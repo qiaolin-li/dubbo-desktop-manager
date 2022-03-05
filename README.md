@@ -49,7 +49,7 @@ NodeJs + Electron + vue + element-UI + Axios + neDB + zookeeper-client
 
 ## 三、如何构建它？
 ### 3.1、安装依赖
-千万不要使用npm安装，可能会跑步起来，一定要使用yarn安装
+千万不要使用npm安装，可能会出错，一定要使用yarn安装
 ```
 yarn install
 ```
