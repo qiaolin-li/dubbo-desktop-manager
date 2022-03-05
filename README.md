@@ -1,6 +1,6 @@
 
 <h1 align="center">
-  <img src="https://github.com/qiaolin-li/dubbo-desktop-manager/blob/master/build/icon.png" alt="Dubbo-Desktop-Manager" width="200">
+  <img src="https://github.com/qiaolin-li/dubbo-desktop-manager/blob/master/build/icons/icon.png" alt="Dubbo-Desktop-Manager" width="200">
   <br>Dubbo-Desktop-Manager<br>
 </h1>
 
