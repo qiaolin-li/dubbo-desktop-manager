@@ -39,9 +39,12 @@
 
 
 ## 二、技术架构
-NodeJs + Electron + vue + element-UI + Axios + neDB + zookeeper-cliet 
+NodeJs + Electron + vue + element-UI + Axios + neDB + zookeeper-client 
+
 使用vue-electron的脚手架构建：https://nklayman.github.io/vue-cli-plugin-electron-builder/
+
 代码展示：https://codemirror.net/
+
 本地数据库 neDB：https://www.w3cschool.cn/nedbintro/nedbintro-x3jk27ml.html
 
 ## 三、如何构建它？
@@ -62,6 +65,9 @@ yarn electron:build
 ```
 
 ## 四、致谢
-感谢 MARKSZのBlog 大佬Electron系列博客，让我少走了很多弯路 博客地址：https://molunerfinn.com/electron-vue-1/#Electron%E7%AE%80%E8%A6%81%E4%BB%8B%E7%BB%8D
+感谢 MARKSZのBlog 大佬Electron系列博客，让我少走了很多弯路
+博客地址：https://molunerfinn.com/electron-vue-1/#Electron%E7%AE%80%E8%A6%81%E4%BB%8B%E7%BB%8D
+
 终端参考自：https://www.codeprj.com/blog/c9bde01.html
+
 分隔栏参考自：https://github.com/NebulaStudio/vue-split-pane
