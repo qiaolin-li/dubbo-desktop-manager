@@ -1,0 +1,76 @@
+{
+  "name": "dubbo-desktop-manager",
+  "productName": "dubbo-desktop-manager",
+  "description": "一个Dubbo管理客户端",
+  "author": {
+    "name": "qiaolin",
+    "email": "992004863@qq.com",
+    "url": "https://github.com/qiaolin-li/dubbo-desktop-manager"
+  },
+  "version": "1.0.2",
+  "private": true,
+  "scripts": {
+    "lint": "vue-cli-service lint",
+    "electron:build": "vue-cli-service electron:build",
+    "electron:serve": "vue-cli-service electron:serve",
+    "postinstall": "electron-builder install-app-deps",
+    "postuninstall": "electron-builder install-app-deps",
+    "release": "vue-cli-service electron:build  --publish always",
+    "patch": "npm version patch && git push origin master && git push origin --tags",
+    "minor": "npm version minor && git push origin master && git push origin --tags",
+    "major": "npm version major && git push origin master && git push origin --tags"
+  },
+  "main": "background.js",
+  "dependencies": {
+    "@electron/remote": "^2.0.1",
+    "axios": "^0.26.0",
+    "codemirror": "^5.64.0",
+    "core-js": "^3.6.5",
+    "electron": "^13.0.0",
+    "electron-devtools-installer": "^3.1.0",
+    "electron-find": "^1.0.7",
+    "element-ui": "^2.15.6",
+    "moment": "^2.29.1",
+    "nedb": "^1.8.0",
+    "node-zookeeper-client": "^1.1.1",
+    "telnet-stream": "^1.0.5",
+    "urijs": "^1.19.7",
+    "vue": "^2.6.11",
+    "vue-codemirror": "^4.0.6",
+    "vue-router": "^3.5.3",
+    "vue-splitpane": "^1.0.6",
+    "vuex": "^3.6.2",
+    "xterm": "^4.17.0",
+    "xterm-addon-fit": "^0.5.0",
+    "xterm-addon-search": "^0.8.2"
+  },
+  "devDependencies": {
+    "@vue/cli-plugin-babel": "~4.5.0",
+    "@vue/cli-plugin-eslint": "~4.5.0",
+    "@vue/cli-service": "^3.9.0",
+    "babel-eslint": "^10.1.0",
+    "eslint": "^6.7.2",
+    "eslint-plugin-vue": "^6.2.2",
+    "vue-cli-plugin-electron-builder": "~2.1.1",
+    "vue-template-compiler": "^2.6.11"
+  },
+  "eslintConfig": {
+    "root": true,
+    "env": {
+      "node": true
+    },
+    "extends": [
+      "plugin:vue/essential",
+      "eslint:recommended"
+    ],
+    "parserOptions": {
+      "parser": "babel-eslint"
+    },
+    "rules": {}
+  },
+  "browserslist": [
+    "> 1%",
+    "last 2 versions",
+    "not dead"
+  ]
+}
