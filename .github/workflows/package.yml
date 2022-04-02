@@ -16,6 +16,7 @@ jobs:
         GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
         npm install -g yarn
+        yarn cache clean
         yarn
         npm run release
     # - name: Upload file # 将构建产物进行上传
