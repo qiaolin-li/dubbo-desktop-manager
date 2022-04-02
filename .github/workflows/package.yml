@@ -1,11 +1,14 @@
-name: Build Pack
+name: Build Release
 on:
   push:
     branches:
       - master # master 分支 push 时触发工作流
 jobs:
-  pack: # 打包任务
-    runs-on: windows-latest # 在 windows 系统中运行
+  release: # 打包任务
+    runs-on: ${{matrix.os}} # 在 windows 系统中运行
+    strategy:
+      matrix:
+        os: [windows-latest, macOS-latest]
     steps:
     - uses: actions/checkout@v2 # 下载仓库代码到工作流机器中
     - name: Install and Pack # 安装依赖并且进行构建
