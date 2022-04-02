@@ -35,9 +35,9 @@ script:
 # - yarn run build:docs
 branches:
   only:
-  # - master
-  - dev-v1.0.1
-after_script:
+  - master
+  # - dev-v1.0.1
+# after_script:
   # - cd docs/dist
   # - git init
   # - git config user.name "Molunerfinn"
