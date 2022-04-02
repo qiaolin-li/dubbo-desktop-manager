@@ -6,7 +6,11 @@ import installExtension, { VUEJS_DEVTOOLS } from 'electron-devtools-installer'
 const isDevelopment = process.env.NODE_ENV !== 'production'
 const path = require('path')
 import menuList from "./menuList.js";
-
+import communication from "@/core/communication/index.js";
+import connectRepository from "@/core/repository/connectRepository.js";
+import invokeHisotryRecord from "@/core/repository/invokeHistoryRepository.js";
+connectRepository.install(communication)
+invokeHisotryRecord.install(communication)
 
 // Scheme must be registered before the app is ready
 protocol.registerSchemesAsPrivileged([
