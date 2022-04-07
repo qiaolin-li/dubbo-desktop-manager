@@ -19,9 +19,14 @@ jobs:
         yarn cache clean
         yarn
         npm run release
-    # - name: Upload file # 将构建产物进行上传
-    #   uses: actions/upload-artifact@v2
-    #   with:
-    #     name: packs # 上传后的名字
-    #     path: dist_electron # 将 packs 目录进行上传
-  
+
+    - name: Build Gitee Pages
+      uses: yanglbme/gitee-pages-action@master
+      with:
+          # 注意替换为你的 Gitee 用户名
+          gitee-username: qiaolin
+          # 注意在 Settings->Secrets 配置 GITEE_PASSWORD
+          gitee-password: ${{ secrets.GITEE_PASSWORD }}
+          # 注意替换为你的 Gitee 仓库
+          gitee-repo: qiaolin/dubbo-desktop-manager
+
