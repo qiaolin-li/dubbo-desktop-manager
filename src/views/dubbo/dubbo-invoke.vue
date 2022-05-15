@@ -12,13 +12,17 @@
         </el-descriptions-item>
 
         <el-descriptions-item>
-          <template slot="label"> 版本 </template>
-          {{ provider.version }}
+          <template slot="label"> 地址 </template>
+          {{ provider.address }}
+        </el-descriptions-item>
+        <el-descriptions-item>
+          <template slot="label"> 泛化 </template>
+          {{ provider.generic }}
         </el-descriptions-item>
 
         <el-descriptions-item>
-          <template slot="label"> Jar </template>
-          {{ provider.revision }}
+          <template slot="label"> 版本 </template>
+          {{ provider.version }}
         </el-descriptions-item>
 
         <el-descriptions-item>
@@ -27,14 +31,10 @@
         </el-descriptions-item>
 
         <el-descriptions-item>
-          <template slot="label"> 是否过期 </template>
-          {{ provider.deprecated }}
+          <template slot="label"> Jar </template>
+          {{ provider.revision }}
         </el-descriptions-item>
 
-        <el-descriptions-item>
-          <template slot="label"> 泛化 </template>
-          {{ provider.generic }}
-        </el-descriptions-item>
         <el-descriptions-item span="2">
           <template slot="label"> 方法 </template>
           <el-select v-model="method" @change="methodChange" class="methodSelect">
@@ -60,16 +60,29 @@
     <div class="invoke-dubbo-dialog-content">
       <div class="invoke-dubbo-dialog-content-code">
         <div class="contentCode">
-          请求参数：
-          <el-popover placement="top-start" title="参数生成策略" width="200" trigger="hover" content="首先会使用上次调用成功的历史参数，如果没有，会尝试生成参数">
-            <i slot="reference" class="el-icon-info"></i>
-          </el-popover>
-          <codeEditor :codeConfig="codeConfig"></codeEditor>
+
+          <codeEditor :codeConfig="codeConfig">
+            <template v-slot:titel>
+              请求参数：
+              <el-popover placement="top-start" title="参数生成策略" width="200" trigger="hover" content="首先会使用上次调用成功的历史参数，如果没有，会尝试生成参数">
+                <i slot="reference" class="el-icon-info"></i>
+              </el-popover>
+            </template>
+            <template v-slot:content>
+
+              <el-tooltip class="item" effect="light" content="格式化" placement="top-start">
+                <i class="el-icon-lollipop" @click="formatContent"></i>
+              </el-tooltip>
+            </template>
+          </codeEditor>
         </div>
 
         <div class="contentCode">
-          响应信息：{{ invokeReulst.elapsedTime }}
-          <codeEditor :codeConfig="invokeReulst"></codeEditor>
+          <codeEditor :codeConfig="invokeReulst">
+            <template v-slot:titel>
+              响应信息：{{ invokeReulst.elapsedTime }}
+            </template>
+          </codeEditor>
         </div>
       </div>
 
@@ -133,9 +146,8 @@ export default {
   },
   methods: {
     async methodChange() {
-      // 这里看似可以调用  this.flushInvokeHistoryList ，但其实不能，
-      // 因为它是异步执行的，会导致方法还没执行完，就往下走了
-      await invokeHisotryRecord.findList(this.provider.serviceName, this.method, 1, 50);
+      // 先刷新列表
+      await this.flushInvokeHistoryList();
 
       if (this.invokeHisotryList && this.invokeHisotryList.length > 0) {
         this.codeConfig.code = this.invokeHisotryList[0].param;
@@ -159,7 +171,7 @@ export default {
         param: this.codeConfig.code,
       };
       await invokeHisotryRecord.save(invokeHistory);
-       this.$message({
+      this.$message({
         type: "success",
         message: "调用dubbo接口成功!",
       });
@@ -183,7 +195,6 @@ export default {
       // 生成参数
       registry.getMethodFillObject(this.provider, this.connectInfo, this.method)
         .then((code) => {
-          console.log("生辰的结果：" + code);
           this.codeConfig.code = code || "[]";
         }).catch((error) => {
           this.$message({
@@ -198,6 +209,10 @@ export default {
         "YYYY-MM-DD HH:mm:ss"
       );
     },
+    formatContent() {
+      let formatedCode = JSON.stringify(JSON.parse(this.codeConfig.code), null, 2)
+      this.codeConfig.code = formatedCode;
+    }
   },
 };
 </script>

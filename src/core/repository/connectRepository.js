@@ -52,5 +52,4 @@ let data = {
 }
 
 let proxy = consumer.wrapper(data);
-debugger
 export default proxy

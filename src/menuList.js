@@ -1,4 +1,4 @@
-const { app, Menu } = require('electron')
+const { app, Menu, shell } = require('electron')
 
 const isMac = process.platform === 'darwin'
 
@@ -91,14 +91,15 @@ const template = [
       {
         label: 'Learn More',
         click: async () => {
-          const { dialog } = require('electron')
 
-          dialog.showMessageBox({
-            title: 'Dubbo-Desktop-Manager',
-            message: 'Dubbo-Desktop-Manager',
-            type:"info",
-            detail: `Author: qiaolin\nGithub: https://github.com/qiaolin-li/dubbo-desktop-manager`
-          })
+          shell.openExternal("https://github.com/qiaolin-li/dubbo-desktop-manager")
+
+          // dialog.showMessageBox({
+          //   title: 'Dubbo-Desktop-Manager',
+          //   message: 'Dubbo-Desktop-Manager',
+          //   type:"info",
+          //   detail: `Author: qiaolin\nGithub: https://github.com/qiaolin-li/dubbo-desktop-manager`
+          // })
         }
       }
     ]

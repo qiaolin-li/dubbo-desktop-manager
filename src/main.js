@@ -23,6 +23,9 @@ Vue.component('split-pane', splitPane);
 
 Vue.config.productionTip = false
 
+import jsonlint from 'jsonlint' //引入
+window.jsonlint = jsonlint  //全局化
+
 new Vue({
   router,
   store,

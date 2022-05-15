@@ -5,6 +5,7 @@ import { createProtocol } from 'vue-cli-plugin-electron-builder/lib'
 import installExtension, { VUEJS_DEVTOOLS } from 'electron-devtools-installer'
 const isDevelopment = process.env.NODE_ENV !== 'production'
 const path = require('path')
+import updateChecker from './utils/updateChecker.js';
 import menuList from "./menuList.js";
 import communication from "@/core/communication/index.js";
 import connectRepository from "@/core/repository/connectRepository.js";
@@ -102,6 +103,9 @@ app.on('activate', () => {
 // 初始化并准备创建浏览器窗口。 
 // 某些api只能在事件发生后使用。
 app.on('ready', async () => {
+
+  updateChecker();
+  
   if (isDevelopment && !process.env.IS_TEST) {
     // Install Vue Devtools
     try {

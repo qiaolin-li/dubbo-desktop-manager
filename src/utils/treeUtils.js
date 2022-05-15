@@ -63,7 +63,7 @@ function createTree(allInterfaceList, split, keyword) {
     let filtedInterface = allInterfaceList;
     if (keyword) {
         keyword = keyword.toLowerCase();
-        filtedInterface = allInterfaceList.filter((i) => i.name.toLowerCase().indexOf(keyword) !== -1);
+        filtedInterface = allInterfaceList.filter((i) => match(i, keyword) !== -1);
     }
     
     for (let i = 0; i < filtedInterface.length; i++) {
@@ -154,6 +154,15 @@ function optimizationTree(children){
     return children;
 }
 
+
+function match(service, keyword){
+    if(service.name.toLowerCase().indexOf(keyword)) {
+        return true;
+    }
+
+    // 未来还可能支持其他的过滤方式
+    return false;
+}
 
 export default {
     createTree,

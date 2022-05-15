@@ -1,5 +1,13 @@
 <template>
   <div>
+    <div class="toolbar">
+      <div class="toolbar-left">
+        <slot name="titel"></slot>
+      </div>
+      <div class="toolbar-right">
+          <slot name="content"></slot>
+      </div>
+    </div>
     <codemirror
       ref="cm"
       v-model="codeConfig.code"
@@ -17,7 +25,7 @@ import "codemirror/lib/codemirror.css";
 // 引入主题 可以从 codemirror/theme/ 下引入多个
 import "codemirror/theme/idea.css";
 // 引入语言模式 可以从 codemirror/mode/ 下引入多个
-import "codemirror/mode/sql/sql.js";
+// import "codemirror/mode/sql/sql.js";
 import "codemirror/mode/javascript/javascript.js";
 
 // 搜索功能
@@ -39,6 +47,11 @@ import "codemirror/addon/hint/show-hint.css";
 import "codemirror/addon/hint/show-hint";
 // import 'codemirror/addon/hint/sql-hint';
 import "codemirror/addon/hint/javascript-hint";
+import 'codemirror/addon/lint/lint'
+import 'codemirror/addon/lint/lint.css'
+import 'codemirror/addon/lint/json-lint'
+import 'codemirror/addon/display/autorefresh' //及时自动更新，配置里面也需要设置autoRefresh为true
+
 
 // 高亮行功能
 import "codemirror/addon/selection/active-line";
@@ -159,9 +172,9 @@ export default {
   },
   methods: {
     inputChange(content) {
-      this.$nextTick(() => {
-        // console.log("content:" + content);
-      });
+      // this.$nextTick(() => {
+        //  this.$refs.cm.codemirror.setValue((JSON.stringify(JSON.parse(content), null, 2)))
+      // });
     },
   },
   mounted() {
@@ -201,4 +214,13 @@ export default {
   color: #0088ff;
   margin-left: 1em;
 }
+
+.toolbar {
+  display: flex;
+  justify-content: space-between;
+  background-color: rgb(248, 247, 247);
+  line-height: 25px;
+  padding-left: 10px;
+  padding-right: 10px;
+}  
 </style>
