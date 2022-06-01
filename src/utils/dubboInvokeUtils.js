@@ -1,5 +1,6 @@
 import net from "net";
 import telnetSocket from "telnet-stream";
+import JSONFormater from "./JSONFormater";
 
 /**
  * 调用Dubbo接口
@@ -29,21 +30,9 @@ function invokeMethod(provder, method, code) {
             if(!result.endsWith("dubbo>")){
                return;
             }
-            
-            // 数据完整返回过来了
-            let errorMessage = result.split("\n");
-            // 调用成功
-            if (errorMessage.length == 4) {
-                let data = errorMessage[1].substring(8);
-                let elapsedTime = errorMessage[2].substring(9)
 
-                let formatedCode = JSON.stringify(JSON.parse(data), null, 2)
-                resolve(new InvokeResult(formatedCode, elapsedTime));
-                return;
-            }
-
-            // // 出现异常了
-            resolve(new InvokeResult(result, null));
+            // 解析结果
+            resolve(resolveResponse(result));
         });
 
         tSocket.write(buildInvokeCommand({ serviceName, method, params }));
@@ -71,6 +60,33 @@ function buildInvokeCommand({ serviceName, method, params }) {
     }
 
     return `invoke ${serviceName}.${method}(${paramStr}) \n`;
+}
+
+/**
+ * 解析响应信息
+ * @param {String} result 
+ * @returns 
+ */
+function resolveResponse(result){
+    // dubbo返回格式分为三部分，第一部分为
+    let errorMessage = result.split("\n");
+    // 调用成功
+    if (errorMessage.length == 4) {
+        let data = errorMessage[1].substring(8);
+        let elapsedTime = errorMessage[2].substring(9)
+
+        try{
+            return new InvokeResult(JSONFormater(data), elapsedTime);
+        }catch(e){
+            // 日后再收集
+        }
+
+        // 解析数据异常，以最原始的数据显示
+        return new InvokeResult(data, elapsedTime);
+    }
+
+    // 调用失败
+    return new InvokeResult(result, 0);
 }
 
 /**
