@@ -35,4 +35,4 @@ jobs:
           npm install -g yarn
           yarn cache clean
           yarn
-          npm run release}
+          npm run release
