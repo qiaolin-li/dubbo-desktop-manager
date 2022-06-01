@@ -24,6 +24,8 @@ jobs:
         if: matrix.os == 'ubuntu-latest'
         run: |
           sudo apt-get install --no-install-recommends -y icnsutils graphicsmagick xz-utils
+          sudo apt-get update
+          sudo snap install snapcraft --classic
 
       - name: Install and Pack # 安装依赖并且进行构建
         env:
