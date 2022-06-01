@@ -28,13 +28,11 @@ jobs:
           sudo apt-get update
           sudo snap install snapcraft --classic
 
-      - name: Yarn install
-        run: |
-          yarn
-          yarn global add xvfb-maybe
-          
-      - name: Build  & release app
-        run: |
-          yarn release
+      - name: Yarn install & Release
         env:
-          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          npm install -g yarn
+          yarn cache clean
+          yarn
+          npm run release}
