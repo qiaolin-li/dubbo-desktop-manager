@@ -1,6 +1,6 @@
 'use strict'
 
-import { app, protocol, BrowserWindow, Menu, MenuItem, globalShortcut, ipcMain, dialog } from 'electron'
+import { app, protocol, BrowserWindow, Menu, MenuItem, globalShortcut, ipcMain, dialog, session } from 'electron'
 import { createProtocol } from 'vue-cli-plugin-electron-builder/lib'
 import installExtension, { VUEJS_DEVTOOLS } from 'electron-devtools-installer'
 const isDevelopment = process.env.NODE_ENV !== 'production'
@@ -115,6 +115,15 @@ app.on('ready', async () => {
     }
   }
   createWindow()
+
+  // 统计时需要
+  const xxx_filter = {
+      urls: ["https://hm.baidu.com/*"]
+  }
+  session.defaultSession.webRequest.onBeforeSendHeaders(xxx_filter, (details, callback)=> {
+    details.requestHeaders['Referer'] = 'http://localhost:8080/'
+    callback({ requestHeaders: details.requestHeaders })
+  })
 
   // const ret = globalShortcut.register('CommandOrControl+X', () => {
   //   console.log('CommandOrControl+X is pressed')
