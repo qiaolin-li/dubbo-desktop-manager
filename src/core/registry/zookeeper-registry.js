@@ -40,7 +40,7 @@ function getServiceList(registryConfig) {
 }
 
 
-function getProviderList(serviceInfo, registryConfig) {
+function getProviderList(serviceName, registryConfig) {
   let { address } = registryConfig;
 
   const OPTIONS = {
@@ -50,7 +50,7 @@ function getProviderList(serviceInfo, registryConfig) {
   return new Promise((resolve, reject) => {
     let zk = zookeeperClient.createClient(address, OPTIONS);
     zk.on("connected", function () {
-      zk.getChildren(PRIVDER_PREFIX + "/" + serviceInfo.serviceName + "/providers", async function (error, children) {
+      zk.getChildren(PRIVDER_PREFIX + "/" + serviceName + "/providers", async function (error, children) {
         if (error) {
           reject(error);
           return;
@@ -119,7 +119,7 @@ function getMethodFillObject(providerInfo, registryConfig, methodName){
 }
 
 
-function getConsumerList(serviceInfo, registryConfig) {
+function getConsumerList(serviceName, registryConfig) {
   let { address } = registryConfig;
 
   const OPTIONS = {
@@ -129,7 +129,7 @@ function getConsumerList(serviceInfo, registryConfig) {
   return new Promise((resolve, reject) => {
     let zk = zookeeperClient.createClient(address, OPTIONS);
     zk.on("connected", function () {
-      zk.getChildren(PRIVDER_PREFIX + "/" + serviceInfo.serviceName + "/consumers", async function (error, children) {
+      zk.getChildren(PRIVDER_PREFIX + "/" + serviceName + "/consumers", async function (error, children) {
         if (error) {
           reject(error);
           return;

@@ -1,5 +1,6 @@
 import zookeeperRegistry from "./zookeeper-registry";
 import nacosRegistry from "./nacos-registry";
+import connectRepository from "@/core/repository/connectRepository.js";
 
 
 const map = new Map();
@@ -8,22 +9,26 @@ map.set("zookeeper", zookeeperRegistry);
 map.set("nacos", nacosRegistry);
 
 
-function getServiceList(registryConfig = {}) {
+async function getServiceList(registryCenterId) {
+    let registryConfig = await connectRepository.findById(registryCenterId);
     let registry = getRealRegistry(registryConfig);
     return registry.getServiceList(registryConfig);
 }
 
-function getProviderList(serviceInfo, registryConfig = {}) {
+async function getProviderList(serviceName, registryCenterId) {
+    let registryConfig = await connectRepository.findById(registryCenterId);
     let registry = getRealRegistry(registryConfig);
-    return registry.getProviderList(serviceInfo, registryConfig);
+    return registry.getProviderList(serviceName, registryConfig);
 }
 
-function getConsumerList(serviceInfo,  registryConfig = {}) {
+async function getConsumerList(serviceName,  registryCenterId) {
+    let registryConfig = await connectRepository.findById(registryCenterId);
     let registry = getRealRegistry(registryConfig);
-    return registry.getConsumerList(serviceInfo, registryConfig);
+    return registry.getConsumerList(serviceName, registryConfig);
 }
 
-function getMethodFillObject(providerInfo, registryConfig, methodName) {
+async function getMethodFillObject(providerInfo, registryCenterId, methodName) {
+    let registryConfig = await connectRepository.findById(registryCenterId);
     let registry = getRealRegistry(registryConfig);
     return registry.getMethodFillObject(providerInfo, registryConfig, methodName);
 }

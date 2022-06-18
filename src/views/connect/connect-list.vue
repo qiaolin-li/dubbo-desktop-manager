@@ -2,7 +2,7 @@
   <div>
     <div class="mainContainer" v-for="connectInfo in connectInfoList" :key="connectInfo.name">
       <!-- zk 连接 -->
-      <div :class="connectInfo.clickZk ? 'connectContainer notSelect selected' : 'connectContainer notSelect'" @click="openConnect(connectInfo)">
+      <div class="connectContainer notSelect" @click="openConnect(connectInfo)">
         <!-- zk 连接名称 -->
         <div class="connectContainer-left">
           <i class="iconfont icon-lianjie-connect" />
@@ -110,29 +110,7 @@ export default {
   padding: 5px 5px;
 }
 
-.connectContainer-right i:hover {
-  background-color: rgb(155, 206, 255);
-}
 
-
-.selected {
-  background-color: rgb(155, 206, 255);
-}
-
-.notSelect {
-  /* 不让用户选中 */
-  -webkit-touch-callout: none; /* iOS Safari */
-  -webkit-user-select: none; /* Chrome/Safari/Opera */
-  -khtml-user-select: none; /* Konqueror */
-  -moz-user-select: none; /* Firefox */
-  -ms-user-select: none; /* Internet Explorer/Edge */
-  user-select: none; /* Non-prefixed version, currently
-  not supported by any browser */
-}
-
-.is-current {
-  background-color: #66b1ff87;
-}
 
 
 </style>

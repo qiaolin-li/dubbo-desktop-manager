@@ -65,13 +65,13 @@ function doGetServiceList(url, params) {
 
 }
 
-function getProviderList(serviceInfo, registryConfig) {
+function getProviderList(serviceName, registryConfig) {
 
     // http://127.0.0.1:8848/nacos/v1/ns/instance/list
     let url = `${registryConfig.address}/nacos/v1/ns/instance/list`;
 
     let params = {
-        serviceName: serviceInfo.serviceName,
+        serviceName: serviceName,
         namespaceId: registryConfig.namespaceId || ""
     }
 
@@ -125,13 +125,13 @@ function parseProvderInfo(data) {
 }
 
 
-function getConsumerList(serviceInfo, registryConfig) {
+function getConsumerList(serviceName, registryConfig) {
 
     // http://127.0.0.1:8848/nacos/v1/ns/instance/list
     let url = `${registryConfig.address}/nacos/v1/ns/instance/list`;
 
     let params = {
-        serviceName: serviceInfo.serviceName,
+        serviceName: serviceName,
         namespaceId: registryConfig.namespaceId || ""
     }
 

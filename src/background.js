@@ -6,12 +6,14 @@ import installExtension, { VUEJS_DEVTOOLS } from 'electron-devtools-installer'
 const isDevelopment = process.env.NODE_ENV !== 'production'
 const path = require('path')
 import updateChecker from './utils/updateChecker.js';
-import menuList from "./menuList.js";
+import template from "./menuList.js";
 import communication from "@/core/communication/index.js";
 import connectRepository from "@/core/repository/connectRepository.js";
 import invokeHisotryRecord from "@/core/repository/invokeHistoryRepository.js";
+import {setWindow} from '@/core/holder/WindowHolder.js';
 connectRepository.install(communication)
 invokeHisotryRecord.install(communication)
+
 
 // Scheme must be registered before the app is ready
 protocol.registerSchemesAsPrivileged([
@@ -36,6 +38,7 @@ async function createWindow() {
   })
 
   window = win;
+  setWindow(win);
   // win.webContents.openDevTools()
   const remote = require('@electron/remote/main');
   if (!init) {
@@ -74,7 +77,7 @@ menu.append(new MenuItem({
 }))
 
 Menu.setApplicationMenu(menu)
-Menu.setApplicationMenu(Menu.buildFromTemplate(menuList));
+Menu.setApplicationMenu(Menu.buildFromTemplate(template));
 
 app.setAboutPanelOptions({
   applicationName: "DDM",

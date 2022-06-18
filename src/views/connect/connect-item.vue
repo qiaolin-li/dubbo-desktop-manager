@@ -6,7 +6,15 @@
     </div>
 
     <!-- dubbo接口列表  -->
-    <el-tree :data="serviceList" :props="defaultProps" :expand-on-click-node="false" @node-click="handleNodeClick"></el-tree>
+    <el-tree ref="tree" :data="serviceList" :props="defaultProps"  :highlight-current="true" :accordion="true"  
+      :expand-on-click-node="false" @node-click="handleNodeClick">
+      
+        <div class="custom-tree-icon" slot-scope="{ node, data }">
+          <i :class="['', data.children && data.children.length > 0  ? 'el-icon-folder' : 'test']" ></i> 
+          <span>{{ data.label }}</span>
+        </div>
+      
+      </el-tree>
   </div>
 </template>
 
@@ -22,8 +30,10 @@ export default {
       init: false,
       allServiceList: [],
       serviceList: [],
-      searchKeyword: "",
+      searchKeyword: "trade",
+      expandAll:false,
       defaultProps: {
+        
         children: "children",
         label: "label",
       }
@@ -57,7 +67,7 @@ export default {
       this.findInterfaceList();
     },
     findInterfaceList() {
-      registry.getServiceList(this.connectInfo).then((list) => {
+      registry.getServiceList(this.connectInfo._id).then((list) => {
         for (let i = 0; i < list.length; i++) {
           list[i].leaf = true;
         }
@@ -83,8 +93,8 @@ export default {
         return;
       }
       let data = {
-        connectInfo: this.connectInfo,
-        serviceInfo: serviceInfo,
+        registryCenterId: this.connectInfo._id,
+        serviceName: serviceInfo.serviceName,
       };
       this.$emit("clickServiceInfo", data);
     },
@@ -104,18 +114,27 @@ export default {
   line-height: 40px;
 }
 
-.el-tree-node__content {
-  line-height: 40px;
-  margin-top: 2px;
-  font-size: 40px;
+.custom-tree-icon {
+   position: relative;
 }
 
-.el-tree-node {
+.el-icon-folder {
+  margin-right: 5px;
+   color: rgb(136, 241, 124);
+    border-radius: 50%;
 }
 
-.el-tree-node__label {
-  margin-top: 10px 10px !important;
-  font-size: 17px !important;
-  line-height: 30px !important;
+.test::before {
+  content: "I";
+  margin-right: 5px;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: rgb(136, 241, 124);
+  width: 17px;
+  height: 17px;
+  text-align: center;
+  font-size: 17px;
+  border-radius: 50%;
+  display:inline-block;
+  
 }
 </style>
