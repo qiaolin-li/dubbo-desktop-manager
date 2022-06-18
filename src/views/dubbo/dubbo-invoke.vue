@@ -57,9 +57,9 @@
       </el-descriptions>
     </div>
 
-    <div class="invoke-dubbo-dialog-content">
+    <div class="invoke-dubbo-dialog-content " >
       <div class="invoke-dubbo-dialog-content-code">
-        <div class="contentCode">
+        <div class="contentCode broder">
 
           <codeEditor :codeConfig="codeConfig">
             <template v-slot:titel>
@@ -77,7 +77,7 @@
           </codeEditor>
         </div>
 
-        <div class="contentCode">
+        <div class="contentCode broder">
           <codeEditor :codeConfig="invokeReulst">
             <template v-slot:titel>
               响应信息：{{ invokeReulst.elapsedTime }}
@@ -86,7 +86,7 @@
         </div>
       </div>
 
-      <div class="invoke-dubbo-dialog-content-hisotry">
+      <div class="invoke-dubbo-dialog-content-hisotry broder">
         历史调用参数（{{ invokeHisotryList.length }}）
 
         <ul class="infinite-list">
@@ -123,7 +123,7 @@ export default {
     };
   },
   props: {
-    connectInfo: Object,
+    registryCenterId: String,
     provider: Object,
   },
   mounted() {
@@ -193,7 +193,7 @@ export default {
     },
     generateParam() {
       // 生成参数
-      registry.getMethodFillObject(this.provider, this.connectInfo, this.method)
+      registry.getMethodFillObject(this.provider, this.registryCenterId, this.method)
         .then((code) => {
           this.codeConfig.code = code || "[]";
         }).catch((error) => {
@@ -218,31 +218,35 @@ export default {
 </script>
 
 <style>
+
+.broder {
+  border: rgb(230, 233, 243) 1px solid;
+}
+
 .invoke-dubbo-dialog {
-  height: 80vh;
-  overflow-y: auto;
+  height: 90vh;
+  overflow-y: hidden;
 }
 
 .invoke-dubbo-dialog-content {
   margin-top: 10px;
-  border: rgb(230, 233, 243) 1px solid;
+
   display: flex;
   flex-direction: row;
   align-content: space-between;
-  height: 55vh;
+  height: 70vh;
   overflow: auto;
 }
 
 .invoke-dubbo-dialog-content-code {
-  overflow-y: auto;
   width: 75%;
 }
 .invoke-dubbo-dialog-content-hisotry {
-  border-left: rgb(230, 233, 243) 1px solid;
   overflow-y: auto;
-  width: 20%;
-  height: 100%;
-  padding-left: 5px;
+  width: 25%;
+  padding-left: 10px;
+  margin-left: 10px;
+  height: 69vh;
 }
 
 .el-collapse-item {
@@ -275,4 +279,9 @@ export default {
 .methodSelect {
   width: 100%;
 }
+
+.contentCode {
+  margin-bottom: 10px;
+}
+
 </style>

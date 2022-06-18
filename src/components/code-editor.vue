@@ -223,4 +223,10 @@ export default {
   padding-left: 10px;
   padding-right: 10px;
 }  
+
+.CodeMirror {
+  /* border: 1px solid #eee; */
+  height: 30vh;
+  font-size: 14px;
+}
 </style>

@@ -1,6 +1,8 @@
-const { app, Menu, shell } = require('electron')
+import { app, Menu, shell } from 'electron'
+import {getWindow} from '@/core/holder/WindowHolder.js';
 
 const isMac = process.platform === 'darwin'
+let window = null;
 
 const template = [
   // { role: 'appMenu' }
@@ -22,6 +24,14 @@ const template = [
   {
     label: 'File',
     submenu: [
+      {
+        label: '新增连接',
+        click: async () => {
+          let window = getWindow();
+          window.webContents.send('openAddConnectDialogEvent')
+
+        }
+      },
       isMac ? { role: 'close' } : { role: 'quit' }
     ]
   },
@@ -108,4 +118,8 @@ const template = [
 
 
 
+
 export default template;
+export const setWindow = (window) => {
+  this.window = window;
+}
