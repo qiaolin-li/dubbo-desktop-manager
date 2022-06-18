@@ -71,7 +71,7 @@ export default {
       this.currentTabName = serviceName;
 
       // 新增了节点
-      this.$nextTick(() => {
+      setTimeout(() => {
         let dubboListTabs = document.getElementById('dubboListTabs');
         let firstElementChild = dubboListTabs.firstElementChild.firstElementChild.lastElementChild.firstElementChild;
         firstElementChild.style.transform = 'translateX(-' + 0 + 'px)'
@@ -81,7 +81,7 @@ export default {
         let navScroll = dubboListTabs.firstElementChild.firstElementChild.lastElementChild;
         navScroll.scrollLeft = serviceNameDiv.offsetLeft;
 
-      })
+      }, 5)
 
     },
     removeTab(targetName) {

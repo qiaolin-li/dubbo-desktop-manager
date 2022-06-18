@@ -30,7 +30,7 @@ export default {
       init: false,
       allServiceList: [],
       serviceList: [],
-      searchKeyword: "trade",
+      searchKeyword: "",
       expandAll:false,
       defaultProps: {
         
