@@ -5,11 +5,11 @@
 
 <h4 align="center">一个Dubbo的桌面管理软件</h4>
 <p align="center">
-  <a href="https://github.com/qiaolin-li/dubbo-desktop-manager/releases/download/v1.0.2/Dubbo-Desktop-Manager-Setup-1.0.2.exe">Windows下载</a>
+  <a href="https://github.com/qiaolin-li/dubbo-desktop-manager/releases">Windows下载</a>
   &nbsp;&nbsp;|&nbsp;&nbsp;
-  <a href="https://github.com/qiaolin-li/dubbo-desktop-manager/releases/download/v1.0.2/Dubbo-Desktop-Manager-1.0.2.dmg">Mac Intel 芯片下载</a>
+  <a href="https://github.com/qiaolin-li/dubbo-desktop-manager/releases">Mac Intel 芯片下载</a>
     &nbsp;&nbsp;|&nbsp;&nbsp;
-  <a href="https://github.com/qiaolin-li/dubbo-desktop-manager/releases/download/v1.0.2/Dubbo-Desktop-Manager-1.0.2-arm64.dmg">Mac M1 芯片下载</a>
+  <a href="https://github.com/qiaolin-li/dubbo-desktop-manager/releases">Mac M1 芯片下载</a>
 </p>
 
 ## 一、功能简介
