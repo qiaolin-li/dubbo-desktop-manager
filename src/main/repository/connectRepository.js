@@ -1,5 +1,5 @@
 import dbUtils from "../../utils/DBUtils.js";
-import consumer from "@/core/communication/consumer.js";
+import consumer from "@/main/communication/consumer.js";
 let dbOperator = dbUtils("zkConnectInfo");
 
 function ZkConnectInfo({_id, name ,type, address, namespaceId, sessionTimeout, createTime = new Date().getTime()}){

@@ -2,7 +2,7 @@
     <div class="welcomeContainer notSelect">
         <div class="contentContainer">
             <div class="imgContainer">
-                        <img src="../assets/icon.png" width="120" height="120" />
+                        <img src="../../assets/icon.png" width="120" height="120" />
                     </div>
             <div class="descContainer" >
                 <span class="title">{{$t("welcome.productName")}}</span>
@@ -14,7 +14,7 @@
 </template>
 
 <script>
-import pkg from "../../package.json";
+import pkg from "../../../package.json";
 export default {
     data() {
         return {

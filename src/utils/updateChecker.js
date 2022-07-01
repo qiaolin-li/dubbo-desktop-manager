@@ -8,7 +8,7 @@ import pkg from '../../package.json'
 import {
   lt
 } from 'semver'
-import appConfig from "@/core/repository/appConfig.js";
+import appConfig from "@/main/repository/appConfig.js";
 
 const currentVersion = pkg.version
 const repostoryName = "qiaolin-li/dubbo-desktop-manager"

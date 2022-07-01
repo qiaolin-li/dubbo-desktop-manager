@@ -13,7 +13,7 @@
 <script>
 
 import i18n from '@/i18n/index.js';
-import appConfig from "@/core/repository/appConfig.js";
+import appConfig from "@/main/repository/appConfig.js";
 export default {
   data() {
     return {

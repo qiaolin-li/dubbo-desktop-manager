@@ -1,6 +1,6 @@
 import { app, Menu, shell } from 'electron'
-import {getWindow} from '@/core/holder/WindowHolder.js';
-import i18n from './i18n'
+import {getWindow} from '@/main/holder/WindowHolder.js';
+import i18n from '../i18n'
 
 const isMac = process.platform === 'darwin'
 let window = null;

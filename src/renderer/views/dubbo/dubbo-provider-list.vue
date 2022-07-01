@@ -35,7 +35,7 @@
 </template>
 
 <script>
-import registry from "@/core/registry";
+import registry from "@/main/registry";
 
 
 export default {

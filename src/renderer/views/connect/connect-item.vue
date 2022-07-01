@@ -18,7 +18,7 @@
 </template>
 
 <script>
-import registry from "@/core/registry";
+import registry from "@/main/registry";
 import treeUtils from "@/utils/treeUtils.js";
 
 export default {

@@ -3,7 +3,7 @@
 </template>
 
 <script>
-import telnetTerminal from "../../../../components/terminal/telnet-terminal.vue";
+import telnetTerminal from "@/renderer/components/terminal/telnet-terminal.vue";
 
 
 export default {

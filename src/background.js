@@ -1,20 +1,17 @@
 'use strict'
 
-
-
-
 import { app, protocol, BrowserWindow, Menu, MenuItem, globalShortcut, ipcMain, dialog, session } from 'electron'
 import { createProtocol } from 'vue-cli-plugin-electron-builder/lib'
 import installExtension, { VUEJS_DEVTOOLS } from 'electron-devtools-installer'
 const isDevelopment = process.env.NODE_ENV !== 'production'
 const path = require('path')
 import updateChecker from './utils/updateChecker.js';
-import template from "./menuList.js";
-import communication from "@/core/communication/index.js";
-import connectRepository from "@/core/repository/connectRepository.js";
-import invokeHisotryRecord from "@/core/repository/invokeHistoryRepository.js";
-import appConfig from "@/core/repository/appConfig.js";
-import {setWindow} from '@/core/holder/WindowHolder.js';
+import template from "./main/menuList.js";
+import communication from "@/main/communication/index.js";
+import connectRepository from "@/main/repository/connectRepository.js";
+import invokeHisotryRecord from "@/main/repository/invokeHistoryRepository.js";
+import appConfig from "@/main/repository/appConfig.js";
+import {setWindow} from '@/main/holder/WindowHolder.js';
 connectRepository.install(communication)
 invokeHisotryRecord.install(communication)
 appConfig.install(communication)

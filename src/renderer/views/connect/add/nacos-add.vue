@@ -6,6 +6,9 @@
     <el-form-item :label="$t('connect.address')" prop="address">
       <el-input v-model="form.address"></el-input>
     </el-form-item>
+    <el-form-item :label="$t('connect.namespaceId')">
+      <el-input v-model="form.namespaceId"></el-input>
+    </el-form-item>
     <el-form-item :label="$t('connect.sessionTimeout')" prop="sessionTimeout">
       <el-input v-model="form.sessionTimeout"></el-input>
     </el-form-item>
@@ -16,16 +19,18 @@
 </template>
 
 <script>
-import connectRepository from "@/core/repository/connectRepository.js";
+import connectRepository from "@/main/repository/connectRepository.js";
 
 export default {
   data() {
 
+
     return {
       form: {
-        type: "zookeeper",
+        type: "nacos",
         name: "",
-        address: "127.0.0.1:2181",
+        address: "http://127.0.0.1:8848",
+        namespaceId: "",
         sessionTimeout: 5000,
       },
 
@@ -56,23 +61,21 @@ export default {
           {
             min: 1,
             max: 32,
-            message:  this.$t('connect.validateMessage.rangeLimit'),
+            message: this.$t('connect.validateMessage.rangeLimit'),
             trigger: "blur",
           },
         ],
         address: [
-          { required: true, message:  this.$t('connect.validateMessage.inputConnectionAddress'), trigger: "blur" },
+          { required: true, message: this.$t('connect.validateMessage.inputConnectionAddress'), trigger: "blur" },
         ],
         sessionTimeout: [{ validator: checkTimeout, trigger: "blur" }],
       }
       return rules;
     }
-
   },
   props: {
     id: String
   },
-
   watch: {
     id: {
       handler() {
@@ -82,7 +85,6 @@ export default {
   },
   async mounted() {
     this.init();
-
   },
   methods: {
     async init() {
@@ -93,6 +95,7 @@ export default {
         this.form.type = "zookeeper"
         this.form.name = "";
         this.form.address = "127.0.0.1:2181";
+        this.form.namespaceId = "";
         this.form.sessionTimeout = 5000;
       }
     },
@@ -104,6 +107,7 @@ export default {
             this.form.name = "";
             this.form.address = "127.0.0.1:2181";
             this.form.sessionTimeout = 5000;
+            this.form.namespaceId = "";
             this.$emit("saveSuccess", data);
           });
         } else {

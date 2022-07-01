@@ -1,6 +1,6 @@
 import zookeeperRegistry from "./zookeeper-registry";
 import nacosRegistry from "./nacos-registry";
-import connectRepository from "@/core/repository/connectRepository.js";
+import connectRepository from "@/main/repository/connectRepository.js";
 
 
 const map = new Map();

@@ -1,6 +1,6 @@
 import lowdb from "lowdb"
 import FileSync from "lowdb/adapters/FileSync.js"
-import consumer from "@/core/communication/consumer.js";
+import consumer from "@/main/communication/consumer.js";
 const USER_HOME = process.env.HOME;
 
 let db = null;

@@ -106,9 +106,9 @@
 
 <script>
 import dubboInvokeUtils from "@/utils/dubboInvokeUtils.js";
-import invokeHisotryRecord from "@/core/repository/invokeHistoryRepository.js";
-import registry from "@/core/registry";
-import codeEditor from "@/components/editor/code-editor.vue";
+import invokeHisotryRecord from "@/main/repository/invokeHistoryRepository.js";
+import registry from "@/main/registry";
+import codeEditor from "@/renderer/components/editor/code-editor.vue";
 
 export default {
   components: {

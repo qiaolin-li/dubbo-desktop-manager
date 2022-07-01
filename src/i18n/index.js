@@ -2,7 +2,7 @@ import Vue from 'vue'
 import VueI18n from 'vue-i18n'
 import {sync} from 'os-locale'
 
-import appConfig from "@/core/repository/appConfig.js";
+import appConfig from "@/main/repository/appConfig.js";
 Vue.use(VueI18n)
 
 
