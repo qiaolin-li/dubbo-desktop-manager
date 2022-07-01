@@ -1,5 +1,8 @@
 'use strict'
 
+
+
+
 import { app, protocol, BrowserWindow, Menu, MenuItem, globalShortcut, ipcMain, dialog, session } from 'electron'
 import { createProtocol } from 'vue-cli-plugin-electron-builder/lib'
 import installExtension, { VUEJS_DEVTOOLS } from 'electron-devtools-installer'
@@ -10,10 +13,11 @@ import template from "./menuList.js";
 import communication from "@/core/communication/index.js";
 import connectRepository from "@/core/repository/connectRepository.js";
 import invokeHisotryRecord from "@/core/repository/invokeHistoryRepository.js";
+import appConfig from "@/core/repository/appConfig.js";
 import {setWindow} from '@/core/holder/WindowHolder.js';
 connectRepository.install(communication)
 invokeHisotryRecord.install(communication)
-
+appConfig.install(communication)
 
 // Scheme must be registered before the app is ready
 protocol.registerSchemesAsPrivileged([
@@ -64,8 +68,6 @@ menu.append(new MenuItem({
     role: 'help',
     accelerator: process.platform === 'darwin' ? 'Cmd+F' : 'Alt+Shift+I',
     click: () => {
-
-      console.log("触发了哦！");
       dialog.showMessageBox({
         type: 'info',
         message: '成功!',
@@ -106,7 +108,7 @@ app.on('activate', () => {
 // 初始化并准备创建浏览器窗口。 
 // 某些api只能在事件发生后使用。
 app.on('ready', async () => {
-
+ 
   updateChecker();
   
   if (isDevelopment && !process.env.IS_TEST) {
@@ -129,7 +131,7 @@ app.on('ready', async () => {
   })
 
   // const ret = globalShortcut.register('CommandOrControl+X', () => {
-  //   console.log('CommandOrControl+X is pressed')
+  //   ('CommandOrControl+X is pressed')
   // }); 
 })
 

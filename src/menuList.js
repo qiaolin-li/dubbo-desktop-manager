@@ -1,5 +1,6 @@
 import { app, Menu, shell } from 'electron'
 import {getWindow} from '@/core/holder/WindowHolder.js';
+import i18n from './i18n'
 
 const isMac = process.platform === 'darwin'
 let window = null;
@@ -25,13 +26,22 @@ const template = [
     label: 'File',
     submenu: [
       {
-        label: '新增连接',
+        label: i18n.t("menu.addConnect") ,
         click: async () => {
           let window = getWindow();
           window.webContents.send('openAddConnectDialogEvent')
 
         }
       },
+      {
+        label: i18n.t("menu.settings") ,
+        click: async () => {
+          let window = getWindow();
+          window.webContents.send('openSettingsTabEvent')
+
+        }
+      },
+      { type: 'separator' },
       isMac ? { role: 'close' } : { role: 'quit' }
     ]
   },

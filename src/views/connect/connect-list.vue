@@ -56,10 +56,10 @@ export default {
     clickServiceInfo(data) {
       this.$emit("clickServiceInfo", data);
     },
-    refreshServiceList(e,connectInfo){
+    refreshServiceList(e, connectInfo) {
       // TODO 暂时通过这种方式，后续再研究
       connectInfo.refreshNum++;
-        e.stopPropagation();
+      e.stopPropagation();
     },
     // eslint-disable-next-line no-unused-vars
     editConnect(e, id) {
@@ -68,16 +68,16 @@ export default {
       e.stopPropagation();
     },
     deleteConnect(e, id) {
-      this.$confirm(`此操作将永久删除改链接, 是否继续?`, "提示", {
-        confirmButtonText: "确定",
-        cancelButtonText: "取消",
+      this.$confirm(this.$t('connect.confirmDeleteConnect'), this.$t('base.hintTitle'), {
+        confirmButtonText: this.$t('base.confirm'),
+        cancelButtonText: this.$t('base.cancel'),
         type: "warning",
       }).then(() => {
         // eslint-disable-next-line no-unused-vars
         connectRepository.deleteConnect(id).then((num) => {
           this.$message({
             type: "success",
-            message: "删除成功!",
+            message: this.$t('base.deleteSuccess'),
           });
           this.findConnectList();
         });
@@ -91,26 +91,21 @@ export default {
 </script>
 
 <style>
-
 .mainContainer {
   background-color: white;
   margin-top: 10px;
 }
-
 
 .connectContainer {
   display: flex;
   justify-content: space-between;
   line-height: 30px;
   padding-left: 10px;
+  white-space: nowrap;
 }
 
 .connectContainer-right i {
   margin-right: 5px;
   padding: 5px 5px;
 }
-
-
-
-
 </style>

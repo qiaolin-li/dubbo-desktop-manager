@@ -47,7 +47,6 @@ let data = {
     ZkConnectInfo,
     install(communication){
         communication.registry(data);
-        console.log("安装完毕 communication");
     }
 }
 

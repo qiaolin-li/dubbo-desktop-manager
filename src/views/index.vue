@@ -2,24 +2,28 @@
   <div class="main-container">
 
     <div class="content-container">
-      <split-pane split="vertical" :min-percent="10" :default-percent="25">
+      <split-pane split="vertical" :min-percent="25" :default-percent="25">
         <template slot="paneL">
           <div class="left-container">
             <registryList @clickServiceInfo="clickServiceInfo" />
           </div>
         </template>
         <template slot="paneR">
-          <div class="right-tab-container">
+          <div class="right-tab-container" v-show="dubboListList.length > 0">
             <el-tabs id="dubboListTabs" v-model="currentTabName" type="card" closable @tab-remove="removeTab">
               <el-tab-pane class="tabPane" v-for="(item, index) in dubboListList" :key="item.serviceName" :name="item.serviceName">
                 <span slot="label" class="notSelect"><i class="el-icon-date"></i> {{item.title}}</span>
               </el-tab-pane>
             </el-tabs>
           </div>
-          <div class="right-container" :min-percent="30" :default-percent="30">
-            <dubbo-list v-for="(item, index) in dubboListList" :key="index" v-show="currentTabName == item.serviceName" :registryCenterId="item.registryCenterId" :serviceName="item.serviceName" />
-            <welcome v-if="dubboListList.length == 0" />
+          <div class="right-container" :min-percent="30" :default-percent="30" v-show="dubboListList.length > 0">
+            <div v-for="(item, index) in dubboListList" :key="item.serviceName">
+              <settings v-if="item.id == 'settings'" v-show="currentTabName == item.id"></settings>
+              <dubbo-list v-else v-show="currentTabName == item.serviceName" :registryCenterId="item.registryCenterId" :serviceName="item.serviceName" />
+            </div>
           </div>
+          <welcome v-if="dubboListList.length == 0" />
+
         </template>
       </split-pane>
     </div>
@@ -29,27 +33,89 @@
 
 <script>
 import splitPane from "vue-splitpane";
-import dubboList from "./dubbo/dubbo-list.vue";
+import dubboList from "./dubbo/index.vue";
 
 import registryList from "./connect/index.vue";
 import welcome from "./welcome.vue";
-
+import settings from "./settings/settings.vue";
+// import { ipcRenderer, remote, Menu } from 'electron'
+const remote = require("@electron/remote");
+import { ipcRenderer } from 'electron'
 
 export default {
   components: {
     splitPane,
     dubboList,
     registryList,
-    welcome
+    welcome,
+    settings
   },
   data() {
     return {
       currentTabName: '',
       dubboListList: [],
+      rightClickTabName: ""
     };
   },
 
-  created() {
+  mounted() {
+
+    let dubboListTabs = document.getElementById('dubboListTabs');
+    let tabListElement = dubboListTabs.firstElementChild.firstElementChild.lastElementChild.firstElementChild;
+
+    // 菜单键点击
+    tabListElement.addEventListener('contextmenu', ev => {
+      // 菜单模板
+      const menuTemplate = [
+        {
+          label: '关闭',
+          click: async () => {
+            this.removeTab(this.rightClickTabName)
+          }
+
+        },
+        {
+          label: '关闭其他',
+          click: async () => {
+            this.removeOtherTab(this.rightClickTabName)
+          }
+        },
+        {
+          label: '关闭全部',
+          click: async () => {
+            this.removeAllTab(this.rightClickTabName)
+          }
+        }
+      ];
+
+      // // 构建菜单项
+      const menu = remote.Menu.buildFromTemplate(menuTemplate);
+      // 阻止默认行为
+      ev.preventDefault();
+
+      let pre = ev.target;
+      let tabName = "";
+      do {
+        let id = pre.id;
+        if (id && id.startsWith("tab-")) {
+          tabName = id.substring(4, id.length);
+          break;
+        }
+
+      } while ((pre = pre.parentElement) != null);
+      this.rightClickTabName = tabName;
+
+      // 弹出上下文菜单
+      menu.popup({
+        // 获取网页所属的窗口
+        window: remote.getCurrentWindow()
+      });
+    });
+
+
+    ipcRenderer.on('openSettingsTabEvent', (event) => {
+      this.openSettingsTab();
+    });
   },
   methods: {
 
@@ -66,6 +132,7 @@ export default {
           serviceName,
           registryCenterId: registryCenterId
         });
+
       }
 
       this.currentTabName = serviceName;
@@ -98,8 +165,33 @@ export default {
         });
       }
 
+      for (let i = 0; i < this.dubboListList.length; i++) {
+        if (this.dubboListList[i].serviceName == targetName) {
+          this.dubboListList.splice(i, 1);
+          break;
+        }
+      }
       this.currentTabName = activeName;
-      this.dubboListList = tabs.filter(tab => tab.serviceName !== targetName);
+    },
+    removeOtherTab(activeName) {
+      this.dubboListList = this.dubboListList.filter(info => info.serviceName == activeName);
+      this.currentTabName = activeName;
+    },
+    removeAllTab() {
+      this.dubboListList = [];
+      this.currentTabName = ""
+    },
+    openSettingsTab() {
+      let exist = this.dubboListList.find(tab => tab.serviceName == "settings");
+      if (exist) {
+        return;
+      }
+
+      this.dubboListList.push({
+        id: "settings",
+        title: "settings"
+      });
+      this.currentTabName = "settings";
     }
   },
 };

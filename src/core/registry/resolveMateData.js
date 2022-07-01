@@ -20,7 +20,6 @@
         params.push(data);
     }
 
-    // console.log(JSON.stringify(params));
     return JSON.stringify(params, null, 2);
 }
 

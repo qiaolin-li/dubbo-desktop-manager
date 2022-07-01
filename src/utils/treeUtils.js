@@ -1,4 +1,3 @@
-
 function Node(label, serviceName = null) {
     this.label = label;
     this.serviceName = serviceName;
@@ -23,15 +22,15 @@ Node.prototype.addNode = function (serviceName, packages, index = 0) {
 
     // // 目录不够，不合并
     // if (packages.length <= index + 3) {
-        let node = this.childrenMap.get(pkg);
-        if (!node) {
-            node = new Node(pkg, serviceName);
-            this.childrenMap.set(pkg, node);
-            this.children.push(node);
-        }
+    let node = this.childrenMap.get(pkg);
+    if (!node) {
+        node = new Node(pkg, serviceName);
+        this.childrenMap.set(pkg, node);
+        this.children.push(node);
+    }
 
-        node.addNode(serviceName, packages, index + 1);
-        return;
+    node.addNode(serviceName, packages, index + 1);
+    return;
     // }
 
     // let newPkg = "";
@@ -57,18 +56,13 @@ Node.prototype.addNode = function (serviceName, packages, index = 0) {
 
 
 
-function createTree(allInterfaceList, split, keyword) {
+function createTree(filtedInterface, split) {
 
     let topNode = new Node("top");
-    let filtedInterface = allInterfaceList;
-    if (keyword) {
-        keyword = keyword.toLowerCase();
-        filtedInterface = allInterfaceList.filter((i) => match(i, keyword));
-    }
-    
+
     for (let i = 0; i < filtedInterface.length; i++) {
         let interfaceInfo = filtedInterface[i];
-    
+
         // 防止不存在
         if (!interfaceInfo.name) {
             continue;
@@ -78,90 +72,33 @@ function createTree(allInterfaceList, split, keyword) {
         if (!packages) {
             continue;
         }
-    
+
         topNode.addNode(interfaceInfo.serviceName, packages);
     }
     // return prefixOptimization(optimizationTree(topNode.children));
     return mergeOptimization(topNode.children);
 }
 
-function prefixOptimization(children, parent = "", level = 0){
-
-    let newChildren = [];
-    for(let i =0; i<children.length; i++){
-        let data = children[i];
-
-        if(data.children){
-            data.children = prefixOptimization(data.children, data.label, level + 1);
-        }
-        
-        for(let j = 0; j < data.children.length; j++){
-            let childrenData = data.children[j];
-            let newLabel = parent + "/" + childrenData.label;
-            newChildren.push({
-                label: newLabel,
-                serviceName : childrenData.serviceName,
-                children: data.children[j].children 
-            })
-        }
-
-    }
-
-    return newChildren;
-}
-
-
 // 合并只有一个子节点的包
-function mergeOptimization(children){
+function mergeOptimization(children) {
 
-    for(let i =0; i<children.length; i++){
+    for (let i = 0; i < children.length; i++) {
         let data = children[i];
 
-        if(!data.children || data.children.length == 0){
+        if (!data.children || data.children.length == 0) {
             continue;
         }
 
         mergeOptimization(data.children);
 
-        if(data.children.length == 1){
+        if (data.children.length == 1) {
             data.label = data.label + "." + data.children[0].label;
             data.serviceName = data.children[0].serviceName;
             data.children = data.children[0].children;
         }
-
-
     }
 
     return children;
-}
-
-function optimizationTree(children){
-    for(let i = 0; i < children.length; i++){
-        let node = children[i];
-        if(!node || !node.children){
-            return;
-        }
-        optimizationTree(node.children);
-
-        if(node.children.length == 1){
-            let data = node.children[0];
-            node.label = node.label + "/" + data.label;
-            node.children = data.children;
-        }
-
-    }
-
-    return children;
-}
-
-
-function match(service, keyword){
-    if(service.name.toLowerCase().indexOf(keyword)  !== -1) {
-        return true;
-    }
-
-    // 未来还可能支持其他的过滤方式
-    return false;
 }
 
 export default {

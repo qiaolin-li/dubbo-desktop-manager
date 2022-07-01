@@ -24,13 +24,10 @@ const ALREADY_REGISTERED_MODULES = new Map();
                 event.returnValue = rs
                 return;
             }
-
-            console.log("调用的结果：" + result);
             event.returnValue = {
                 data:result
             }
         }catch(e){
-            console.log(e);
             event.returnValue = new Error("调用失败 " + e);
         }
     })

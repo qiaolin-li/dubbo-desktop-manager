@@ -13,10 +13,14 @@ function wrapper(target, moduleName) {
         throw new Error("模块必须拥有一个模块名，请在对象中配置name值");
     }
 
-
     var handler = {
         get(target, method, proxy) {
             let result = target[method];
+
+            if(isMainProgress()){
+                return result;
+            }
+            
 
             if (typeof result != "function") {
                 return result;
@@ -43,11 +47,22 @@ function wrapper(target, moduleName) {
                     return Promise.resolve(result.data)
                 }
                 // 调用方法的结果
-                return result;
+                return result ? result.data : result;
             }
         }
     };
     return new Proxy(target, handler);
+}
+
+
+function isMainProgress(){
+    try {
+        window.name;
+        return false;
+    } catch(e){
+        // 忽略
+        return true;
+    }
 }
 
 export default {

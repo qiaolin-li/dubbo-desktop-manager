@@ -74,7 +74,6 @@ function resolveResponse(result){
     if (errorMessage.length == 4) {
         let data = errorMessage[1].substring(8);
         let elapsedTime = errorMessage[2].substring(9)
-
         try{
             return new InvokeResult(JSONFormater(data), elapsedTime);
         }catch(e){

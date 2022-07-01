@@ -1,16 +1,16 @@
 <template>
   <el-form ref="form" :rules="rules" :model="form" label-width="100px">
-    <el-form-item label="链接名称" prop="name">
+    <el-form-item :label="$t('connect.name')" prop="name">
       <el-input v-model="form.name"></el-input>
     </el-form-item>
-    <el-form-item label="链接地址" prop="address">
+    <el-form-item :label="$t('connect.address')" prop="address">
       <el-input v-model="form.address"></el-input>
     </el-form-item>
-    <el-form-item label="超时时间" prop="sessionTimeout">
+    <el-form-item :label="$t('connect.sessionTimeout')" prop="sessionTimeout">
       <el-input v-model="form.sessionTimeout"></el-input>
     </el-form-item>
     <el-form-item>
-      <el-button type="primary" @click="saveZkConnectInfo">立即创建</el-button>
+      <el-button type="primary" @click="saveZkConnectInfo">{{$t('connect.save')}}</el-button>
     </el-form-item>
   </el-form>
 </template>
@@ -20,22 +20,7 @@ import connectRepository from "@/core/repository/connectRepository.js";
 
 export default {
   data() {
-    var checkTimeout = (rule, value, callback) => {
-      if (!value) {
-        return callback(new Error("超时时间不能为空"));
-      }
-      setTimeout(() => {
-        if (!Number.isInteger(value)) {
-          callback(new Error("请输入数字值"));
-        } else {
-          if (value < 10) {
-            callback(new Error("必须大于10ms"));
-          } else {
-            callback();
-          }
-        }
-      }, 1000);
-    };
+
     return {
       form: {
         type: "zookeeper",
@@ -43,26 +28,51 @@ export default {
         address: "127.0.0.1:2181",
         sessionTimeout: 5000,
       },
-      rules: {
+
+    };
+  },
+  computed: {
+    rules() {
+      let checkTimeout = (rule, value, callback) => {
+        if (!value) {
+          return callback(new Error(this.$t('connect.validateMessage.timeOutNotNull')));
+        }
+        setTimeout(() => {
+          if (!Number.isInteger(value)) {
+            callback(new Error(this.$t('connect.validateMessage.inputNumber')));
+          } else {
+            if (value < 10) {
+              callback(new Error(this.$t('connect.validateMessage.inputNumberRange')));
+            } else {
+              callback();
+            }
+          }
+        }, 1000);
+      };
+
+      const rules = {
         name: [
-          { required: true, message: "请输入链接名称", trigger: "blur" },
+          { required: true, message: this.$t('connect.validateMessage.inputName'), trigger: "blur" },
           {
             min: 1,
             max: 32,
-            message: "长度在 1 到 32 个字符",
+            message:  this.$t('connect.validateMessage.rangeLimit'),
             trigger: "blur",
           },
         ],
         address: [
-          { required: true, message: "请输入链接地址", trigger: "blur" },
+          { required: true, message:  this.$t('connect.validateMessage.inputConnectionAddress'), trigger: "blur" },
         ],
         sessionTimeout: [{ validator: checkTimeout, trigger: "blur" }],
-      },
-    };
+      }
+      return rules;
+    }
+
   },
   props: {
     id: String
   },
+
   watch: {
     id: {
       handler() {
@@ -97,7 +107,6 @@ export default {
             this.$emit("saveSuccess", data);
           });
         } else {
-          console.log("error submit!!");
           return false;
         }
       });

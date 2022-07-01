@@ -1,22 +1,22 @@
 <template>
   <div class="dubbo-list-main-container">
-    <el-tabs type="border-card" v-model="editableTabsValue">
+    <el-tabs type="card" tab-position="top" v-model="editableTabsValue">
       <el-tab-pane>
-        <span slot="label" class="notSelect"><i class="el-icon-date"></i> 提供者列表</span>
+        <span slot="label" class="notSelect"><i class="el-icon-date"></i>{{$t('dubbo.serviceTab.providerList')}}</span>
         <div class="tab-content">
-          <dubboProviderList :registryCenterId="registryCenterId" :serviceName="serviceName" @invokeProvider="invokeProvider" />
+          <dubboProviderList :registryCenterId="registryCenterId" :serviceName="serviceName" @openNewTab="openNewTab" />
         </div>
       </el-tab-pane>
-      <el-tab-pane >
-         <span slot="label" class="notSelect"><i class="el-icon-date"></i> 消费者列表</span>
+      <el-tab-pane>
+        <span slot="label" class="notSelect"><i class="el-icon-date"></i> {{$t('dubbo.serviceTab.consumerList')}}</span>
         <div class="tab-content">
           <dubboConsumerList :registryCenterId="registryCenterId" :serviceName="serviceName" />
         </div>
       </el-tab-pane>
-      <el-tab-pane  v-for="provider in invokeProviderList" :key="provider.ip" :name="provider.ip">
-          <span slot="label" class="notSelect"><i class="el-icon-date"></i> {{provider.label}}</span>
+      <el-tab-pane v-for="tabData in tabDataList" :key="tabData.id" :name="tabData.id">
+        <span slot="label" class="notSelect"><i class="el-icon-date"></i> {{tabData.label}}</span>
         <div class="tab-content">
-          <dubbo-invoke :registryCenterId="registryCenterId" :provider="provider" />
+          <extend :registryCenterId="registryCenterId" :serviceName="serviceName" :tabData="tabData"></extend>
         </div>
       </el-tab-pane>
     </el-tabs>
@@ -27,17 +27,18 @@
 <script>
 import dubboProviderList from "./dubbo-provider-list.vue";
 import dubboConsumerList from "./dubbo-consumer-list.vue";
-import dubboInvoke from "./dubbo-invoke.vue";
+import extend from "./extend/index.vue";
+
 
 export default {
   components: {
+    extend,
     dubboProviderList,
     dubboConsumerList,
-    dubboInvoke
   },
   data() {
     return {
-      invokeProviderList: [],
+      tabDataList: [],
       editableTabsValue: "",
     };
   },
@@ -54,25 +55,23 @@ export default {
   mounted() {
   },
   methods: {
-    invokeProvider(provider) {
-      let exist = this.invokeProviderList.find(tab => tab.ip == provider.ip);
+    openNewTab(tabData){
+        let exist = this.tabDataList.find(tab => tab.id == tabData.id);
 
       // 不存在，新增一个
       if (!exist) {
-        let data = Object.assign(provider);
-        data["label"] = `调用 ${provider.ip}`;
-        this.invokeProviderList.push(data);
+        this.tabDataList.push(tabData);
       }
 
-      this.editableTabsValue = provider.ip
+      this.editableTabsValue = tabData.id;
     }
   },
+
+
 };
 </script>
 
 <style >
-
-
 .dubbo-list-main-container {
   height: 100vh;
   margin: 5px 0px;
@@ -80,13 +79,10 @@ export default {
   margin-right: 5px;
   background-color: white;
   border-radius: 5px;
- 
 }
 
 .tab-content {
-  height: 90vh;
+  height: 87vh;
   overflow-y: auto;
 }
-
-
 </style>

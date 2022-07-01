@@ -3,7 +3,7 @@
 
     <connectList ref="connectList" @clickServiceInfo="clickServiceInfo" @editConnect="editConnect"></connectList>
 
-    <el-dialog title="新增链接" width="40%" :visible.sync="dialogVisible" :close-on-click-modal="false">
+    <el-dialog :title="$t('connect.addConnect')" width="40%" :visible.sync="dialogVisible" :close-on-click-modal="false">
       <addConnect @saveSuccess="saveConnectSuccess" :id="currentConnectId" />
     </el-dialog>
   </div>

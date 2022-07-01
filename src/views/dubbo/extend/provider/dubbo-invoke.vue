@@ -3,74 +3,79 @@
     <div class="invoke-dubbo-dialog-interface-info">
       <el-descriptions class="margin-top" :column="3" size="mini" border>
         <el-descriptions-item span="3">
-          <template slot="label"> 接口 </template>
+          <template slot="label"> {{$t('dubbo.invokePage.serviceName')}} </template>
           {{ provider.serviceName }}
         </el-descriptions-item>
         <el-descriptions-item>
-          <template slot="label"> 应用 </template>
+          <template slot="label"> {{$t('dubbo.invokePage.application')}} </template>
           {{ provider.application }}
         </el-descriptions-item>
 
         <el-descriptions-item>
-          <template slot="label"> 地址 </template>
+          <template slot="label"> {{$t('dubbo.invokePage.address')}} </template>
           {{ provider.address }}
         </el-descriptions-item>
         <el-descriptions-item>
-          <template slot="label"> 泛化 </template>
+          <template slot="label"> {{$t('dubbo.invokePage.generic')}} </template>
           {{ provider.generic }}
         </el-descriptions-item>
 
         <el-descriptions-item>
-          <template slot="label"> 版本 </template>
+          <template slot="label"> {{$t('dubbo.invokePage.version')}} </template>
           {{ provider.version }}
         </el-descriptions-item>
 
         <el-descriptions-item>
-          <template slot="label"> Dubbo </template>
+          <template slot="label"> {{$t('dubbo.invokePage.dubboVersion')}} </template>
           {{ provider.dubboVersion }}
         </el-descriptions-item>
 
         <el-descriptions-item>
-          <template slot="label"> Jar </template>
+          <template slot="label"> {{$t('dubbo.invokePage.jarVersion')}} </template>
           {{ provider.revision }}
         </el-descriptions-item>
 
         <el-descriptions-item span="2">
-          <template slot="label"> 方法 </template>
+          <template slot="label"> {{$t('dubbo.invokePage.method')}} </template>
           <el-select v-model="method" @change="methodChange" class="methodSelect">
             <el-option v-for="item in provider.methods" :key="item" :label="item" :value="item">
             </el-option>
           </el-select>
         </el-descriptions-item>
         <el-descriptions-item>
-          <template slot="label"> 操作 </template>
-          <!-- <button @click="invokeDubbo()">调用Dubbo接口</button>
-          <button @click="generateParam()">生成默认参数</button>
-          <button @click="generateInvokeCommand()">生成invoke命令</button> -->
-
+          <template slot="label"> {{$t('dubbo.invokePage.operate')}}</template>
           <el-button-group>
-            <el-button plain type="primary" icon="el-icon-thumb" @click="invokeDubbo()">调用</el-button>
-            <el-button plain type="primary" icon="el-icon-news" @click="generateParam()">生成参数</el-button>
-            <el-button plain type="primary" icon="el-icon-magic-stick" @click="generateInvokeCommand()">生成命令</el-button>
+            <el-tooltip class="item" effect="dark" :content="$t('dubbo.invokePage.call')" placement="top">
+              <el-button plain type="primary" icon="el-icon-thumb" @click="invokeDubbo()"></el-button>
+
+            </el-tooltip>
+            <el-tooltip class="item" effect="dark" :content="$t('dubbo.invokePage.generateParam')" placement="top">
+
+              <el-button plain type="primary" icon="el-icon-news" @click="generateParam()"></el-button>
+            </el-tooltip>
+            <el-tooltip class="item" effect="dark" :content="$t('dubbo.invokePage.generateCommand')" placement="top">
+              <el-button plain type="primary" icon="el-icon-magic-stick" @click="generateInvokeCommand()"></el-button>
+
+            </el-tooltip>
           </el-button-group>
         </el-descriptions-item>
       </el-descriptions>
     </div>
 
-    <div class="invoke-dubbo-dialog-content " >
+    <div class="invoke-dubbo-dialog-content ">
       <div class="invoke-dubbo-dialog-content-code">
         <div class="contentCode broder">
 
           <codeEditor :codeConfig="codeConfig">
             <template v-slot:titel>
-              请求参数：
-              <el-popover placement="top-start" title="参数生成策略" width="200" trigger="hover" content="首先会使用上次调用成功的历史参数，如果没有，会尝试生成参数">
+              {{$t('dubbo.invokePage.requestParam')}}
+              <el-popover placement="top-start" :title="$t('dubbo.invokePage.requestParamStrategyTitle')" width="200" trigger="hover" :content="$t('dubbo.invokePage.paramGenerateStrategyDesc')">
                 <i slot="reference" class="el-icon-info"></i>
               </el-popover>
             </template>
             <template v-slot:content>
 
-              <el-tooltip class="item" effect="light" content="格式化" placement="top-start">
+              <el-tooltip class="item" effect="light" :content="$t('dubbo.invokePage.format')" placement="top-start">
                 <i class="el-icon-lollipop" @click="formatContent"></i>
               </el-tooltip>
             </template>
@@ -80,14 +85,14 @@
         <div class="contentCode broder">
           <codeEditor :codeConfig="invokeReulst">
             <template v-slot:titel>
-              响应信息：{{ invokeReulst.elapsedTime }}
+              {{$t('dubbo.invokePage.responseInfo')}} {{ invokeReulst.elapsedTime }}
             </template>
           </codeEditor>
         </div>
       </div>
 
       <div class="invoke-dubbo-dialog-content-hisotry broder">
-        历史调用参数（{{ invokeHisotryList.length }}）
+        {{$t('dubbo.invokePage.historyInvokeParamList')}}{{ invokeHisotryList.length }}）
 
         <ul class="infinite-list">
           <li v-for="invokeHistry in invokeHisotryList" :key="invokeHistry._id" class="infinite-list-item" @click="copy(invokeHistry)">
@@ -103,7 +108,7 @@
 import dubboInvokeUtils from "@/utils/dubboInvokeUtils.js";
 import invokeHisotryRecord from "@/core/repository/invokeHistoryRepository.js";
 import registry from "@/core/registry";
-import codeEditor from "../../components/code-editor.vue";
+import codeEditor from "@/components/editor/code-editor.vue";
 
 export default {
   components: {
@@ -131,18 +136,6 @@ export default {
       this.method = this.provider.methods[0];
       this.methodChange();
     }
-  },
-  watch: {
-    provider: {
-      deep: true,
-      // eslint-disable-next-line no-unused-vars
-      handler(provider, oldProvider) {
-        this.method = this.provider.methods[0];
-        if (provider && provider.methods) {
-          this.methodChange();
-        }
-      },
-    },
   },
   methods: {
     async methodChange() {
@@ -173,7 +166,7 @@ export default {
       await invokeHisotryRecord.save(invokeHistory);
       this.$message({
         type: "success",
-        message: "调用dubbo接口成功!",
+        message: this.$t('dubbo.invokePage.callDubboServiceSuccess'),
       });
       this.flushInvokeHistoryList();
     },
@@ -198,7 +191,7 @@ export default {
           this.codeConfig.code = code || "[]";
         }).catch((error) => {
           this.$message({
-            message: `无法生成参数！原因：${error}`,
+            message: this.$t('dubbo.invokePage.generateParamError'),
             type: 'warning'
           });
           this.codeConfig.code = "[]";
@@ -218,7 +211,6 @@ export default {
 </script>
 
 <style>
-
 .broder {
   border: rgb(230, 233, 243) 1px solid;
 }
@@ -226,11 +218,12 @@ export default {
 .invoke-dubbo-dialog {
   height: 90vh;
   overflow-y: hidden;
+  margin-left: 5px;
+  margin-right: 5px;
 }
 
 .invoke-dubbo-dialog-content {
   margin-top: 10px;
-
   display: flex;
   flex-direction: row;
   align-content: space-between;
@@ -283,5 +276,4 @@ export default {
 .contentCode {
   margin-bottom: 10px;
 }
-
 </style>

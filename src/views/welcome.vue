@@ -5,8 +5,7 @@
                         <img src="../assets/icon.png" width="120" height="120" />
                     </div>
             <div class="descContainer" >
-                <span class="title">Dubbo-Desktop-Manager</span>
-                <span class="name">Dubbo 桌面管理工具</span>
+                <span class="title">{{$t("welcome.productName")}}</span>
                 <span class="version">version：{{version}} </span>
             </div>
         </div>
@@ -36,7 +35,7 @@ export default {
     /* position : absolute; */
     /* width: 100%; */
     background-color: #fff;
-     height: 95vh;
+     height: 100vh;
     overflow-y: auto;
     margin: 5px 0px;
     margin-left: 5px;
@@ -68,13 +67,8 @@ export default {
     color: #333;
 }
 
-.name {
-    font-size: 20px;
-    color: #333;
-}
-
 .version {
-    font-size: 15px;
+    font-size: 20px;
     color: #333;
 }
 </style>

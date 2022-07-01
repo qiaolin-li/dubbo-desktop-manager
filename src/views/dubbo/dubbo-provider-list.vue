@@ -1,56 +1,50 @@
 <template>
   <div class="dubboProviderListContainer">
 
-    <el-table :data="providerList" class="content" >
+    <el-table :data="providerList" class="content">
       <el-table-column type="expand">
         <template slot-scope="props">
           <div v-for="method in props.row.methods" :key="method">{{method}}</div><br />
         </template>
       </el-table-column>
-      <el-table-column prop="address" label="地址" column-key="address">
+      <el-table-column prop="address" :label="$t('dubbo.providePage.address')" column-key="address">
       </el-table-column>
-      <el-table-column prop="application" label="所属应用">
+      <el-table-column prop="application"  :label="$t('dubbo.providePage.application')" >
       </el-table-column>
-      <el-table-column prop="version" label="版本号">
+      <el-table-column prop="version"  :label="$t('dubbo.providePage.version')">
         <template slot-scope="scope">
           <el-tag type="success" disable-transitions>{{
             scope.row.revision
           }}</el-tag>
         </template>
       </el-table-column>
-      <el-table-column prop="methods" label="方法数量">
+      <el-table-column prop="methods"  :label="$t('dubbo.providePage.methodCount')" >
         <template slot-scope="scope">
           {{scope.row.methods.length}}
         </template>
       </el-table-column>
-      <el-table-column label="操作">
+      <el-table-column  :label="$t('dubbo.providePage.operate')">
         <template slot-scope="scope">
-          <el-button size="mini" @click="openInvokeDrawer(scope.$index, scope.row)">调用</el-button>
+          <el-button size="mini" @click="openInvokeDrawer(scope.$index, scope.row)">{{$t('dubbo.providePage.call')}}</el-button>
           <el-button size="mini" @click="openTelnet(scope.$index, scope.row)">telnet</el-button>
         </template>
       </el-table-column>
     </el-table>
-
-    <el-dialog title="Telnet 连接" width="70%" top="5vh" :visible.sync="telnetDialogVisible">
-      <dubbo-telnet :provider="currentProvider"></dubbo-telnet>
-    </el-dialog>
 
   </div>
 </template>
 
 <script>
 import registry from "@/core/registry";
-import dubboTelnet from "./dubbo-telnet.vue";
+
 
 export default {
   components: {
-    dubboTelnet
+
   },
   data() {
     return {
-      providerList: [],
-      currentProvider: {},
-      telnetDialogVisible: false
+      providerList: []
     };
   },
   props: {
@@ -67,15 +61,31 @@ export default {
     this.handleNodeClick();
   },
   methods: {
-    openInvokeDrawer(index, data) {
-      this.$emit("invokeProvider", data);
-    },
     async handleNodeClick() {
       this.providerList = await registry.getProviderList(this.serviceName, this.registryCenterId);
     },
-    openTelnet(index, provder) {
-      this.currentProvider = provder;
-      this.telnetDialogVisible = true;
+    openInvokeDrawer(index, data) {
+      let tabData = {
+        id: `invoke-${data.serviceName}-${data.address}`,
+        label : this.$t('dubbo.providePage.callTitle', data),
+        componentName: "dubboInvoke",
+        extendData: {
+          provider: data
+        },
+      }
+      this.$emit("openNewTab", tabData);
+    },
+
+    openTelnet(index, data) {
+      let tabData = {
+        id: `telnet-${data.serviceName}-${data.address}`,
+        label : `telnet ${data.address}`,
+        componentName: "dubboTelnet",
+        extendData: {
+          provider: data
+        },
+      }
+      this.$emit("openNewTab", tabData);
     }
   },
 };

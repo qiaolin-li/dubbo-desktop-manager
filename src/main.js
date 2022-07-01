@@ -10,9 +10,14 @@ import ElementUI from 'element-ui';
 import 'element-ui/lib/theme-chalk/index.css';
 import splitPane from 'vue-splitpane'
 
+import i18n from './i18n'
+
 if(process.platform === 'win32'){
   import("./assets/style/windows.css")
 }
+
+console.log(__dirname)
+
 
 import moment from 'moment'
 Vue.prototype.$moment = moment
@@ -23,8 +28,10 @@ Vue.component('split-pane', splitPane);
 
 Vue.config.productionTip = false
 
+
 new Vue({
   router,
   store,
+  i18n,
   render: h => h(App)
 }).$mount('#app')

@@ -6,24 +6,24 @@
         </template>
       </el-table-column>
       <el-table-column prop="ip" label="ip" column-key="ip" show-overflow-tooltip min-width="110px"> </el-table-column>
-      <el-table-column prop="application" label="所属应用" show-overflow-tooltip min-width="200px"> </el-table-column>
-      <el-table-column prop="version" label="版本号" show-overflow-tooltip>
+      <el-table-column prop="application" :label="$t('dubbo.consumerPage.application')" show-overflow-tooltip min-width="200px"> </el-table-column>
+      <el-table-column prop="version" :label="$t('dubbo.consumerPage.version')" show-overflow-tooltip>
         <template slot-scope="scope">
            {{scope.row.revision}} 
         </template>
       </el-table-column>
-      <el-table-column prop="check" label="检查">
+      <el-table-column prop="check" :label="$t('dubbo.consumerPage.check')">
         <template slot-scope="scope">
-          {{scope.row.check ? '是' : '否'}}
+          {{scope.row.check ? $t('base.yes') : $t('base.no')}}
         </template>
       </el-table-column>
-      <el-table-column prop="enable" label="是否可用">
+      <el-table-column prop="enable" :label="$t('dubbo.consumerPage.enable')">
         <template slot-scope="scope">
-          {{scope.row.enable ? '是' : '否'}}
+          {{scope.row.enable ? $t('base.yes') : $t('base.no')}}
         </template>
       </el-table-column>
-      <el-table-column prop="timeout" label="超时"> </el-table-column>
-      <el-table-column prop="retries" label="重试"> </el-table-column>
+      <el-table-column prop="timeout" :label="$t('dubbo.consumerPage.timeout')"> </el-table-column>
+      <el-table-column prop="retries" :label="$t('dubbo.consumerPage.retries')"> </el-table-column>
     </el-table>
 </template>
 
