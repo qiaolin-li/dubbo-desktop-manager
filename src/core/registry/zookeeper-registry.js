@@ -110,7 +110,6 @@ function getMethodFillObject(providerInfo, registryConfig, methodName){
           return;
         }
         let jsonData = JSON.parse(data.toString("utf8"));
-
         resolve(resolveMateData.generateParam(jsonData, methodName));
       });
     });
