@@ -13,13 +13,15 @@ export default {
         hintTitle: "hint",
         yes: "yes",
         no: "no",
+        refresh : "refresh"
     },
     menu: {
         addConnect: "New Connection",
         settings: "Settings"
     },
     welcome: {
-        productName: "Dubbo Desktop Manager"
+        productName: "DUBBO DESKTOP MANAGER",
+        version : "version: "
     },
     settings: {
         baseSettings: "Base Settings",
@@ -94,7 +96,11 @@ export default {
             responseInfo: "Response Info",
             historyInvokeParamList: "History call",
             callDubboServiceSuccess: "Calling the Dubbo interface succeeded.",
+            callDubboServiceFail: "Failed to invoke the Dubbo interface：{e}",
             generateParamError: "Unable to generate parameters! The reason: {error}",
+            invokeProgress: "Call in progress",
+            cancelInvoke: "Cancel",
+            invokeTimeOut: "The call to the Dubbo interface timed out.",
         },
         telnetTerminal: {
             connecting: "connecting {ip} {port}",

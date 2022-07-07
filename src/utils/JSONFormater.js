@@ -1,13 +1,16 @@
+import jsonBigInt from 'json-bigint';
+
+let JSONString = jsonBigInt(({"storeAsString": true}));
 
 const formaterArray = [];
-const formatJsonString = data => JSON.stringify(JSON.parse(data), null, 2);
+const formatJsonString = data => JSON.stringify(JSONString.parse(data), null, 2);
 
 function registryFormater(fun){
     formaterArray.push(fun);
 }
 
 // 普通的json解析
-registryFormater(data => formatJsonString(data))
+registryFormater(formatJsonString)
 
 
 // 是不规范的json, 给有些字段或者值加上 ""

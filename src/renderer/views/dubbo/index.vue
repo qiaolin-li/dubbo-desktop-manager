@@ -1,22 +1,10 @@
 <template>
   <div class="dubbo-list-main-container">
-    <el-tabs type="card" tab-position="top" v-model="editableTabsValue">
-      <el-tab-pane>
-        <span slot="label" class="notSelect"><i class="el-icon-date"></i>{{$t('dubbo.serviceTab.providerList')}}</span>
-        <div class="tab-content">
-          <dubboProviderList :registryCenterId="registryCenterId" :serviceName="serviceName" @openNewTab="openNewTab" />
-        </div>
-      </el-tab-pane>
-      <el-tab-pane>
-        <span slot="label" class="notSelect"><i class="el-icon-date"></i> {{$t('dubbo.serviceTab.consumerList')}}</span>
-        <div class="tab-content">
-          <dubboConsumerList :registryCenterId="registryCenterId" :serviceName="serviceName" />
-        </div>
-      </el-tab-pane>
+    <el-tabs id="serviceInfoTab" type="card" tab-position="top" v-model="editableTabsValue">
       <el-tab-pane v-for="tabData in tabDataList" :key="tabData.id" :name="tabData.id">
         <span slot="label" class="notSelect"><i class="el-icon-date"></i> {{tabData.label}}</span>
         <div class="tab-content">
-          <extend :registryCenterId="registryCenterId" :serviceName="serviceName" :tabData="tabData"></extend>
+          <extend :registryCenterId="registryCenterId" :serviceName="serviceName" :tabData="tabData" @openNewTab="openNewTab"></extend>
         </div>
       </el-tab-pane>
     </el-tabs>
@@ -25,21 +13,19 @@
 </template>
 
 <script>
-import dubboProviderList from "./dubbo-provider-list.vue";
-import dubboConsumerList from "./dubbo-consumer-list.vue";
 import extend from "./extend/index.vue";
-
+const remote = require("@electron/remote");
 
 export default {
   components: {
     extend,
-    dubboProviderList,
-    dubboConsumerList,
   },
   data() {
     return {
-      tabDataList: [],
-      editableTabsValue: "",
+      tabDataList: [
+
+      ],
+      editableTabsValue: "providerList",
     };
   },
   props: {
@@ -52,11 +38,76 @@ export default {
       default: "",
     }
   },
+  created() {
+    this.tabDataList.push(
+      {
+        id: `providerList`,
+        label: this.$t('dubbo.serviceTab.providerList'),
+        componentName: "dubboProviderList",
+        extendData: {
+          provider: {},
+          consumer: {},
+          default: {},
+        },
+      });
+    this.tabDataList.push(
+      {
+        id: `consumerList`,
+        label: this.$t('dubbo.serviceTab.consumerList'),
+        componentName: "dubboConsumerList",
+        extendData: {
+          provider: {},
+          consumer: {},
+          default: {},
+        },
+      });
+  },
   mounted() {
+
+
+    let serviceInfoTab = document.getElementById('serviceInfoTab');
+    let tabListElement = serviceInfoTab.firstElementChild.firstElementChild.lastElementChild.firstElementChild;
+
+    // 菜单键点击
+    tabListElement.addEventListener('contextmenu', ev => {
+      // 菜单模板
+      const menuTemplate = [
+        {
+          label: this.$t('base.refresh'),
+          click: async () => {
+            this.forceUpdateComponent(this.editableTabsValue)
+          }
+        }
+      ];
+
+      // // 构建菜单项
+      const menu = remote.Menu.buildFromTemplate(menuTemplate);
+      // 阻止默认行为
+      ev.preventDefault();
+
+      let pre = ev.target;
+      let tabName = "";
+      do {
+        let id = pre.id;
+        if (id && id.startsWith("tab-")) {
+          tabName = id.substring(4, id.length);
+          break;
+        }
+
+      } while ((pre = pre.parentElement) != null);
+      this.editableTabsValue = tabName;
+
+      // 弹出上下文菜单
+      menu.popup({
+        // 获取网页所属的窗口
+        window: remote.getCurrentWindow()
+      });
+    });
+
   },
   methods: {
-    openNewTab(tabData){
-        let exist = this.tabDataList.find(tab => tab.id == tabData.id);
+    openNewTab(tabData) {
+      let exist = this.tabDataList.find(tab => tab.id == tabData.id);
 
       // 不存在，新增一个
       if (!exist) {
@@ -64,7 +115,33 @@ export default {
       }
 
       this.editableTabsValue = tabData.id;
-    }
+    },
+    forceUpdateComponent(targetName) {
+      let nextId = targetName;
+      for (let i = 0; i < this.tabDataList.length; i++) {
+        if (this.tabDataList[i].id == targetName) {
+          this.tabDataList[i].id += "1";
+          nextId = this.tabDataList[i].id;
+          break;
+        }
+      }
+
+      this.$nextTick(() => {
+        this.editableTabsValue = nextId;
+      });
+
+    },
+    openInvokeDrawer(index, data) {
+      let tabData = {
+        id: `invoke-${data.serviceName}-${data.address}`,
+        label: this.$t('dubbo.providePage.callTitle', data),
+        componentName: "dubboInvoke",
+        extendData: {
+          provider: data
+        },
+      }
+      this.$emit("openNewTab", tabData);
+    },
   },
 
 

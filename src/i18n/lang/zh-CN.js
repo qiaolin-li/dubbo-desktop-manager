@@ -13,13 +13,15 @@ export default {
         hintTitle: "提示",
         yes: "是",
         no: "否",
+        refresh : "刷新"
     },
     menu: {
         addConnect: "新增连接",
         settings: "设置"
     },
     welcome: {
-        productName: "Dubbo 桌面管理工具"
+        productName: "Dubbo 桌面管理工具",
+        version : "版本："
     },
     settings: {
         baseSettings: "基本设置",
@@ -89,7 +91,11 @@ export default {
             responseInfo: "响应参数",
             historyInvokeParamList: "历史调用参数",
             callDubboServiceSuccess: "调用dubbo接口成功",
+            callDubboServiceFail: "调用dubbo接口失败，原因：{e}",
             generateParamError: "无法生成参数！原因：{error}",
+            invokeProgress: "正在调用..",
+            cancelInvoke: "取消调用",
+            invokeTimeOut: "调用Dubbo接口超时",
         }
     },
     telnetTerminal: {

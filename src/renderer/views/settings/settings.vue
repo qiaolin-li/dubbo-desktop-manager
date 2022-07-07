@@ -6,7 +6,7 @@
     </el-select>
 
     <el-divider content-position="left"></el-divider>
-    <el-button  @click="saveConfig">{{$t('settings.apply')}}</el-button>
+    <el-button @click="saveConfig">{{$t('settings.apply')}}</el-button>
   </div>
 </template>
 

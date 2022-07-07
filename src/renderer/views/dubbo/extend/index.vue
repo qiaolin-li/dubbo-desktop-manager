@@ -1,14 +1,17 @@
 <template>
-  <component :is="tabData.componentName" :registryCenterId="registryCenterId" :serviceName="serviceName"
-         :provider="tabData.extendData.provider" :consumer="tabData.extendData.consumer"></component>
+  <component :is="tabData.componentName" :registryCenterId="registryCenterId" :serviceName="serviceName" :provider="tabData.extendData.provider" :consumer="tabData.extendData.consumer" @openNewTab="openNewTab"></component>
 </template>
 
 <script>
-import dubboTelnet from "./provider/dubbo-telnet.vue";
-import dubboInvoke from "./provider/dubbo-invoke.vue";
+import dubboProviderList from "./dubbo-provider-list.vue";
+import dubboConsumerList from "./dubbo-consumer-list.vue";
+import dubboTelnet from "./dubbo-telnet.vue";
+import dubboInvoke from "./dubbo-invoke.vue";
 
 export default {
   components: {
+    dubboProviderList,
+    dubboConsumerList,
     dubboTelnet,
     dubboInvoke
   },
@@ -21,6 +24,7 @@ export default {
       componentName: String,
       extendData: {
         type: Object,
+        required: false,
         provider: {
           type: Object,
           required: false,
@@ -31,11 +35,14 @@ export default {
           required: false,
           default: {},
         },
-        default: () => {
-          return {};
-        }
+        default: {}
       }
     }
+  },
+  methods: {
+    openNewTab(data) {
+      this.$emit("openNewTab", data);
+    },
   }
 }
 </script>

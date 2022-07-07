@@ -1,5 +1,5 @@
 <template>
-  <div :id="terminalKey"></div>
+  <div :id="terminalKey" class="terminal-container"></div>
 </template>
 
 <script>
@@ -16,7 +16,7 @@ export default {
     return {
       terminal: Object,
       termOptions: {
-        rows: 40,
+        rows: 100,
         scrollback: 800
       },
       input: '',
@@ -84,6 +84,11 @@ export default {
       term.open(terminalContainer)
       // term.fit()
       fitAddon.fit()
+
+      window.addEventListener('resize', () => {
+        fitAddon.fit()
+      });
+
       term.focus()
       term.prompt = () => {
         term.write(this.prefix)
@@ -111,7 +116,7 @@ export default {
             break;
           // 退格键
           case 8:
-            if (offset > threshold) {
+             if (offset > threshold) {
               if (!this.input) {
                 return;
               }
@@ -119,8 +124,8 @@ export default {
               // \x1b[?K: 清除光标至行末的"可清除"字符
               term.write('\x1b[?K' + this.input.slice(offset - threshold))
               // 保留原来光标位置
-              const cursor = this.bulidData(fixation - offset, '\x1b[D')
-              term.write(cursor)
+              // const cursor = this.bulidData(2, '\x1b[D')
+              // term.write(cursor)
               // this.input = `${this.input.slice(0, offset - threshold - 1)}${this.input.slice(offset - threshold)}`
               this.input = this.input.substring(0, this.input.length - 1);
             }
@@ -184,13 +189,6 @@ export default {
 
       })
 
-      // 选中复制
-      term.onSelectionChange(() => {
-        if (term.hasSelection()) {
-          this.copy = term.getSelection()
-        }
-      })
-
       // 若需要中文输入, 使用on data监听
       term.onData((data) => {
         this.terminal.write(data)
@@ -247,7 +245,8 @@ export default {
 </script>
 
 <style>
-.dubbo-telnet-container {
+.terminal-container {
   width: 100%;
+  height: 100%;
 }
 </style>

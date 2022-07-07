@@ -28,7 +28,6 @@ Vue.component('split-pane', splitPane);
 
 Vue.config.productionTip = false
 
-
 new Vue({
   router,
   store,

@@ -7,18 +7,16 @@
           <div v-for="method in props.row.methods" :key="method">{{method}}</div><br />
         </template>
       </el-table-column>
-      <el-table-column prop="address" :label="$t('dubbo.providePage.address')" column-key="address">
+      <el-table-column prop="address" :label="$t('dubbo.providePage.address')" column-key="address" :show-overflow-tooltip="true">
       </el-table-column>
-      <el-table-column prop="application"  :label="$t('dubbo.providePage.application')" >
+      <el-table-column prop="application"  :label="$t('dubbo.providePage.application')" :show-overflow-tooltip="true" >
       </el-table-column>
-      <el-table-column prop="version"  :label="$t('dubbo.providePage.version')">
+      <el-table-column prop="version"  :label="$t('dubbo.providePage.version')" :show-overflow-tooltip="true">
         <template slot-scope="scope">
-          <el-tag type="success" disable-transitions>{{
-            scope.row.revision
-          }}</el-tag>
+          <span class="versionSpan">{{ scope.row.revision  }} </span>
         </template>
       </el-table-column>
-      <el-table-column prop="methods"  :label="$t('dubbo.providePage.methodCount')" >
+      <el-table-column prop="methods"  :label="$t('dubbo.providePage.methodCount')" :show-overflow-tooltip="true" >
         <template slot-scope="scope">
           {{scope.row.methods.length}}
         </template>
@@ -92,6 +90,13 @@ export default {
 </script>
 
 <style>
-.dubboProviderListContainer {
+
+
+.versionSpan {
+  color : rgb(114,	197,	76	);
+  background-color :  rgb(237,	249,	230	);
+  padding : 5px 5px;
+  border-radius : 5px;
 }
+
 </style>

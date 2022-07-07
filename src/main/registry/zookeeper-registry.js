@@ -10,7 +10,8 @@ function getServiceList(registryConfig) {
   let { address } = registryConfig;
 
   const OPTIONS = {
-    sessionTimeout: registryConfig.sessionTimeout,
+    sessionTimeout: 1000,
+    requestTimeout : true
   };
 
   return new Promise((resolve, reject) => {
@@ -35,6 +36,11 @@ function getServiceList(registryConfig) {
         resolve(array);
       });
     });
+
+    setTimeout(() => {
+      reject("连接超时！");
+    }, OPTIONS.sessionTimeout);
+
     zk.connect();
   });
 }

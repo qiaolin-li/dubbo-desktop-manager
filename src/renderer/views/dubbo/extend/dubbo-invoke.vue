@@ -6,6 +6,7 @@
           <template slot="label"> {{$t('dubbo.invokePage.serviceName')}} </template>
           {{ provider.serviceName }}
         </el-descriptions-item>
+
         <el-descriptions-item>
           <template slot="label"> {{$t('dubbo.invokePage.application')}} </template>
           {{ provider.application }}
@@ -15,6 +16,7 @@
           <template slot="label"> {{$t('dubbo.invokePage.address')}} </template>
           {{ provider.address }}
         </el-descriptions-item>
+
         <el-descriptions-item>
           <template slot="label"> {{$t('dubbo.invokePage.generic')}} </template>
           {{ provider.generic }}
@@ -45,15 +47,13 @@
         <el-descriptions-item>
           <template slot="label"> {{$t('dubbo.invokePage.operate')}}</template>
           <el-button-group>
-            <el-tooltip class="item" effect="dark" :content="$t('dubbo.invokePage.call')" placement="top">
+            <el-tooltip class="item" effect="light" :content="$t('dubbo.invokePage.call')" placement="top">
               <el-button plain type="primary" icon="el-icon-thumb" @click="invokeDubbo()"></el-button>
-
             </el-tooltip>
-            <el-tooltip class="item" effect="dark" :content="$t('dubbo.invokePage.generateParam')" placement="top">
-
+            <el-tooltip class="item" effect="light" :content="$t('dubbo.invokePage.generateParam')" placement="top">
               <el-button plain type="primary" icon="el-icon-news" @click="generateParam()"></el-button>
             </el-tooltip>
-            <el-tooltip class="item" effect="dark" :content="$t('dubbo.invokePage.generateCommand')" placement="top">
+            <el-tooltip class="item" effect="light" :content="$t('dubbo.invokePage.generateCommand')" placement="top">
               <el-button plain type="primary" icon="el-icon-magic-stick" @click="generateInvokeCommand()"></el-button>
 
             </el-tooltip>
@@ -62,7 +62,7 @@
       </el-descriptions>
     </div>
 
-    <div class="invoke-dubbo-dialog-content ">
+    <div id="invoke-dubbo-dialog-content" class="invoke-dubbo-dialog-content ">
       <div class="invoke-dubbo-dialog-content-code">
         <div class="contentCode broder">
 
@@ -74,7 +74,6 @@
               </el-popover>
             </template>
             <template v-slot:content>
-
               <el-tooltip class="item" effect="light" :content="$t('dubbo.invokePage.format')" placement="top-start">
                 <i class="el-icon-lollipop" @click="formatContent"></i>
               </el-tooltip>
@@ -101,7 +100,9 @@
         </ul>
       </div>
     </div>
+
   </div>
+
 </template>
 
 <script>
@@ -109,6 +110,7 @@ import dubboInvokeUtils from "@/utils/dubboInvokeUtils.js";
 import invokeHisotryRecord from "@/main/repository/invokeHistoryRepository.js";
 import registry from "@/main/registry";
 import codeEditor from "@/renderer/components/editor/code-editor.vue";
+import { Loading } from 'element-ui';
 
 export default {
   components: {
@@ -149,26 +151,64 @@ export default {
       }
     },
     async invokeDubbo() {
-      let response = await dubboInvokeUtils.invokeMethod(
+      let loadingInstance = Loading.service({
+        target: "#invoke-dubbo-dialog-content",
+        text:this.$t("dubbo.invokePage.invokeProgress"),
+        spinner:"0",
+        background: 'rgba(0, 0, 0, 0.2)'
+      });
+
+
+      let cancelFunction = () =>{};
+      let cancelPromise = new Promise(reject => {
+        cancelFunction = reject;
+      });
+
+      let button = document.createElement("input");
+      button.type = "button";
+      button.value = this.$t("dubbo.invokePage.cancelInvoke")
+      button.className = "cancel-button";
+      button.addEventListener("click", () => {
+          cancelFunction(this.$t("dubbo.invokePage.cancelInvoke"));
+      });
+      loadingInstance.$el.firstElementChild.appendChild(button)
+
+
+      dubboInvokeUtils.invokeMethod(
         this.provider,
         this.method,
-        this.codeConfig.code
-      );
-      this.invokeReulst.code = response.code;
-      this.invokeReulst.elapsedTime = response.elapsedTime;
+        this.codeConfig.code,
+        cancelPromise
+      ).then(async response => {
+        this.invokeReulst.code = response.code;
+        this.invokeReulst.elapsedTime = response.elapsedTime;
+        // 保存调用记录
+        let invokeHistory = {
+          serviceName: this.provider.serviceName,
+          method: this.method,
+          param: this.codeConfig.code,
+        };
+        await invokeHisotryRecord.save(invokeHistory);
+        this.$message({
+          type: "success",
+          message: this.$t('dubbo.invokePage.callDubboServiceSuccess'),
+        });
 
-      // 保存调用记录
-      let invokeHistory = {
-        serviceName: this.provider.serviceName,
-        method: this.method,
-        param: this.codeConfig.code,
-      };
-      await invokeHisotryRecord.save(invokeHistory);
-      this.$message({
-        type: "success",
-        message: this.$t('dubbo.invokePage.callDubboServiceSuccess'),
-      });
-      this.flushInvokeHistoryList();
+        loadingInstance.close();
+        this.flushInvokeHistoryList();
+      }).catch(e => {
+        this.$message({
+          type: "error",
+          message: this.$t('dubbo.invokePage.callDubboServiceFail', { e }),
+        });
+        loadingInstance.close();
+      })
+
+
+    },
+
+    cancelInvoke() {
+    
     },
     async generateInvokeCommand() {
       let param = {
@@ -276,4 +316,34 @@ export default {
 .contentCode {
   margin-bottom: 10px;
 }
+
+
+
+.cancel-button {
+	box-shadow:inset 0px 1px 0px 0px #ffffff;
+	background:linear-gradient(to bottom, #ffffff 5%, #f6f6f6 100%);
+	background-color:#ffffff;
+	border-radius:4px;
+	border:1px solid #dcdcdc;
+	display:inline-block;
+	cursor:pointer;
+	color:#666666;
+	font-family:Arial;
+	font-size:16px;
+	font-weight:bold;
+	padding:10px 29px;
+	text-decoration:none;
+	text-shadow:0px 1px 0px #ffffff;
+  margin-top: 10px;
+}
+.cancel-button:hover {
+	background:linear-gradient(to bottom, #f6f6f6 5%, #ffffff 100%);
+	background-color:#f6f6f6;
+}
+.cancel-button:active {
+	position:relative;
+	top:1px;
+}
+
+        
 </style>

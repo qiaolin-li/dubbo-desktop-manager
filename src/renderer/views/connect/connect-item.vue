@@ -2,7 +2,7 @@
   <div class="interfaceContainer" v-show="connectInfo.isShow">
     <div class="searchTool">
       <el-input v-model="searchKeyword" :placeholder="$t('connect.searchContent')" @input="searchKeywordChange($event)"></el-input>
-      <span class="serviceSizeTool">{{this.connectInfo.serviceSize}}</span>
+      <span  class="serviceSizeTool">{{this.connectInfo.serviceSize}}</span>
     </div>
 
     <!-- dubbo接口列表  -->
@@ -174,6 +174,8 @@ export default {
 
 .serviceSizeTool {
   line-height: 40px;
+  width: 50px;
+  padding-left: 2px;
 }
 
 .custom-tree-icon {
