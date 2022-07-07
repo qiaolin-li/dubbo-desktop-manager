@@ -13,7 +13,8 @@ export default {
         hintTitle: "提示",
         yes: "是",
         no: "否",
-        refresh : "刷新"
+        refresh : "刷新",
+        connectTimeOut : "连接超时",
     },
     menu: {
         addConnect: "新增连接",

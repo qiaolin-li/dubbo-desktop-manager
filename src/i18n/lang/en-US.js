@@ -13,7 +13,8 @@ export default {
         hintTitle: "hint",
         yes: "yes",
         no: "no",
-        refresh : "refresh"
+        refresh : "refresh",
+        connectTimeOut : "connect timeout",
     },
     menu: {
         addConnect: "New Connection",
