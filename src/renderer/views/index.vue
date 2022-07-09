@@ -10,16 +10,16 @@
         </template>
         <template slot="paneR">
           <div class="right-tab-container" v-show="dubboListList.length > 0">
-            <el-tabs id="dubboListTabs" v-model="currentTabName" type="card" closable @tab-remove="removeTab">
-              <el-tab-pane class="tabPane" v-for="(item, index) in dubboListList" :key="item.serviceName" :name="item.serviceName">
+            <el-tabs id="dubboListTabs" v-model="currentTabId" type="card" closable @tab-remove="removeTab">
+              <el-tab-pane class="tabPane" v-for="(item, index) in dubboListList" :key="item.id" :name="item.id">
                 <span slot="label" class="notSelect"><i class="el-icon-date"></i> {{item.title}}</span>
               </el-tab-pane>
             </el-tabs>
           </div>
           <div class="right-container" :min-percent="30" :default-percent="30" v-show="dubboListList.length > 0">
             <div v-for="(item, index) in dubboListList" :key="item.serviceName">
-              <settings v-if="item.id == 'settings'" v-show="currentTabName == item.id"></settings>
-              <dubbo-list v-else v-show="currentTabName == item.serviceName" :registryCenterId="item.registryCenterId" :serviceName="item.serviceName" />
+              <settings v-if="item.id == 'settings'" v-show="currentTabId == item.id"></settings>
+              <dubbo-list v-else v-show="currentTabId == item.serviceName" :registryCenterId="item.registryCenterId" :serviceName="item.serviceName" />
             </div>
           </div>
           <welcome v-if="dubboListList.length == 0" />
@@ -52,7 +52,7 @@ export default {
   },
   data() {
     return {
-      currentTabName: '',
+      currentTabId: '',
       dubboListList: [],
       rightClickTabName: ""
     };
@@ -128,6 +128,7 @@ export default {
         let title = serviceName.split(".")[serviceName.split(".").length - 1];
 
         this.dubboListList.push({
+          id: serviceName,
           title: title,
           serviceName,
           registryCenterId: registryCenterId
@@ -135,7 +136,7 @@ export default {
 
       }
 
-      this.currentTabName = serviceName;
+      this.currentTabId = serviceName;
 
       // 新增了节点
       setTimeout(() => {
@@ -151,47 +152,47 @@ export default {
       }, 5)
 
     },
-    removeTab(targetName) {
+    removeTab(id) {
       let tabs = this.dubboListList;
-      let activeName = this.currentTabName;
-      if (activeName === targetName) {
+      let activeName = this.currentTabId;
+      if (activeName === id) {
         tabs.forEach((tab, index) => {
-          if (tab.serviceName === targetName) {
+          if (tab.id === id) {
             let nextTab = tabs[index + 1] || tabs[index - 1];
             if (nextTab) {
-              activeName = nextTab.serviceName;
+              activeName = nextTab.id;
             }
           }
         });
       }
 
       for (let i = 0; i < this.dubboListList.length; i++) {
-        if (this.dubboListList[i].serviceName == targetName) {
+        if (this.dubboListList[i].id == id) {
           this.dubboListList.splice(i, 1);
           break;
         }
       }
-      this.currentTabName = activeName;
+      this.currentTabId = activeName;
     },
-    removeOtherTab(activeName) {
-      this.dubboListList = this.dubboListList.filter(info => info.serviceName == activeName);
-      this.currentTabName = activeName;
+    removeOtherTab(id) {
+      this.dubboListList = this.dubboListList.filter(info => info.id == id);
+      this.currentTabId = id;
     },
     removeAllTab() {
       this.dubboListList = [];
-      this.currentTabName = ""
+      this.currentTabId = ""
     },
     openSettingsTab() {
-      let exist = this.dubboListList.find(tab => tab.serviceName == "settings");
-      if (exist) {
-        return;
+      let exist = this.dubboListList.find(tab => tab.id == "settings");
+      if (!exist) {
+
+        this.dubboListList.push({
+          id: "settings",
+          title: "settings"
+        });
       }
 
-      this.dubboListList.push({
-        id: "settings",
-        title: "settings"
-      });
-      this.currentTabName = "settings";
+      this.currentTabId = "settings";
     }
   },
 };

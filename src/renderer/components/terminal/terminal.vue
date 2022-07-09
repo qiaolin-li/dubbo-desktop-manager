@@ -46,6 +46,10 @@ export default {
           e.stopPropagation();
         }
       }
+
+      // 绑定快捷键
+      Mousetrap(terminalContainer).bind(['command+v', 'ctrl+v'], () => this.pasteContentToTerminal());
+
     });
 
     // 需要解除对 areatext 的粘贴
@@ -59,8 +63,6 @@ export default {
       // stop for input, select, and textarea
       return element.tagName == 'INPUT' || element.tagName == 'SELECT' || (element.contentEditable && element.contentEditable == 'true');
     }
-
-    Mousetrap.bind(['command+v', 'ctrl+v'], () => this.pasteContentToTerminal());
 
   },
   methods: {
@@ -116,7 +118,7 @@ export default {
             break;
           // 退格键
           case 8:
-             if (offset > threshold) {
+            if (offset > threshold) {
               if (!this.input) {
                 return;
               }

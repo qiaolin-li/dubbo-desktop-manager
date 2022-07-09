@@ -66,7 +66,7 @@
       <div class="invoke-dubbo-dialog-content-code">
         <div class="contentCode broder">
 
-          <codeEditor :codeConfig="codeConfig">
+          <codeEditor :codeConfig="codeConfig" :lint="true">
             <template v-slot:titel>
               {{$t('dubbo.invokePage.requestParam')}}
               <el-popover placement="top-start" :title="$t('dubbo.invokePage.requestParamStrategyTitle')" width="200" trigger="hover" :content="$t('dubbo.invokePage.paramGenerateStrategyDesc')">
@@ -231,7 +231,7 @@ export default {
           this.codeConfig.code = code || "[]";
         }).catch((error) => {
           this.$message({
-            message: this.$t('dubbo.invokePage.generateParamError'),
+            message: this.$t('dubbo.invokePage.generateParamError', {error}),
             type: 'warning'
           });
           this.codeConfig.code = "[]";

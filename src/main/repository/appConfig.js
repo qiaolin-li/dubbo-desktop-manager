@@ -1,14 +1,12 @@
 import lowdb from "lowdb"
 import FileSync from "lowdb/adapters/FileSync.js"
 import consumer from "@/main/communication/consumer.js";
-const USER_HOME = process.env.HOME;
+import constant from "@/utils/Constant.js";
 
 let db = null;
 
 if (process.type != "renderer") {
-    const CONFIG_PATH = `${USER_HOME}/.dubbo-desktop-manager/config.db`;
-
-    const adapter = new FileSync(CONFIG_PATH)
+    const adapter = new FileSync(constant.APPLICATION_CONFIG_FILE)
     db = lowdb(adapter)
 
     // Read data from JSON file, this will set db.data content

@@ -45,11 +45,15 @@ import "codemirror/addon/search/match-highlighter";
 // 代码提示功能 具体语言可以从 codemirror/addon/hint/ 下引入多个
 import "codemirror/addon/hint/show-hint.css";
 import "codemirror/addon/hint/show-hint";
-// import 'codemirror/addon/hint/sql-hint';
-import "codemirror/addon/hint/javascript-hint";
-import 'codemirror/addon/lint/lint'
+
 import 'codemirror/addon/lint/lint.css'
+import 'codemirror/addon/lint/lint'
 import 'codemirror/addon/lint/json-lint'
+
+ // 引入jsonlint
+import jsonlint from "jsonlint";
+window.jsonlint = jsonlint;
+
 import 'codemirror/addon/display/autorefresh' //及时自动更新，配置里面也需要设置autoRefresh为true
 
 
@@ -134,11 +138,13 @@ export default {
         // 自动括号匹配功能
         matchBrackets: true,
         foldGutter: true,
+        // CodeMirror-lint-markers是实现语法报错功能
+        lint: this.lint,
         gutters: [
           "CodeMirror-linenumbers",
           "CodeMirror-foldgutter",
           "CodeMirror-line",
-          "CodeMirror-lint-markers",
+          "CodeMirror-lint-markers"
         ],
         foldOptions: {
           widget: (from, to) => {
@@ -169,6 +175,10 @@ export default {
   },
   props: {
     codeConfig: Object,
+    lint : {
+      type: Boolean,
+      default: false
+    }
   },
   methods: {
     inputChange(content) {

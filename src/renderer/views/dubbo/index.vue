@@ -1,6 +1,6 @@
 <template>
   <div class="dubbo-list-main-container">
-    <el-tabs id="serviceInfoTab" type="card" tab-position="top" v-model="editableTabsValue">
+    <el-tabs :id="tabId" type="card" tab-position="top" v-model="editableTabsValue">
       <el-tab-pane v-for="tabData in tabDataList" :key="tabData.id" :name="tabData.id">
         <span slot="label" class="notSelect"><i class="el-icon-date"></i> {{tabData.label}}</span>
         <div class="tab-content">
@@ -26,6 +26,7 @@ export default {
 
       ],
       editableTabsValue: "providerList",
+      tabId :"",
     };
   },
   props: {
@@ -39,6 +40,9 @@ export default {
     }
   },
   created() {
+    
+    this.tabId = `serviceInfoTab-${this.serviceName}`;
+
     this.tabDataList.push(
       {
         id: `providerList`,
@@ -64,8 +68,7 @@ export default {
   },
   mounted() {
 
-
-    let serviceInfoTab = document.getElementById('serviceInfoTab');
+    let serviceInfoTab = document.getElementById(this.tabId);
     let tabListElement = serviceInfoTab.firstElementChild.firstElementChild.lastElementChild.firstElementChild;
 
     // 菜单键点击

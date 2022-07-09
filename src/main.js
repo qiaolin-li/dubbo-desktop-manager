@@ -10,6 +10,9 @@ import ElementUI from 'element-ui';
 import 'element-ui/lib/theme-chalk/index.css';
 import splitPane from 'vue-splitpane'
 
+import jsonlint from 'jsonlint' 
+window.jsonlint = jsonlint
+
 import i18n from './i18n'
 
 if(process.platform === 'win32'){

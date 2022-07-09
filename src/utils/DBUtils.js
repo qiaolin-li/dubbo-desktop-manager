@@ -1,11 +1,11 @@
 // 加载模块
 const nedb = require('nedb');
-const USER_HOME = process.env.HOME;
+import constant from "@/utils/Constant.js";
 
 function getDB(business) {
     // 实例化连接对象（不带参数默认为内存数据库）
     return new nedb({
-        filename: `${USER_HOME}/.dubbo-desktop-manager/data/${business}.db`,
+        filename: `${constant.APPLICATION_DATA_DIR}/${business}.db`,
         autoload: true
     });
 }
