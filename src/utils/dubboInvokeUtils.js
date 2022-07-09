@@ -1,6 +1,7 @@
 import net from "net";
 import telnetSocket from "telnet-stream";
 import JSONFormater from "./JSONFormater";
+import i18n from '../i18n'
 
 /**
  * 调用Dubbo接口
@@ -9,8 +10,12 @@ import JSONFormater from "./JSONFormater";
  * @param {*} code 参数信息
  * @returns 
  */
-function invokeMethod(provder, method, code) {
-    let { ip, port, serviceName } = provder;
+function invokeMethod(provder, method, code, cancelPromise) {
+    let {
+        ip,
+        port,
+        serviceName
+    } = provder;
     let params = JSON.parse(code);
 
     // eslint-disable-next-line no-unused-vars
@@ -21,29 +26,48 @@ function invokeMethod(provder, method, code) {
         let tSocket = new telnetSocket.TelnetSocket(socket);
         let mainBuffer = Buffer.from("");
         tSocket.on("data", function (buffer) {
-
+       
             mainBuffer = Buffer.concat([mainBuffer, buffer], mainBuffer.length + buffer.length);
 
             let result = mainBuffer.toString("utf8");
 
             // 数据还未接收完，再等等
-            if(!result.endsWith("dubbo>")){
-               return;
+            if (!result.endsWith("dubbo>")) {
+                return;
             }
 
             // 解析结果
             resolve(resolveResponse(result));
         });
 
-        tSocket.write(buildInvokeCommand({ serviceName, method, params }));
+        socket.setTimeout(30000);
+        socket.on("timeout", () => {
+            reject(i18n.t("dubbo.invokePage.invokeTimeOut") )
+            socket.end();
+        })
+
+        tSocket.write(buildInvokeCommand({
+            serviceName,
+            method,
+            params
+        }));
+
+        cancelPromise.then((message) => {
+            reject(message)
+            socket.end();
+        });
     });
 }
 
 
 /** 
-* 构建invoke命令 
-*/
-function buildInvokeCommand({ serviceName, method, params }) {
+ * 构建invoke命令 
+ */
+function buildInvokeCommand({
+    serviceName,
+    method,
+    params
+}) {
     let paramStr = "";
     // let command = "invoke com.indi.qiaolin.test.api.facade.TestFacade.test(\"1\") \n";
     for (let i = 0; i < params.length; i++) {
@@ -67,17 +91,16 @@ function buildInvokeCommand({ serviceName, method, params }) {
  * @param {String} result 
  * @returns 
  */
-function resolveResponse(result){
+function resolveResponse(result) {
     // dubbo返回格式分为三部分，第一部分为
     let errorMessage = result.split("\n");
     // 调用成功
     if (errorMessage.length == 4) {
         let data = errorMessage[1].substring(8);
         let elapsedTime = errorMessage[2].substring(9)
-
-        try{
+        try {
             return new InvokeResult(JSONFormater(data), elapsedTime);
-        }catch(e){
+        } catch (e) {
             // 日后再收集
         }
 
