@@ -151,15 +151,26 @@ export default {
       }
     },
     async invokeDubbo() {
+
+      try{
+        JSON.parse(this.codeConfig.code);
+      } catch (e) {
+         this.$message({
+            type: "error",
+            message: this.$t('dubbo.invokePage.callParamError'),
+          });
+          return;
+      }
+
       let loadingInstance = Loading.service({
         target: "#invoke-dubbo-dialog-content",
-        text:this.$t("dubbo.invokePage.invokeProgress"),
-        spinner:"0",
+        text: this.$t("dubbo.invokePage.invokeProgress"),
+        spinner: "0",
         background: 'rgba(0, 0, 0, 0.2)'
       });
 
 
-      let cancelFunction = () =>{};
+      let cancelFunction = () => { };
       let cancelPromise = new Promise(reject => {
         cancelFunction = reject;
       });
@@ -169,7 +180,7 @@ export default {
       button.value = this.$t("dubbo.invokePage.cancelInvoke")
       button.className = "cancel-button";
       button.addEventListener("click", () => {
-          cancelFunction(this.$t("dubbo.invokePage.cancelInvoke"));
+        cancelFunction(this.$t("dubbo.invokePage.cancelInvoke"));
       });
       loadingInstance.$el.firstElementChild.appendChild(button)
 
@@ -208,7 +219,7 @@ export default {
     },
 
     cancelInvoke() {
-    
+
     },
     async generateInvokeCommand() {
       let param = {
@@ -231,7 +242,7 @@ export default {
           this.codeConfig.code = code || "[]";
         }).catch((error) => {
           this.$message({
-            message: this.$t('dubbo.invokePage.generateParamError', {error}),
+            message: this.$t('dubbo.invokePage.generateParamError', { error }),
             type: 'warning'
           });
           this.codeConfig.code = "[]";
@@ -317,33 +328,29 @@ export default {
   margin-bottom: 10px;
 }
 
-
-
 .cancel-button {
-	box-shadow:inset 0px 1px 0px 0px #ffffff;
-	background:linear-gradient(to bottom, #ffffff 5%, #f6f6f6 100%);
-	background-color:#ffffff;
-	border-radius:4px;
-	border:1px solid #dcdcdc;
-	display:inline-block;
-	cursor:pointer;
-	color:#666666;
-	font-family:Arial;
-	font-size:16px;
-	font-weight:bold;
-	padding:10px 29px;
-	text-decoration:none;
-	text-shadow:0px 1px 0px #ffffff;
+  box-shadow: inset 0px 1px 0px 0px #ffffff;
+  background: linear-gradient(to bottom, #ffffff 5%, #f6f6f6 100%);
+  background-color: #ffffff;
+  border-radius: 4px;
+  border: 1px solid #dcdcdc;
+  display: inline-block;
+  cursor: pointer;
+  color: #666666;
+  font-family: Arial;
+  font-size: 16px;
+  font-weight: bold;
+  padding: 10px 29px;
+  text-decoration: none;
+  text-shadow: 0px 1px 0px #ffffff;
   margin-top: 10px;
 }
 .cancel-button:hover {
-	background:linear-gradient(to bottom, #f6f6f6 5%, #ffffff 100%);
-	background-color:#f6f6f6;
+  background: linear-gradient(to bottom, #f6f6f6 5%, #ffffff 100%);
+  background-color: #f6f6f6;
 }
 .cancel-button:active {
-	position:relative;
-	top:1px;
+  position: relative;
+  top: 1px;
 }
-
-        
 </style>

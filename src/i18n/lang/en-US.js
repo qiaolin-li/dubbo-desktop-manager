@@ -96,6 +96,7 @@ export default {
             format: "format",
             responseInfo: "Response Info",
             historyInvokeParamList: "History call",
+            callParamError: "The request parameter format is incorrect",
             callDubboServiceSuccess: "Calling the Dubbo interface succeeded.",
             callDubboServiceFail: "Failed to invoke the Dubbo interface：{e}",
             generateParamError: "Unable to generate parameters! The reason: {error}",
