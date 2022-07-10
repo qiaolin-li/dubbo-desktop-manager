@@ -1,0 +1,13 @@
+diff --git a/node_modules/JSV/package.json b/node_modules/JSV/package.json
+index e496fc9..07f037d 100644
+--- a/node_modules/JSV/package.json
++++ b/node_modules/JSV/package.json
+@@ -26,7 +26,7 @@
+ 			"url" : "git://github.com/garycourt/JSV.git"
+ 		}
+ 	],
+-	"dependencies" : [],
++	"dependencies" : {},
+ 	"main" : "lib/jsv.js",
+ 	"keywords" : ["json", "schema", "validator"]
+ }
