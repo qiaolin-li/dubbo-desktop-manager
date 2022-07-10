@@ -22,7 +22,7 @@ jobs:
           node-version: ${{ matrix.node }}
       
       - name: Install system deps
-        if: matrix.os == 'ubuntu-latest'
+        if: matrix.os == 'ubuntu-18.04'
         run: |
           sudo apt-get install --no-install-recommends -y icnsutils graphicsmagick xz-utils
           sudo apt-get update
