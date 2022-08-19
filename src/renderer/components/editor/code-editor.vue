@@ -237,6 +237,7 @@ export default {
 .CodeMirror {
   /* border: 1px solid #eee; */
   height: 30vh;
-  font-size: 14px;
+  font-size: 13px;
+   line-height : 120%;
 }
 </style>

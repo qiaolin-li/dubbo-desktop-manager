@@ -1,7 +1,7 @@
 import zookeeperRegistry from "./zookeeper-registry";
 import nacosRegistry from "./nacos-registry";
 import connectRepository from "@/main/repository/connectRepository.js";
-
+import consumer from "@/main/communication/consumer.js";
 
 const map = new Map();
 
@@ -27,10 +27,23 @@ async function getConsumerList(serviceName,  registryCenterId) {
     return registry.getConsumerList(serviceName, registryConfig);
 }
 
-async function getMethodFillObject(providerInfo, registryCenterId, methodName) {
+
+async function getMetaData(providerInfo, registryCenterId) {
     let registryConfig = await connectRepository.findById(registryCenterId);
     let registry = getRealRegistry(registryConfig);
-    return registry.getMethodFillObject(providerInfo, registryConfig, methodName);
+    return registry.getMetaData(providerInfo, registryConfig);
+}
+
+async function disableProvider(serviceName, registryCenterId, address, version){
+    let registryConfig = await connectRepository.findById(registryCenterId);
+    let registry = getRealRegistry(registryConfig);
+    return registry.disableProvider(serviceName, registryConfig, address, version);
+}
+
+async function enableProvider(serviceName, registryCenterId, address, version){
+    let registryConfig = await connectRepository.findById(registryCenterId);
+    let registry = getRealRegistry(registryConfig);
+    return registry.enableProvider(serviceName, registryConfig, address, version);
 }
 
 function getRealRegistry(registryConfig) {
@@ -44,9 +57,20 @@ function getRealRegistry(registryConfig) {
     return registry;
 }
 
-export default {
+
+
+
+let data = {
+    name: "registry",
     getServiceList,
     getProviderList,
     getConsumerList,
-    getMethodFillObject
+    getMetaData,
+    disableProvider,
+    enableProvider,
+    install(communication) {
+        communication.registry(data);
+    }
 }
+
+export default consumer.wrapper(data);

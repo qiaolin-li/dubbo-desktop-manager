@@ -50,7 +50,7 @@ export default {
   methods: {
     async init() {
       if (this.id) {
-        let connect = await connectRepository.findById(this.id);
+        let connect = connectRepository.findById(this.id);
         for (let index = 0; index < this.options.length; index++) {
           let element = this.options[index];
           if (element.label == connect.type) {

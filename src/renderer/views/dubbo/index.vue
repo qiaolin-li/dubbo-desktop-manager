@@ -42,7 +42,6 @@ export default {
   created() {
     
     this.tabId = `serviceInfoTab-${this.serviceName}`;
-
     this.tabDataList.push(
       {
         id: `providerList`,
@@ -135,6 +134,7 @@ export default {
 
     },
     openInvokeDrawer(index, data) {
+      data["uniqueId"] = this.serviceName;
       let tabData = {
         id: `invoke-${data.serviceName}-${data.address}`,
         label: this.$t('dubbo.providePage.callTitle', data),

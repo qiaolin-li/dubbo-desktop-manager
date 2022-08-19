@@ -2,7 +2,7 @@
   <div class="interfaceContainer" v-show="connectInfo.isShow">
     <div class="searchTool">
       <el-input v-model="searchKeyword" :placeholder="$t('connect.searchContent')" @input="searchKeywordChange($event)"></el-input>
-      <span  class="serviceSizeTool">{{this.connectInfo.serviceSize}}</span>
+      <span class="serviceSizeTool">{{this.connectInfo.serviceSize}}</span>
     </div>
 
     <!-- dubbo接口列表  -->
@@ -67,22 +67,15 @@ export default {
       this.findInterfaceList();
     },
     findInterfaceList() {
-      registry.getServiceList(this.connectInfo._id).then((list) => {
-        for (let i = 0; i < list.length; i++) {
-          list[i].leaf = true;
-        }
-        this.allServiceList = list;
-        this.serviceList = this.optimizationTree();
-        let a = "111";
-        this.$message({
-          type: "success",
-          message: this.$t('connect.refreshSuccess'),
-        });
-      }).catch(e => {
-        this.$message({
-          message: this.$t('connect.refreshError', { e }),
-          type: 'warning'
-        });
+      let list = registry.getServiceList(this.connectInfo._id);
+      for (let i = 0; i < list.length; i++) {
+        list[i].leaf = true;
+      }
+      this.allServiceList = list;
+      this.serviceList = this.optimizationTree();
+      this.$message({
+        type: "success",
+        message: this.$t('connect.refreshSuccess'),
       });
     },
     searchKeywordChange() {

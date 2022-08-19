@@ -106,9 +106,12 @@
 </template>
 
 <script>
+
 import dubboInvokeUtils from "@/utils/dubboInvokeUtils.js";
+import dubboInvoke from "@/main/invoker/";
 import invokeHisotryRecord from "@/main/repository/invokeHistoryRepository.js";
 import registry from "@/main/registry";
+import resolveMateData from "@/utils/resolveMateData";
 import codeEditor from "@/renderer/components/editor/code-editor.vue";
 import { Loading } from 'element-ui';
 
@@ -121,6 +124,7 @@ export default {
       codeConfig: {
         code: "[]",
       },
+      metadata: {},
       invokeReulst: {
         code: "",
         elapsedTime: "",
@@ -134,6 +138,8 @@ export default {
     provider: Object,
   },
   mounted() {
+    this.getMataData();
+
     if (this.provider && this.provider.methods) {
       this.method = this.provider.methods[0];
       this.methodChange();
@@ -152,14 +158,14 @@ export default {
     },
     async invokeDubbo() {
 
-      try{
+      try {
         JSON.parse(this.codeConfig.code);
       } catch (e) {
-         this.$message({
-            type: "error",
-            message: this.$t('dubbo.invokePage.callParamError'),
-          });
-          return;
+        this.$message({
+          type: "error",
+          message: this.$t('dubbo.invokePage.callParamError'),
+        });
+        return;
       }
 
       let loadingInstance = Loading.service({
@@ -184,41 +190,25 @@ export default {
       });
       loadingInstance.$el.firstElementChild.appendChild(button)
 
-
-      dubboInvokeUtils.invokeMethod(
-        this.provider,
-        this.method,
-        this.codeConfig.code,
-        cancelPromise
-      ).then(async response => {
+      try {
+        let response = dubboInvoke.invokeMethod(
+          this.provider,
+          this.metadata,
+          this.method,
+          this.codeConfig.code
+        );
+        
         this.invokeReulst.code = response.code;
         this.invokeReulst.elapsedTime = response.elapsedTime;
-        // 保存调用记录
-        let invokeHistory = {
-          serviceName: this.provider.serviceName,
-          method: this.method,
-          param: this.codeConfig.code,
-        };
-        await invokeHisotryRecord.save(invokeHistory);
         this.$message({
           type: "success",
           message: this.$t('dubbo.invokePage.callDubboServiceSuccess'),
         });
-
-        loadingInstance.close();
         this.flushInvokeHistoryList();
-      }).catch(e => {
-        this.$message({
-          type: "error",
-          message: this.$t('dubbo.invokePage.callDubboServiceFail', { e }),
-        });
+      } finally {
         loadingInstance.close();
-      })
+      }
 
-
-    },
-
-    cancelInvoke() {
 
     },
     async generateInvokeCommand() {
@@ -233,20 +223,16 @@ export default {
       this.codeConfig.code = invokeHistory.param;
     },
     async flushInvokeHistoryList() {
-      this.invokeHisotryList = await invokeHisotryRecord.findList(this.provider.serviceName, this.method, 1, 50);
+      this.invokeHisotryList = invokeHisotryRecord.findList(this.provider.serviceName, this.method, 1, 50);
     },
     generateParam() {
-      // 生成参数
-      registry.getMethodFillObject(this.provider, this.registryCenterId, this.method)
-        .then((code) => {
-          this.codeConfig.code = code || "[]";
-        }).catch((error) => {
-          this.$message({
-            message: this.$t('dubbo.invokePage.generateParamError', { error }),
-            type: 'warning'
-          });
-          this.codeConfig.code = "[]";
-        });
+
+      //  生成参数
+      let code = resolveMateData.generateParam(this.metadata, this.method);
+      this.codeConfig.code = code || "[]";
+    },
+    getMataData() {
+      this.metadata = registry.getMetaData(this.provider, this.registryCenterId);
     },
     getInvokeHisotryTitle(invokeHistory) {
       return this.$moment(new Date(invokeHistory.createTime)).format(

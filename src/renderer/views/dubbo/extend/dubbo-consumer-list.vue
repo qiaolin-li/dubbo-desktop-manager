@@ -51,7 +51,7 @@ export default {
   },
   methods: {
     async handleNodeClick() {
-      this.consumerList = await registry.getConsumerList(this.serviceName, this.registryCenterId);
+      this.consumerList = registry.getConsumerList(this.serviceName, this.registryCenterId);
     },
   },
 };

@@ -25,9 +25,15 @@ export default {
         version : "version: "
     },
     settings: {
-        baseSettings: "Base Settings",
-        language: "Language",
+        baseSettings: {
+            title: "Base Settings",
+            language: "Language",
+        },
         apply: "Apply",
+        invokerSettings : {
+            invokerType : "Invoker Type",
+            invokerTypeTips : "Before using the Java actuator, install the Java environment first. Java invocation is slower than Telnet invocation, but the information returned by the Java invocation is more complete.",
+        }
     },
     main: {
         addConnect: "New Connect",
@@ -62,6 +68,7 @@ export default {
             address: "address",
             application: "application",
             version: "version",
+            disabled: "disabled",
             methodCount: "methodCount",
             operate: "operate",
             call: "call",

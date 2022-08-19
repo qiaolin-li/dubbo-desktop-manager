@@ -56,12 +56,12 @@ export default {
           {
             min: 1,
             max: 32,
-            message:  this.$t('connect.validateMessage.rangeLimit'),
+            message: this.$t('connect.validateMessage.rangeLimit'),
             trigger: "blur",
           },
         ],
         address: [
-          { required: true, message:  this.$t('connect.validateMessage.inputConnectionAddress'), trigger: "blur" },
+          { required: true, message: this.$t('connect.validateMessage.inputConnectionAddress'), trigger: "blur" },
         ],
         sessionTimeout: [{ validator: checkTimeout, trigger: "blur" }],
       }
@@ -87,7 +87,7 @@ export default {
   methods: {
     async init() {
       if (this.id) {
-        let connect = await connectRepository.findById(this.id);
+        let connect = connectRepository.findById(this.id);
         this.form = connect;
       } else {
         this.form.type = "zookeeper"
@@ -99,13 +99,12 @@ export default {
     saveZkConnectInfo() {
       this.$refs.form.validate((valid) => {
         if (valid) {
-          connectRepository.save(this.form).then(() => {
-            let data = { ...this.form };
-            this.form.name = "";
-            this.form.address = "127.0.0.1:2181";
-            this.form.sessionTimeout = 5000;
-            this.$emit("saveSuccess", data);
-          });
+          connectRepository.save(this.form);
+          let data = { ...this.form };
+          this.form.name = "";
+          this.form.address = "127.0.0.1:2181";
+          this.form.sessionTimeout = 5000;
+          this.$emit("saveSuccess", data);
         } else {
           return false;
         }

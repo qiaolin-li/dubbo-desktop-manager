@@ -40,14 +40,13 @@ export default {
   },
   methods: {
     findConnectList() {
-      connectRepository.findList().then((connectInfoList) => {
+      let connectInfoList = connectRepository.findList();
         for (let i = 0; i < connectInfoList.length; i++) {
           connectInfoList[i].interfaceList = [];
           connectInfoList[i].isShow = false;
           connectInfoList[i].refreshNum = 0;
         }
         this.connectInfoList = connectInfoList;
-      });
     },
     openConnect(connectInfo) {
       connectInfo.isShow = !connectInfo.isShow;
@@ -74,13 +73,12 @@ export default {
         type: "warning",
       }).then(() => {
         // eslint-disable-next-line no-unused-vars
-        connectRepository.deleteConnect(id).then((num) => {
+        connectRepository.deleteConnect(id);
           this.$message({
             type: "success",
             message: this.$t('base.deleteSuccess'),
           });
           this.findConnectList();
-        });
       }).catch(() => { });
 
       //W3C阻止冒泡方法

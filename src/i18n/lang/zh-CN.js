@@ -25,9 +25,16 @@ export default {
         version : "版本："
     },
     settings: {
-        baseSettings: "基本设置",
-        language: "语言",
+        baseSettings: {
+            title: "基本设置",
+            language: "语言",
+        },
         apply: "应用",
+        invokerSettings : {
+            title:"执行器设置",
+            invokerType : "执行器类型",
+            invokerTypeTips : "使用Java执行器时，请先安装Java环境，Java调用相对Telnet执行器较慢，但是Java调用返回的信息更加完整。",
+        }
     },
     connect: {
         addConnect: "新增连接",
@@ -58,6 +65,7 @@ export default {
             address: "地址",
             application: "所属应用",
             version: "版本号",
+            disabled: "禁用",
             methodCount: "方法数量",
             operate: "操作",
             call: "调用",

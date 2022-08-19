@@ -2,6 +2,7 @@ import {
     ipcMain
 } from 'electron'
 
+
 const COMMUNICATION_CHANEL = "ipc-main-unify";
 
 const ALREADY_REGISTERED_MODULES = new Map();
@@ -13,22 +14,18 @@ const ALREADY_REGISTERED_MODULES = new Map();
 
         try{
             let obj = ALREADY_REGISTERED_MODULES.get(moduleName);
+            
             let result = Reflect.apply(obj[method], obj, args)
 
             if(result instanceof Promise){
                 let data = await result;
-                let rs = {
-                    isPromise : true,
-                    data
-                }
-                event.returnValue = rs
+                event.returnValue = new Response(true, data)
                 return;
             }
-            event.returnValue = {
-                data:result
-            }
+            event.returnValue = new Response(true, result);
         }catch(e){
-            event.returnValue = new Error("调用失败 " + e);
+            console.log("调用接口异常", e);
+            event.returnValue = new Response(false, null, e.message);
         }
     })
 }
@@ -45,6 +42,11 @@ function registry(target, moduleName) {
     ALREADY_REGISTERED_MODULES.set(moduleName, target);
 }
 
+function Response(success, data, errorMessage){
+    this.success = success;
+    this.data = data;
+    this.errorMessage = errorMessage;
+}
 
 startListener() 
 export default {

@@ -12,6 +12,7 @@
   "scripts": {
     "lint": "vue-cli-service lint",
     "build": "vue-cli-service electron:build",
+    "devDebug": "vue-cli-service electron:serve --inspect=5858",
     "dev": "vue-cli-service electron:serve",
     "postinstall": "patch-package && electron-builder install-app-deps",
     "postuninstall": "electron-builder install-app-deps",
@@ -34,6 +35,7 @@
     "element-ui": "^2.15.6",
     "file": "^0.2.2",
     "fs-extra": "^10.1.0",
+    "js-yaml": "^4.1.0",
     "json-bigint": "^1.0.0",
     "jsonlint": "^1.6.3",
     "lowdb": "^1.0.0",

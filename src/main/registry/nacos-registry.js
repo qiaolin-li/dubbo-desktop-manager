@@ -1,12 +1,12 @@
 import common from "./common";
 const axios = require('axios').default;
-import resolveMateData from "./resolveMateData";
 
 async function getServiceList(registryConfig) {
+    console.log(111)
 
     let params = {
         pageNo: 1,
-        pageSize: 1,
+        pageSize: 100,
         namespaceId: registryConfig.namespaceId || ""
     }
     // `http://127.0.0.1:8848/nacos/v1/ns/service/list?pageNo=1&pageSize=20`
@@ -33,7 +33,7 @@ async function getServiceList(registryConfig) {
                 continue;
             }
 
-            array.push(new common.ServiceInfo(datas[1], serviceName));
+            array.push(new common.ServiceInfo(datas[1], serviceName, datas.length == 4 ? datas[3] : ""));
         }
 
         count = data.doms.length;
@@ -120,7 +120,8 @@ function parseProvderInfo(data) {
         dubboVersion: metadata.dubbo,
         deprecated: metadata.deprecated,
         weight: data.weight,
-        enabled: data.enabled
+        enabled: data.enabled,
+        group: metadata.group,
     });
 }
 
@@ -163,7 +164,7 @@ function getConsumerList(serviceName, registryConfig) {
     });
 }
 
-function getMethodFillObject(providerInfo, registryConfig, methodName) {
+function getMetaData(providerInfo, registryConfig) {
 
     // http://127.0.0.1:8848/nacos/v1/cs/configs
     let url = `${registryConfig.address}/nacos/v1/cs/configs`;
@@ -171,15 +172,18 @@ function getMethodFillObject(providerInfo, registryConfig, methodName) {
     let {
         application,
         serviceName,
-        version
+        version,
+        group
     } = providerInfo;
     version = version || "";
-    let dataId = `${serviceName}:${version}::provider:${application}`;
+    let dataId = `${serviceName}:${version}:${group || ''}:provider:${application}`;
+
+    console.log(dataId)
 
     let params = {
         dataId: dataId,
         group: "dubbo",
-        tenant: registryConfig.namespaceId || ""
+        namespaceId: registryConfig.namespaceId || ""
     }
 
     return new Promise((resolve, reject) => {
@@ -201,7 +205,7 @@ function getMethodFillObject(providerInfo, registryConfig, methodName) {
                     return resolve("[]");
                 }
 
-                resolve(resolveMateData.generateParam(response.data, methodName));
+                resolve(response.data);
             })
             .catch(function (error) {
                 reject(new Error("查询服务列表错误! 原因" + error))
@@ -210,9 +214,21 @@ function getMethodFillObject(providerInfo, registryConfig, methodName) {
     });
 }
 
+// eslint-disable-next-line no-unused-vars
+function disableProvider(serviceName, registryConfig, address, version){
+    
+    return Promise.resolve(new Error("nacos不支持"));
+}
+// eslint-disable-next-line no-unused-vars
+function enableProvider(serviceName, registryConfig, address, version){
+    return Promise.resolve(new Error("nacos不支持"));
+}
+
 export default {
     getServiceList,
     getProviderList,
     getConsumerList,
-    getMethodFillObject
+    getMetaData,
+    disableProvider,
+    enableProvider
 }

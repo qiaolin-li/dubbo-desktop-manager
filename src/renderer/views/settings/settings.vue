@@ -1,11 +1,22 @@
 <template>
   <div class="settingsContainer">
     <el-divider content-position="left">{{$t('settings.baseSettings')}}</el-divider>
-    {{$t('settings.language')}}：<el-select v-model="selectMessage">
+    {{$t('settings.baseSettings.language')}}：
+    <el-select v-model="selectMessage">
       <el-option v-for="message in messages" :key="message.code" :label="message.name" :value="message.code"></el-option>
     </el-select>
 
-    <el-divider content-position="left"></el-divider>
+    <el-divider content-position="left">{{$t('settings.invokerSettings')}}</el-divider>
+     {{$t('settings.invokerSettings.invokerType')}}：
+       <el-select v-model="invokerType">
+      <el-option v-for="invokerType in invokerTypes" :key="invokerType.code" :label="invokerType.name" :value="invokerType.code"></el-option>
+    </el-select>
+    <br/>
+    <br/>
+    {{$t('settings.invokerSettings.invokerTypeTips')}}
+
+     <el-divider content-position="left"></el-divider>
+
     <el-button @click="saveConfig">{{$t('settings.apply')}}</el-button>
   </div>
 </template>
@@ -18,17 +29,30 @@ export default {
   data() {
     return {
       selectMessage: "",
-      messages: []
+      messages: [],
+      invokerType: "telnet",
+      invokerTypes: [
+        {
+          code: "telnet",
+          name: "Telnet"
+        },
+        {
+          code: "java",
+          name: "Java"
+        }
+      ]
     }
   },
   created() {
     this.selectMessage = i18n.locale;
     this.messages = i18n.messages;
+    this.invokerType = appConfig.getProperty("invokerType") || "telnet";
   },
   methods: {
     saveConfig() {
       i18n.locale = this.selectMessage;
       appConfig.setProperty("systemLocale", this.selectMessage);
+      appConfig.setProperty("invokerType", this.invokerType);
     }
   }
 

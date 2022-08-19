@@ -1,7 +1,7 @@
 <template>
   <div class="dubboProviderListContainer">
 
-    <el-table :data="providerList" class="content">
+    <el-table :data="providerList" class="content" @row-contextmenu="openMenu">
       <el-table-column type="expand">
         <template slot-scope="props">
           <div v-for="method in props.row.methods" :key="method">{{method}}</div><br />
@@ -9,19 +9,24 @@
       </el-table-column>
       <el-table-column prop="address" :label="$t('dubbo.providePage.address')" column-key="address" :show-overflow-tooltip="true">
       </el-table-column>
-      <el-table-column prop="application"  :label="$t('dubbo.providePage.application')" :show-overflow-tooltip="true" >
+      <el-table-column prop="application" :label="$t('dubbo.providePage.application')" :show-overflow-tooltip="true">
       </el-table-column>
-      <el-table-column prop="version"  :label="$t('dubbo.providePage.version')" :show-overflow-tooltip="true">
+      <el-table-column prop="version" :label="$t('dubbo.providePage.version')" :show-overflow-tooltip="true">
         <template slot-scope="scope">
           <span class="versionSpan">{{ scope.row.revision  }} </span>
         </template>
       </el-table-column>
-      <el-table-column prop="methods"  :label="$t('dubbo.providePage.methodCount')" :show-overflow-tooltip="true" >
+          <el-table-column prop="disabled" :label="$t('dubbo.providePage.disabled')" :show-overflow-tooltip="true">
+        <template slot-scope="scope">
+          <span class="versionSpan">{{ scope.row.disabled ? disableTypeMap[scope.row.disabledType] :''  }} </span>
+        </template>
+      </el-table-column>
+      <el-table-column prop="methods" :label="$t('dubbo.providePage.methodCount')" :show-overflow-tooltip="true">
         <template slot-scope="scope">
           {{scope.row.methods.length}}
         </template>
       </el-table-column>
-      <el-table-column  :label="$t('dubbo.providePage.operate')">
+      <el-table-column :label="$t('dubbo.providePage.operate')">
         <template slot-scope="scope">
           <el-button size="mini" @click="openInvokeDrawer(scope.$index, scope.row)">{{$t('dubbo.providePage.call')}}</el-button>
           <el-button size="mini" @click="openTelnet(scope.$index, scope.row)">telnet</el-button>
@@ -34,6 +39,7 @@
 
 <script>
 import registry from "@/main/registry";
+const remote = require("@electron/remote");
 
 
 export default {
@@ -42,6 +48,10 @@ export default {
   },
   data() {
     return {
+      disableTypeMap : {
+        service : "服务维度",
+        application : "应用维度"
+      },
       providerList: []
     };
   },
@@ -60,12 +70,12 @@ export default {
   },
   methods: {
     async handleNodeClick() {
-      this.providerList = await registry.getProviderList(this.serviceName, this.registryCenterId);
+      this.providerList = registry.getProviderList(this.serviceName, this.registryCenterId);
     },
     openInvokeDrawer(index, data) {
       let tabData = {
         id: `invoke-${data.serviceName}-${data.address}`,
-        label : this.$t('dubbo.providePage.callTitle', data),
+        label: this.$t('dubbo.providePage.callTitle', data),
         componentName: "dubboInvoke",
         extendData: {
           provider: data
@@ -77,26 +87,59 @@ export default {
     openTelnet(index, data) {
       let tabData = {
         id: `telnet-${data.serviceName}-${data.address}`,
-        label : `telnet ${data.address}`,
+        label: `telnet ${data.address}`,
         componentName: "dubboTelnet",
         extendData: {
           provider: data
         },
       }
       this.$emit("openNewTab", tabData);
+    },
+    openMenu(row, column, event) {
+      // 菜单模板
+      const menuTemplate = [
+        {
+          label: "禁用-服务维度",
+          click: async () => {
+            registry.disableProvider(row.serviceName, this.registryCenterId, row.address, row.version);
+          }
+        },
+         {
+          label: "禁用-应用维度",
+          click: async () => {
+            
+          }
+        },
+         {
+          label: "启用-服务维度",
+          click: async () => {
+             registry.enableProvider(row.serviceName, this.registryCenterId, row.address, row.version);
+          }
+        }
+      ];
+
+      // // 构建菜单项
+      const menu = remote.Menu.buildFromTemplate(menuTemplate);
+
+      // 弹出上下文菜单
+      menu.popup({
+        // 获取网页所属的窗口
+        window: remote.getCurrentWindow()
+      });
+
+      // 阻止默认行为
+      event.preventDefault();
     }
   },
+
 };
 </script>
 
 <style>
-
-
 .versionSpan {
-  color : rgb(114,	197,	76	);
-  background-color :  rgb(237,	249,	230	);
-  padding : 5px 5px;
-  border-radius : 5px;
+  color: rgb(114, 197, 76);
+  background-color: rgb(237, 249, 230);
+  padding: 5px 5px;
+  border-radius: 5px;
 }
-
 </style>

@@ -2,11 +2,11 @@ const {
     ipcRenderer
 } = require('electron')
 
+
 const COMMUNICATION_CHANEL = "ipc-main-unify";
 
 function wrapper(target, moduleName) {
     moduleName = moduleName || target.name;
-
 
     // 模块名不能为空
     if (!moduleName) {
@@ -41,13 +41,17 @@ function wrapper(target, moduleName) {
                     args
                 }
                 // 和主进程进行通讯
-                let result = ipcRenderer.sendSync(COMMUNICATION_CHANEL, invocation);
+                let repsonse = ipcRenderer.sendSync(COMMUNICATION_CHANEL, invocation);
 
-                if(result.isPromise){
-                    return Promise.resolve(result.data)
+                if(!repsonse.success){
+                    require('element-ui').Message({
+                        type: "error",
+                        message: repsonse.errorMessage,
+                    });
+                    throw new Error(repsonse.errorMessage);
                 }
                 // 调用方法的结果
-                return result ? result.data : result;
+                return repsonse.data;
             }
         }
     };
