@@ -13,7 +13,6 @@ if (process.env.NODE_ENV === 'development') {
     jarPath = path.join(__dirname, '../../app.asar.unpacked/build/java-invoker.jar')
 }
 
-
 async function invokeMethod(provder, metadata, method, code) {
     let {
         ip,
@@ -38,7 +37,7 @@ async function invokeMethod(provder, metadata, method, code) {
         dataList: dataList
     }
 
-    const outFile = path.join(constant.APPLICATION_JAVA_INVOKE_DIR, serviceName, "java-invoker-out.json");
+    const outFile = path.join(constant.APPLICATION_JAVA_INVOKE_DIR, `${serviceName}${new Date().getTime()}.json`);
 
     fs.writeFileSync(outFile, JSON.stringify(invokeParam));
 

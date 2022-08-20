@@ -41,6 +41,7 @@ export default {
   },
   created() {
     
+    debugger
     this.tabId = `serviceInfoTab-${this.serviceName}`;
     this.tabDataList.push(
       {

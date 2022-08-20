@@ -89,6 +89,7 @@ export default {
       let data = {
         registryCenterId: this.connectInfo._id,
         serviceName: serviceInfo.serviceName,
+        interfaceName: serviceInfo.label,
       };
       this.$emit("clickServiceInfo", data);
     },

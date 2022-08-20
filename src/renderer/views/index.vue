@@ -120,12 +120,12 @@ export default {
   methods: {
 
     clickServiceInfo(data) {
-      let { serviceName, registryCenterId } = data;
+      let { serviceName, interfaceName, registryCenterId } = data;
       let exist = this.dubboListList.find(tab => tab.serviceName == serviceName);
 
       // 不存在，新增一个
       if (!exist) {
-        let title = serviceName.split(".")[serviceName.split(".").length - 1];
+        let title = interfaceName.split(".")[interfaceName.split(".").length - 1];
 
         this.dubboListList.push({
           id: serviceName,

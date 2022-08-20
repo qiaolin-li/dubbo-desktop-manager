@@ -113,7 +113,7 @@ import invokeHisotryRecord from "@/main/repository/invokeHistoryRepository.js";
 import registry from "@/main/registry";
 import resolveMateData from "@/utils/resolveMateData";
 import codeEditor from "@/renderer/components/editor/code-editor.vue";
-import { Loading } from 'element-ui';
+import Loading from "@/utils/MyLoading";
 
 export default {
   components: {
@@ -168,46 +168,41 @@ export default {
         return;
       }
 
-      let loadingInstance = Loading.service({
-        target: "#invoke-dubbo-dialog-content",
-        text: this.$t("dubbo.invokePage.invokeProgress"),
-        spinner: "0",
-        background: 'rgba(0, 0, 0, 0.2)'
+      let rejectFun = () => { };
+
+      let loadingInstance = Loading.service(this.$t("dubbo.invokePage.invokeProgress"), this.$t("dubbo.invokePage.cancelInvoke"), () => {
+        rejectFun(this.$t('dubbo.invokePage.callDubboServiceError'));
       });
 
-
-      let cancelFunction = () => { };
-      let cancelPromise = new Promise(reject => {
-        cancelFunction = reject;
-      });
-
-      let button = document.createElement("input");
-      button.type = "button";
-      button.value = this.$t("dubbo.invokePage.cancelInvoke")
-      button.className = "cancel-button";
-      button.addEventListener("click", () => {
-        cancelFunction(this.$t("dubbo.invokePage.cancelInvoke"));
-      });
-      loadingInstance.$el.firstElementChild.appendChild(button)
-
-      try {
-        let response = dubboInvoke.invokeMethod(
-          this.provider,
-          this.metadata,
-          this.method,
-          this.codeConfig.code
-        );
-        
-        this.invokeReulst.code = response.code;
-        this.invokeReulst.elapsedTime = response.elapsedTime;
-        this.$message({
-          type: "success",
-          message: this.$t('dubbo.invokePage.callDubboServiceSuccess'),
+      this.$nextTick(() => {
+        new Promise((resovle, reject) => {
+          rejectFun = reject;
+          let response = dubboInvoke.invokeMethod(
+            this.provider,
+            this.metadata,
+            this.method,
+            this.codeConfig.code
+          );
+          resovle(response);
+        }).then(response => {
+          this.invokeReulst.code = response.code;
+          this.invokeReulst.elapsedTime = response.elapsedTime;
+          this.$message({
+            type: "success",
+            message: this.$t('dubbo.invokePage.callDubboServiceSuccess'),
+          });
+          this.flushInvokeHistoryList();
+        }).catch(errorMessage => {
+          this.$message({
+            type: "error",
+            message: errorMessage,
+          });
+        }).finally(() => {
+          loadingInstance.close();
         });
-        this.flushInvokeHistoryList();
-      } finally {
-        loadingInstance.close();
-      }
+
+      })
+
 
 
     },

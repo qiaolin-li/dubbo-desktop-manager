@@ -183,7 +183,8 @@ function getMetaData(providerInfo, registryConfig) {
     let params = {
         dataId: dataId,
         group: "dubbo",
-        namespaceId: registryConfig.namespaceId || ""
+        namespaceId: registryConfig.namespaceId || "",
+        tenant: registryConfig.namespaceId || ""
     }
 
     return new Promise((resolve, reject) => {
