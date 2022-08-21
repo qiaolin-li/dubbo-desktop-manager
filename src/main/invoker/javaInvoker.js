@@ -8,10 +8,11 @@ import JSONFormater from "@/utils/JSONFormater";
 
 let jarPath;
 if (process.env.NODE_ENV === 'development') {
-    jarPath = path.join(__dirname, '../public/java-invoker.jar');
+    jarPath = path.join(__dirname, '../public/jar/java-invoker.jar');
 } else {
-    jarPath = path.join(__dirname, '../../app.asar.unpacked/build/java-invoker.jar')
+    jarPath = path.join(__dirname, '../app.asar.unpacked/jar/java-invoker.jar')
 }
+
 
 async function invokeMethod(provder, metadata, method, code) {
     let {
