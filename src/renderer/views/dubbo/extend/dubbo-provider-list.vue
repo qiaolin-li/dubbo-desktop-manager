@@ -16,7 +16,7 @@
           <span class="versionSpan">{{ scope.row.revision  }} </span>
         </template>
       </el-table-column>
-          <el-table-column prop="disabled" :label="$t('dubbo.providePage.disabled')" :show-overflow-tooltip="true">
+      <el-table-column prop="disabled" :label="$t('dubbo.providePage.disabled')" :show-overflow-tooltip="true">
         <template slot-scope="scope">
           <span class="versionSpan">{{ scope.row.disabled ? disableTypeMap[scope.row.disabledType] :''  }} </span>
         </template>
@@ -48,9 +48,9 @@ export default {
   },
   data() {
     return {
-      disableTypeMap : {
-        service : "服务维度",
-        application : "应用维度"
+      disableTypeMap: {
+        service: "服务维度",
+        application: "应用维度"
       },
       providerList: []
     };
@@ -70,7 +70,7 @@ export default {
   },
   methods: {
     async handleNodeClick() {
-      this.providerList = registry.getProviderList(this.serviceName, this.registryCenterId);
+      this.providerList = await registry.getProviderList(this.serviceName, this.registryCenterId);
     },
     openInvokeDrawer(index, data) {
       let tabData = {
@@ -101,19 +101,19 @@ export default {
         {
           label: "禁用-服务维度",
           click: async () => {
-            registry.disableProvider(row.serviceName, this.registryCenterId, row.address, row.version);
+            await registry.disableProvider(row.serviceName, this.registryCenterId, row.address, row.version);
           }
         },
-         {
+        {
           label: "禁用-应用维度",
           click: async () => {
-            
+
           }
         },
-         {
+        {
           label: "启用-服务维度",
           click: async () => {
-             registry.enableProvider(row.serviceName, this.registryCenterId, row.address, row.version);
+            await registry.enableProvider(row.serviceName, this.registryCenterId, row.address, row.version);
           }
         }
       ];

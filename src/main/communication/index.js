@@ -1,6 +1,7 @@
 import {
     ipcMain
 } from 'electron'
+import {getWindow} from '@/main/holder/WindowHolder.js';
 
 
 const COMMUNICATION_CHANEL = "ipc-main-unify";
@@ -10,22 +11,23 @@ const ALREADY_REGISTERED_MODULES = new Map();
  function startListener() {
     // method
     ipcMain.on(COMMUNICATION_CHANEL, async (event, invocation) => {
-        let {moduleName, method, args} = invocation;
+        let {moduleName, method,callbackChannel, args} = invocation;
 
         try{
             let obj = ALREADY_REGISTERED_MODULES.get(moduleName);
             
             let result = Reflect.apply(obj[method], obj, args)
-
+            
+            let window = getWindow();
             if(result instanceof Promise){
                 let data = await result;
-                event.returnValue = new Response(true, data)
+                window.webContents.send(callbackChannel, new Response(true, data));
                 return;
             }
-            event.returnValue = new Response(true, result);
+            window.webContents.send(callbackChannel, new Response(true, result));
         }catch(e){
             console.log("调用接口异常", e);
-            event.returnValue = new Response(false, null, e.message);
+            window.webContents.send(callbackChannel, new Response(false, null, e.message));
         }
     })
 }

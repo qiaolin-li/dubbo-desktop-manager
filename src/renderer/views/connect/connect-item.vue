@@ -66,8 +66,8 @@ export default {
       // 初始化
       this.findInterfaceList();
     },
-    findInterfaceList() {
-      let list = registry.getServiceList(this.connectInfo._id);
+    async findInterfaceList() {
+      let list = await registry.getServiceList(this.connectInfo._id);
       for (let i = 0; i < list.length; i++) {
         list[i].leaf = true;
       }

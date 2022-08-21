@@ -1,17 +1,14 @@
 import lowdb from "lowdb"
 import FileSync from "lowdb/adapters/FileSync.js"
-import consumer from "@/main/communication/consumer.js";
 import constant from "@/utils/Constant.js";
 
 let db = null;
 
-if (process.type != "renderer") {
-    const adapter = new FileSync(constant.APPLICATION_CONFIG_FILE)
-    db = lowdb(adapter)
+const adapter = new FileSync(constant.APPLICATION_CONFIG_FILE)
+db = lowdb(adapter)
 
-    // Read data from JSON file, this will set db.data content
-    db.read()
-}
+// Read data from JSON file, this will set db.data content
+db.read()
 
 
 /**
@@ -37,14 +34,8 @@ function getProperty(key) {
     return db.read().get(key).value()
 }
 
-let data = {
-    name: "appConfig",
+export default {
     setProperty,
     hasProperty,
     getProperty,
-    install(communication) {
-        communication.registry(data);
-    }
 }
-
-export default consumer.wrapper(data);

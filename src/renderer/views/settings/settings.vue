@@ -7,15 +7,15 @@
     </el-select>
 
     <el-divider content-position="left">{{$t('settings.invokerSettings')}}</el-divider>
-     {{$t('settings.invokerSettings.invokerType')}}：
-       <el-select v-model="invokerType">
+    {{$t('settings.invokerSettings.invokerType')}}：
+    <el-select v-model="invokerType">
       <el-option v-for="invokerType in invokerTypes" :key="invokerType.code" :label="invokerType.name" :value="invokerType.code"></el-option>
     </el-select>
-    <br/>
-    <br/>
+    <br />
+    <br />
     {{$t('settings.invokerSettings.invokerTypeTips')}}
 
-     <el-divider content-position="left"></el-divider>
+    <el-divider content-position="left"></el-divider>
 
     <el-button @click="saveConfig">{{$t('settings.apply')}}</el-button>
   </div>
@@ -43,16 +43,16 @@ export default {
       ]
     }
   },
-  created() {
-    this.selectMessage = i18n.locale;
+  async created() {
+    this.selectMessage =  appConfig.getProperty("systemLocale");
     this.messages = i18n.messages;
-    this.invokerType = appConfig.getProperty("invokerType") || "telnet";
+    this.invokerType =  appConfig.getProperty("invokerType") || "telnet";
   },
   methods: {
-    saveConfig() {
+    async saveConfig() {
       i18n.locale = this.selectMessage;
-      appConfig.setProperty("systemLocale", this.selectMessage);
-      appConfig.setProperty("invokerType", this.invokerType);
+       appConfig.setProperty("systemLocale", this.selectMessage);
+       appConfig.setProperty("invokerType", this.invokerType);
     }
   }
 

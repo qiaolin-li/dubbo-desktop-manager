@@ -39,14 +39,14 @@ export default {
     this.findConnectList();
   },
   methods: {
-    findConnectList() {
-      let connectInfoList = connectRepository.findList();
-        for (let i = 0; i < connectInfoList.length; i++) {
-          connectInfoList[i].interfaceList = [];
-          connectInfoList[i].isShow = false;
-          connectInfoList[i].refreshNum = 0;
-        }
-        this.connectInfoList = connectInfoList;
+    async findConnectList() {
+      let connectInfoList = await connectRepository.findList();
+      for (let i = 0; i < connectInfoList.length; i++) {
+        connectInfoList[i].interfaceList = [];
+        connectInfoList[i].isShow = false;
+        connectInfoList[i].refreshNum = 0;
+      }
+      this.connectInfoList = connectInfoList;
     },
     openConnect(connectInfo) {
       connectInfo.isShow = !connectInfo.isShow;
@@ -71,14 +71,14 @@ export default {
         confirmButtonText: this.$t('base.confirm'),
         cancelButtonText: this.$t('base.cancel'),
         type: "warning",
-      }).then(() => {
+      }).then(async () => {
         // eslint-disable-next-line no-unused-vars
-        connectRepository.deleteConnect(id);
-          this.$message({
-            type: "success",
-            message: this.$t('base.deleteSuccess'),
-          });
-          this.findConnectList();
+        await connectRepository.deleteConnect(id);
+        this.$message({
+          type: "success",
+          message: this.$t('base.deleteSuccess'),
+        });
+        this.findConnectList();
       }).catch(() => { });
 
       //W3C阻止冒泡方法

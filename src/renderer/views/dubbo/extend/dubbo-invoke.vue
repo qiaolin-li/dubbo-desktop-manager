@@ -171,39 +171,30 @@ export default {
       let rejectFun = () => { };
 
       let loadingInstance = Loading.service(this.$t("dubbo.invokePage.invokeProgress"), this.$t("dubbo.invokePage.cancelInvoke"), () => {
+        console.log("点击了哦！！！！！！！！！！");
         rejectFun(this.$t('dubbo.invokePage.callDubboServiceError'));
       });
 
-      this.$nextTick(() => {
-        new Promise((resovle, reject) => {
-          rejectFun = reject;
-          let response = dubboInvoke.invokeMethod(
-            this.provider,
-            this.metadata,
-            this.method,
-            this.codeConfig.code
-          );
-          resovle(response);
-        }).then(response => {
-          this.invokeReulst.code = response.code;
-          this.invokeReulst.elapsedTime = response.elapsedTime;
-          this.$message({
-            type: "success",
-            message: this.$t('dubbo.invokePage.callDubboServiceSuccess'),
-          });
-          this.flushInvokeHistoryList();
-        }).catch(errorMessage => {
-          this.$message({
-            type: "error",
-            message: errorMessage,
-          });
-        }).finally(() => {
-          loadingInstance.close();
+
+      try {
+
+        let response = await dubboInvoke.invokeMethod(
+          this.provider,
+          this.metadata,
+          this.method,
+          this.codeConfig.code
+        );
+
+        this.invokeReulst.code = response.code;
+        this.invokeReulst.elapsedTime = response.elapsedTime;
+        this.$message({
+          type: "success",
+          message: this.$t('dubbo.invokePage.callDubboServiceSuccess'),
         });
-
-      })
-
-
+        this.flushInvokeHistoryList();
+      } finally {
+        loadingInstance.close();
+      }
 
     },
     async generateInvokeCommand() {
@@ -218,7 +209,7 @@ export default {
       this.codeConfig.code = invokeHistory.param;
     },
     async flushInvokeHistoryList() {
-      this.invokeHisotryList = invokeHisotryRecord.findList(this.provider.serviceName, this.method, 1, 50);
+      this.invokeHisotryList = await invokeHisotryRecord.findList(this.provider.serviceName, this.method, 1, 50);
     },
     generateParam() {
 
@@ -226,8 +217,8 @@ export default {
       let code = resolveMateData.generateParam(this.metadata, this.method);
       this.codeConfig.code = code || "[]";
     },
-    getMataData() {
-      this.metadata = registry.getMetaData(this.provider, this.registryCenterId);
+    async getMataData() {
+      this.metadata = await registry.getMetaData(this.provider, this.registryCenterId);
     },
     getInvokeHisotryTitle(invokeHistory) {
       return this.$moment(new Date(invokeHistory.createTime)).format(

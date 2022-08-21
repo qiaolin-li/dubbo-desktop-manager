@@ -127,13 +127,14 @@ export default {
       if (!exist) {
         let title = interfaceName.split(".")[interfaceName.split(".").length - 1];
 
-        this.dubboListList.push({
+        let data = {
           id: serviceName,
           title: title,
           serviceName,
           registryCenterId: registryCenterId
-        });
+        };
 
+        this.dubboListList.push(data);
       }
 
       this.currentTabId = serviceName;

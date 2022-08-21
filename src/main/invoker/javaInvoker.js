@@ -24,7 +24,11 @@ async function invokeMethod(provder, metadata, method, code) {
     let params = JSON.parse(code);
     for (let i = 0; i < params.length; i++) {
         let data = params[i];
-        dataList.push(JSON.stringify(data));
+        if(typeof(data) =='string'){
+            dataList.push(data);
+        } else {
+            dataList.push(JSON.stringify(data));
+        }
     }
 
 
@@ -40,8 +44,13 @@ async function invokeMethod(provder, metadata, method, code) {
     const outFile = path.join(constant.APPLICATION_JAVA_INVOKE_DIR, `${serviceName}${new Date().getTime()}.json`);
 
     fs.writeFileSync(outFile, JSON.stringify(invokeParam));
-
+ 
     let data = await executeJar(outFile);
+
+    if(data && !data.success) {
+        console.log("调用Java失败：", data.data);
+    }
+
     return new InvokeResult(JSONFormater(JSON.stringify(data.data)), data.elapsedTime);
 }
 

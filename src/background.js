@@ -10,14 +10,12 @@ import template from "./main/menuList.js";
 import communication from "@/main/communication/index.js";
 import connectRepository from "@/main/repository/connectRepository.js";
 import invokeHisotryRecord from "@/main/repository/invokeHistoryRepository.js";
-import appConfig from "@/main/repository/appConfig.js";
 import {setWindow} from '@/main/holder/WindowHolder.js';
 import invoke from "@/main/invoker/index.js";
 import registry from "@/main/registry/index.js";
 connectRepository.install(communication)
 invokeHisotryRecord.install(communication)
 invoke.install(communication)
-appConfig.install(communication)
 registry.install(communication)
 
 // Scheme must be registered before the app is ready
