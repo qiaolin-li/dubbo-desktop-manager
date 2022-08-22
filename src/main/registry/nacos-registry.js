@@ -2,7 +2,6 @@ import common from "./common";
 const axios = require('axios').default;
 
 async function getServiceList(registryConfig) {
-    console.log(111)
 
     let params = {
         pageNo: 1,

@@ -1,9 +1,9 @@
 import { Loading } from 'element-ui';
 
 
-function service(text, cancelText, cancelFunction){
+function service(target, text, cancelText, cancelFunction){
     let loadingInstance = Loading.service({
-        target: "#invoke-dubbo-dialog-content",
+        target: target,
         text: text,
         spinner: "0",
         background: 'rgba(0, 0, 0, 0.2)'

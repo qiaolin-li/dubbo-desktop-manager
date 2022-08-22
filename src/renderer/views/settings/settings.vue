@@ -1,12 +1,12 @@
 <template>
   <div class="settingsContainer">
-    <el-divider content-position="left">{{$t('settings.baseSettings')}}</el-divider>
+    <el-divider content-position="left">{{$t('settings.baseSettings.title')}}</el-divider>
     {{$t('settings.baseSettings.language')}}：
     <el-select v-model="selectMessage">
       <el-option v-for="message in messages" :key="message.code" :label="message.name" :value="message.code"></el-option>
     </el-select>
 
-    <el-divider content-position="left">{{$t('settings.invokerSettings')}}</el-divider>
+    <el-divider content-position="left">{{$t('settings.invokerSettings.title')}}</el-divider>
     {{$t('settings.invokerSettings.invokerType')}}：
     <el-select v-model="invokerType">
       <el-option v-for="invokerType in invokerTypes" :key="invokerType.code" :label="invokerType.name" :value="invokerType.code"></el-option>

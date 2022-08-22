@@ -1,7 +1,7 @@
 <template>
   <div class="dubboProviderListContainer">
-
-    <el-table :data="providerList" class="content" @row-contextmenu="openMenu">
+    <el-button type="primary" @click="exportExcel">点击导出</el-button>
+    <el-table :data="providerList" class="content" @row-contextmenu="openMenu" id="out-table">
       <el-table-column type="expand">
         <template slot-scope="props">
           <div v-for="method in props.row.methods" :key="method">{{method}}</div><br />
@@ -40,6 +40,7 @@
 <script>
 import registry from "@/main/registry";
 const remote = require("@electron/remote");
+const XLSX = require("xlsx");
 
 
 export default {
@@ -69,6 +70,38 @@ export default {
     this.handleNodeClick();
   },
   methods: {
+    exportExcel(id, title) {
+
+      let filePaths = remote.dialog.showOpenDialogSync({
+        title: "选择导出文件",
+        defaultPath: "./",
+
+        filters: [{
+          name: "Excel",
+          extensions: ["xlsx"]
+        }],
+        properties: [
+          "openDirectory",
+          "createDirectory"
+        ]
+      })
+
+      if (filePaths) {
+        /* generate workbook object from table */
+        var wb = XLSX.utils.table_to_book(document.querySelector("#out-table"))
+        /* get binary string as output */
+        var wbout = XLSX.write(wb, { bookType: 'xlsx', bookSST: true, type: 'array' })
+        try {
+          require("fs").writeFileSync(filePaths[0] + "/test.xlsx", Buffer.from(wbout), "binary");
+        } catch (e) { 
+          if (typeof console !== 'undefined') {
+            console.log(e, wbout) 
+          }
+        }
+        return wbout
+      }
+
+    },
     async handleNodeClick() {
       this.providerList = await registry.getProviderList(this.serviceName, this.registryCenterId);
     },

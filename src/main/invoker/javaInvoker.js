@@ -5,6 +5,7 @@ import fs from 'fs';
 import path from 'path';
 import constant from "@/utils/Constant.js";
 import JSONFormater from "@/utils/JSONFormater";
+import i18n from '@/i18n'
 
 let jarPath;
 if (process.env.NODE_ENV === 'development') {
@@ -48,8 +49,8 @@ async function invokeMethod(provder, metadata, method, code) {
  
     let data = await executeJar(outFile);
 
-    if(data && !data.success) {
-        console.log("调用Java失败：", data.data);
+    if(data){
+        data["elapsedTime"] = `${data["elapsedTime"]} ms`; 
     }
 
     return new InvokeResult(JSONFormater(JSON.stringify(data.data)), data.elapsedTime);
@@ -74,15 +75,6 @@ function executeJar(outFile) {
         execFile(javaCommandPath, commandArgs, config, (error, stdout, stderr) => {
             if (error) {
                 let tempError = error.message || stderr || stdout;
-                if (/spawn .* ENOENT/.test(tempError)) {
-                    // JDK 不存在
-                    'config.JavaHomeConfigResult.notFoundJDK'
-                    reject({
-                        success: false,
-                        message: tempError
-                    });
-                    return;
-                }
                 reject({
                     success: false,
                     message: tempError

@@ -37,32 +37,21 @@
           {{ provider.revision }}
         </el-descriptions-item>
 
-        <el-descriptions-item span="2">
-          <template slot="label"> {{$t('dubbo.invokePage.method')}} </template>
+        <el-descriptions-item span="3">
+          <template slot="label"> {{$t('dubbo.invokePage.operate')}} </template>
           <el-select v-model="method" @change="methodChange" class="methodSelect">
             <el-option v-for="item in provider.methods" :key="item" :label="item" :value="item">
             </el-option>
           </el-select>
-        </el-descriptions-item>
-        <el-descriptions-item>
-          <template slot="label"> {{$t('dubbo.invokePage.operate')}}</template>
-          <el-button-group>
-            <el-tooltip class="item" effect="light" :content="$t('dubbo.invokePage.call')" placement="top">
-              <el-button plain type="primary" icon="el-icon-thumb" @click="invokeDubbo()"></el-button>
-            </el-tooltip>
-            <el-tooltip class="item" effect="light" :content="$t('dubbo.invokePage.generateParam')" placement="top">
-              <el-button plain type="primary" icon="el-icon-news" @click="generateParam()"></el-button>
-            </el-tooltip>
-            <el-tooltip class="item" effect="light" :content="$t('dubbo.invokePage.generateCommand')" placement="top">
-              <el-button plain type="primary" icon="el-icon-magic-stick" @click="generateInvokeCommand()"></el-button>
-
-            </el-tooltip>
-          </el-button-group>
+          <el-select v-model="currentInvoker" class="invokerSelect">
+            <el-option v-for="invokerType in invokerTypes" :key="invokerType.code" :label="invokerType.name" :value="invokerType.code"></el-option>
+          </el-select>
+          <el-button plain type="primary" icon="el-icon-thumb" @click="invokeDubbo()" :disabled="invokeing" >{{invokeing ?  $t('dubbo.invokePage.calling') : $t('dubbo.invokePage.call')}}</el-button>
         </el-descriptions-item>
       </el-descriptions>
     </div>
 
-    <div id="invoke-dubbo-dialog-content" class="invoke-dubbo-dialog-content ">
+    <div :id="contentElementId" class="invoke-dubbo-dialog-content ">
       <div class="invoke-dubbo-dialog-content-code">
         <div class="contentCode broder">
 
@@ -74,6 +63,12 @@
               </el-popover>
             </template>
             <template v-slot:content>
+              <el-tooltip class="item" effect="light" :content="$t('dubbo.invokePage.generateParam')" placement="top">
+                <i class="el-icon-news" @click="generateParam"></i>
+              </el-tooltip>
+              <el-tooltip class="item" effect="light" :content="$t('dubbo.invokePage.generateCommand')" placement="top">
+                <i class="el-icon-magic-stick" @click="generateInvokeCommand"></i>
+              </el-tooltip>
               <el-tooltip class="item" effect="light" :content="$t('dubbo.invokePage.format')" placement="top-start">
                 <i class="el-icon-lollipop" @click="formatContent"></i>
               </el-tooltip>
@@ -114,6 +109,7 @@ import registry from "@/main/registry";
 import resolveMateData from "@/utils/resolveMateData";
 import codeEditor from "@/renderer/components/editor/code-editor.vue";
 import Loading from "@/utils/MyLoading";
+import appConfig from "@/main/repository/appConfig.js";
 
 export default {
   components: {
@@ -121,6 +117,7 @@ export default {
   },
   data() {
     return {
+      contentElementId :"",
       codeConfig: {
         code: "[]",
       },
@@ -131,13 +128,29 @@ export default {
       },
       method: "",
       invokeHisotryList: [],
+      currentInvoker: "",
+      invokeing: false,
+      invokerTypes: [
+        {
+          code: "telnet",
+          name: "Telnet"
+        },
+        {
+          code: "java",
+          name: "Java"
+        }
+      ]
     };
   },
   props: {
     registryCenterId: String,
     provider: Object,
   },
+  created(){
+    this.contentElementId = `invoke-dubbo-content-${this.provider.serviceName.replace(/\./g, '-')}-${this.provider.address.replace(/./g, '-')}`;
+  },
   mounted() {
+    this.currentInvoker = this.invokerType = appConfig.getProperty("invokerType") || "telnet";
     this.getMataData();
 
     if (this.provider && this.provider.methods) {
@@ -170,21 +183,26 @@ export default {
 
       let rejectFun = () => { };
 
-      let loadingInstance = Loading.service(this.$t("dubbo.invokePage.invokeProgress"), this.$t("dubbo.invokePage.cancelInvoke"), () => {
-        console.log("点击了哦！！！！！！！！！！");
-        rejectFun(this.$t('dubbo.invokePage.callDubboServiceError'));
+      let loadingInstance = Loading.service(
+        `#${this.contentElementId}`,
+        this.$t("dubbo.invokePage.invokeProgress"), 
+        this.$t("dubbo.invokePage.cancelInvoke"), () => {
+        rejectFun(this.$t('dubbo.invokePage.cancelInvoke'));
       });
 
-
       try {
+        this.invokeing = true;
 
-        let response = await dubboInvoke.invokeMethod(
-          this.provider,
-          this.metadata,
-          this.method,
-          this.codeConfig.code
-        );
-
+        let response = await new Promise((resolve, reject) => {
+          rejectFun = reject;
+          dubboInvoke.invokeMethod(
+            this.provider,
+            this.metadata,
+            this.method,
+            this.codeConfig.code,
+            this.currentInvoker
+          ).then(resolve).catch(reject);
+        });
         this.invokeReulst.code = response.code;
         this.invokeReulst.elapsedTime = response.elapsedTime;
         this.$message({
@@ -192,8 +210,14 @@ export default {
           message: this.$t('dubbo.invokePage.callDubboServiceSuccess'),
         });
         this.flushInvokeHistoryList();
-      } finally {
+      } catch (errorMessage) {
+         this.$message({
+            type: "error",
+            message: errorMessage,
+          });
+      }finally {
         loadingInstance.close();
+        this.invokeing = false;
       }
 
     },
@@ -293,7 +317,8 @@ export default {
 }
 
 .methodSelect {
-  width: 100%;
+  margin-right: 10px;
+  width: 300px;
 }
 
 .contentCode {
@@ -324,5 +349,14 @@ export default {
 .cancel-button:active {
   position: relative;
   top: 1px;
+}
+
+.item {
+  padding-left: 10px;
+}
+
+.invokerSelect {
+  width: 100px;
+  padding-right: 10px;
 }
 </style>

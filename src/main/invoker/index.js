@@ -4,9 +4,9 @@ import invokeHisotryRecord from "@/main/repository/invokeHistoryRepository.js";
 import consumer from "@/main/communication/consumer.js";
 import appConfig from "@/main/repository/appConfig.js";
 
-async function invokeMethod(provder, metadata, method, code) {
+async function invokeMethod(provder, metadata, method, code, currentInvoker) {
 
-    let result = doInvokeMethod(provder, metadata, method, code);
+    let result = doInvokeMethod(provder, metadata, method, code, currentInvoker);
 
     // 保存调用记录
     let invokeHistory = {
@@ -19,9 +19,9 @@ async function invokeMethod(provder, metadata, method, code) {
     return result;
 }
 
-function doInvokeMethod(provder, metadata, method, code) {
+function doInvokeMethod(provder, metadata, method, code, currentInvoker) {
     // 执行器类型
-    let invokerType = appConfig.getProperty("invokerType") || "telnet";
+    let invokerType = currentInvoker || appConfig.getProperty("invokerType") || "telnet";
 
     if ("telnet" === invokerType) {
         return telnetInvoker.invokeMethod(provder, metadata, method, code);

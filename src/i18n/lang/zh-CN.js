@@ -32,7 +32,7 @@ export default {
         apply: "应用",
         invokerSettings : {
             title:"执行器设置",
-            invokerType : "执行器类型",
+            invokerType : "默认执行器类型",
             invokerTypeTips : "使用Java执行器时，请先安装Java环境，Java调用相对Telnet执行器较慢，但是Java调用返回的信息更加完整。",
         }
     },
@@ -91,6 +91,7 @@ export default {
             method: "方法",
             operate: "操作",
             call: "调用",
+            calling: "调用中",
             generateParam: "生成参数",
             generateCommand: "生成命令",
             requestParam: "请求参数",

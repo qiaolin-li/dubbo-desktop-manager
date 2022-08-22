@@ -19,9 +19,6 @@ if(process.platform === 'win32'){
   import("./assets/style/windows.css")
 }
 
-console.log(__dirname)
-
-
 import moment from 'moment'
 Vue.prototype.$moment = moment
 moment.locale('zh-cn')  //设置区域为中国
