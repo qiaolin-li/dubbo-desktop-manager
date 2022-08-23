@@ -110,6 +110,7 @@ export default {
             invokeProgress: "正在调用..",
             cancelInvoke: "取消调用",
             invokeTimeOut: "调用Dubbo接口超时",
+            notFoundJDK:"如果需要使用Java调用器，请先安装JDK",
         }
     },
     telnetTerminal: {

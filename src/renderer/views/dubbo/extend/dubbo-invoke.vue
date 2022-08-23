@@ -210,12 +210,7 @@ export default {
           message: this.$t('dubbo.invokePage.callDubboServiceSuccess'),
         });
         this.flushInvokeHistoryList();
-      } catch (errorMessage) {
-         this.$message({
-            type: "error",
-            message: errorMessage,
-          });
-      }finally {
+      } finally {
         loadingInstance.close();
         this.invokeing = false;
       }

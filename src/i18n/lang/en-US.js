@@ -115,6 +115,7 @@ export default {
             invokeProgress: "Call in progress",
             cancelInvoke: "Cancel",
             invokeTimeOut: "The call to the Dubbo interface timed out.",
+            notFoundJDK:"如果需要使用Java调用器，请先安装JDK",
         },
         telnetTerminal: {
             connecting: "connecting {ip} {port}",

@@ -65,7 +65,7 @@ function executeJar(outFile) {
         '-jar', jarPath,
         outFile
     ];
-
+    debugger
     const config = {
         // maxBuffer: 100 * 1024 * 1024 * 1024, // 1G
     }
@@ -75,6 +75,11 @@ function executeJar(outFile) {
         execFile(javaCommandPath, commandArgs, config, (error, stdout, stderr) => {
             if (error) {
                 let tempError = error.message || stderr || stdout;
+                debugger
+                // JDK不存在
+                if(/spawn .* ENOENT/.test(tempError)){
+                    tempError = i18n.t("dubbo.invokePage.notFoundJDK");
+                }
                 reject({
                     success: false,
                     message: tempError
