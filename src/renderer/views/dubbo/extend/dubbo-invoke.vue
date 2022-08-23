@@ -352,7 +352,12 @@ export default {
 }
 
 .item {
-  padding-left: 10px;
+  margin-left: 2px;
+  padding: 4px;
+}
+.item:hover {
+ background-color: #ccc;
+  border-radius: 50%;
 }
 
 .invokerSelect {

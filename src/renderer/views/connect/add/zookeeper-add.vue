@@ -72,7 +72,6 @@ export default {
   props: {
     id: String
   },
-
   watch: {
     id: {
       handler() {
@@ -82,12 +81,11 @@ export default {
   },
   async mounted() {
     this.init();
-
   },
   methods: {
     async init() {
       if (this.id) {
-        let connect = connectRepository.findById(this.id);
+        let connect = await connectRepository.findById(this.id);
         this.form = connect;
       } else {
         this.form.type = "zookeeper"
@@ -96,10 +94,10 @@ export default {
         this.form.sessionTimeout = 5000;
       }
     },
-    saveZkConnectInfo() {
-      this.$refs.form.validate((valid) => {
+    async saveZkConnectInfo() {
+      this.$refs.form.validate(async (valid) => {
         if (valid) {
-          connectRepository.save(this.form);
+          await connectRepository.save(this.form);
           let data = { ...this.form };
           this.form.name = "";
           this.form.address = "127.0.0.1:2181";

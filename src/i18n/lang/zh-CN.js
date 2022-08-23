@@ -51,6 +51,8 @@ export default {
             rangeLimit: "长度在 1 到 32 个字符",
             inputConnectionAddress: "请输入链接地址",
         },
+        createSuccess:"新增连接成功!",
+        updateSuccess:"修改连接成功!",
         searchContent: "搜一搜",
         refreshSuccess: "刷新服务列表完成",
         refreshError: "刷新服务列表失败！原因：{e}",
@@ -70,6 +72,7 @@ export default {
             operate: "操作",
             call: "调用",
             callTitle: "调用 {address}",
+            exportExcel:"导出Excel"
         },
 
         consumerPage: {

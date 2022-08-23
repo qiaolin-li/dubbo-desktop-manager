@@ -4,6 +4,7 @@ const {
 
 const COMMUNICATION_CHANEL = "ipc-main-unify";
 const COMMUNICATION_CONSUMER_CHANEL = "ipc-rendenerer-unify";
+const waitResponsePromiseMap = new Map();
 
 function wrapper(target, moduleName) {
     moduleName = moduleName || target.name;
@@ -33,28 +34,22 @@ function wrapper(target, moduleName) {
             return async function () {
                 // 将所有参数转为数组
                 const args = [...arguments];
-                const callbackChannel = `${COMMUNICATION_CONSUMER_CHANEL}-${moduleName}-${method}-${Math.random()}`;
+                const requestId = `${COMMUNICATION_CONSUMER_CHANEL}-${moduleName}-${method}-${Math.random()}`;
                 // 将参数包装
                 let invocation = {
                     moduleName,
                     method,
-                    callbackChannel : callbackChannel,
+                    requestId : requestId,
                     args
                 }
+                
                 // 和主进程进行通讯
                 ipcRenderer.send(COMMUNICATION_CHANEL, invocation);
-                let data = await new Promise((resolve, reject) => {
-                    ipcRenderer.on(callbackChannel, (event, response) => {
-                        if (!response.success) {
-                            require('element-ui').Message({
-                                type: "error",
-                                message: response.errorMessage,
-                            });
-                            reject(new Error(response.errorMessage));
-                        }
 
-                        // 调用方法的结果
-                        return resolve(response.data);
+                let data = new Promise((resolve, reject) => {
+                    waitResponsePromiseMap.set(requestId, {
+                        resolve, 
+                        reject
                     });
                 });
 
@@ -63,6 +58,31 @@ function wrapper(target, moduleName) {
         }
     };
     return new Proxy(target, handler);
+}
+
+function startResponseListener(){
+    // 和主进程进行通讯
+    ipcRenderer.on(COMMUNICATION_CONSUMER_CHANEL, (event, response) => {
+        let waitResponsePromise = waitResponsePromiseMap.get(response.requestId);
+
+        try {
+            if (!response.success) {
+                require('element-ui').Message({
+                    type: "error",
+                    message: response.errorMessage,
+                });
+                waitResponsePromise.reject(new Error(response.errorMessage));
+            }
+    
+            // 调用方法的结果
+            return waitResponsePromise.resolve(response.data);
+        } finally {
+            waitResponsePromiseMap.delete(response.requestId);
+        }
+      
+    });
+
+    console.log("消费者监听器注册成功");
 }
 
 
@@ -75,6 +95,12 @@ function isMainProgress() {
         return true;
     }
 }
+
+if(!isMainProgress()){
+    // 启动监听
+    startResponseListener();
+}
+
 
 export default {
     wrapper

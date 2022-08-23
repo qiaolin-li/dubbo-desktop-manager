@@ -5,29 +5,29 @@ import {getWindow} from '@/main/holder/WindowHolder.js';
 
 
 const COMMUNICATION_CHANEL = "ipc-main-unify";
+const COMMUNICATION_CONSUMER_CHANEL = "ipc-rendenerer-unify";
 
 const ALREADY_REGISTERED_MODULES = new Map();
 
  function startListener() {
     // method
     ipcMain.on(COMMUNICATION_CHANEL, async (event, invocation) => {
-        let {moduleName, method,callbackChannel, args} = invocation;
+        let {moduleName, method,requestId, args} = invocation;
 
         try{
             let obj = ALREADY_REGISTERED_MODULES.get(moduleName);
             
             let result = Reflect.apply(obj[method], obj, args)
             
-            let window = getWindow();
             if(result instanceof Promise){
                 let data = await result;
-                window.webContents.send(callbackChannel, new Response(true, data));
+                getWindow().webContents.send(COMMUNICATION_CONSUMER_CHANEL, new Response(requestId, true, data));
                 return;
             }
-            window.webContents.send(callbackChannel, new Response(true, result));
+            getWindow().webContents.send(COMMUNICATION_CONSUMER_CHANEL, new Response(requestId, true, result));
         }catch(e){
             console.log("调用接口异常", e);
-            window.webContents.send(callbackChannel, new Response(false, null, e.message));
+            getWindow().webContents.send(COMMUNICATION_CONSUMER_CHANEL, new Response(requestId, false, null, e.message));
         }
     })
 }
@@ -44,7 +44,8 @@ function registry(target, moduleName) {
     ALREADY_REGISTERED_MODULES.set(moduleName, target);
 }
 
-function Response(success, data, errorMessage){
+function Response(requestId, success, data, errorMessage){
+    this.requestId = requestId;
     this.success = success;
     this.data = data;
     this.errorMessage = errorMessage;

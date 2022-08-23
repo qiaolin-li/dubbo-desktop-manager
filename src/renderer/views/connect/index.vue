@@ -1,10 +1,10 @@
 <template>
   <div id="connectDiv">
 
-    <connectList ref="connectList" @clickServiceInfo="clickServiceInfo" @editConnect="editConnect"></connectList>
+    <connectList ref="connectList" @clickServiceInfo="clickServiceInfo" @editConnect="openAddConnectDialog"></connectList>
 
     <el-dialog :title="$t('connect.addConnect')" width="40%" :visible.sync="dialogVisible" :close-on-click-modal="false">
-      <addConnect @saveSuccess="saveConnectSuccess" :id="currentConnectId" />
+      <addConnect @saveSuccess="saveConnectSuccess" :id="currentConnectId" :key="addConnectKey"/>
     </el-dialog>
   </div>
 
@@ -24,6 +24,7 @@ export default {
   },
   data() {
     return {
+      addConnectKey : 1,
       dialogVisible: false,
       currentConnectId: "",
     };
@@ -63,26 +64,19 @@ export default {
     });
   },
   methods: {
-    openAddConnectDialog() {
-      this.dialogVisible = true;
-      this.currentConnectId = "";
-    },
     // eslint-disable-next-line no-unused-vars
     saveConnectSuccess(data) {
-      this.$message({
-        type: "success",
-        message: "新增连接成功!",
-      });
       this.$refs.connectList.findConnectList();
       this.dialogVisible = false;
     },
-    editConnect(id) {
-      this.currentConnectId = id;
-      this.dialogVisible = true;
-    },
     clickServiceInfo(data) {
       this.$emit("clickServiceInfo", data);
-    }
+    },
+     openAddConnectDialog(id) {
+      this.addConnectKey++;
+      this.dialogVisible = true;
+      this.currentConnectId = id || "";
+    },
   }
 }
 </script>

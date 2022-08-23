@@ -89,7 +89,7 @@ export default {
   methods: {
     async init() {
       if (this.id) {
-        this.form = connectRepository.findById(this.id);
+        this.form = await connectRepository.findById(this.id);
       } else {
         this.form.type = "nacos"
         this.form.name = "";
@@ -99,9 +99,9 @@ export default {
       }
     },
     saveZkConnectInfo() {
-      this.$refs.form.validate((valid) => {
+      this.$refs.form.validate(async (valid) => {
         if (valid) {
-          connectRepository.save(this.form);
+          await connectRepository.save(this.form);
           let data = { ...this.form };
           this.form.name = "";
           this.form.address = "127.0.0.1:2181";

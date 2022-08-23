@@ -106,4 +106,9 @@ export default {
   margin-right: 5px;
   padding: 5px 5px;
 }
+
+.connectContainer-right i:hover {
+  background-color: #ccc;
+  border-radius: 50%;
+}
 </style>

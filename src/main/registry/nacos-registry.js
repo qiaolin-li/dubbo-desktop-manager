@@ -177,8 +177,6 @@ function getMetaData(providerInfo, registryConfig) {
     version = version || "";
     let dataId = `${serviceName}:${version}:${group || ''}:provider:${application}`;
 
-    console.log(dataId)
-
     let params = {
         dataId: dataId,
         group: "dubbo",
@@ -216,12 +214,11 @@ function getMetaData(providerInfo, registryConfig) {
 
 // eslint-disable-next-line no-unused-vars
 function disableProvider(serviceName, registryConfig, address, version){
-    
-    return Promise.resolve(new Error("nacos不支持"));
+    throw new Error("nacos不支持")
 }
 // eslint-disable-next-line no-unused-vars
 function enableProvider(serviceName, registryConfig, address, version){
-    return Promise.resolve(new Error("nacos不支持"));
+    throw new Error("nacos不支持")
 }
 
 export default {

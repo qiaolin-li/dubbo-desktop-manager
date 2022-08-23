@@ -20,7 +20,7 @@ export default {
   },
   props: {
     ip: String,
-    port: String,
+    port: [String, Number],
     terminalKey : String
   },
   mounted() {

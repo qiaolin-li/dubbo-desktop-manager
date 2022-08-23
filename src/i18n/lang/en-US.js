@@ -55,6 +55,8 @@ export default {
             rangeLimit: "The value contains 1 to 32 characters",
             inputConnectionAddress: "Please enter the link address",
         },
+        createSuccess:"Adding a connection succeeded!",
+        updateSuccess:"Succeeded in modifying the connection!",
         searchContent: "search content",
         refreshSuccess: "Refreshing the service list is complete",
         refreshError: "Failed to refresh the service list! The reason: {e}",
@@ -74,6 +76,7 @@ export default {
             operate: "operate",
             call: "call",
             callTitle: "call {address}",
+            exportExcel:"Export Excel"
         },
 
         consumerPage: {
