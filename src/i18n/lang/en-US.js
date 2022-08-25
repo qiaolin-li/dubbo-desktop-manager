@@ -115,12 +115,18 @@ export default {
             invokeProgress: "Call in progress",
             cancelInvoke: "Cancel",
             invokeTimeOut: "The call to the Dubbo interface timed out.",
-            notFoundJDK:"如果需要使用Java调用器，请先安装JDK",
+            notFoundJDK:"If you need to use the Java caller, install the JDK first",
         },
         telnetTerminal: {
             connecting: "connecting {ip} {port}",
             connectionTimeout: "Connection timed out, please check the network! {ip} {port} ",
             connectionClosed: "Disconnected, reconnecting...",
+        },
+        configurationPage: {
+            title : "configuration information",
+            save : "save configuration",
+            invalidFormat : "Incorrect configuration format",
+            saveSuccess:"save successfully"
         }
     }
 }

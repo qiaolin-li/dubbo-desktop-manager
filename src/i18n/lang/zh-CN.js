@@ -111,11 +111,18 @@ export default {
             cancelInvoke: "取消调用",
             invokeTimeOut: "调用Dubbo接口超时",
             notFoundJDK:"如果需要使用Java调用器，请先安装JDK",
+        },
+        telnetTerminal: {
+            connecting: "正在连接 {ip} {port}",
+            connectionTimeout: "连接超时，请检查网络! {ip} {port} ",
+            connectionClosed: "连接断开，正在重新连接...",
+        },
+        configurationPage: {
+            title : "配置信息",
+            save : "保存配置",
+            invalidFormat : "配置格式错误",
+            saveSuccess:"保存成功"
         }
     },
-    telnetTerminal: {
-        connecting: "正在连接 {ip} {port}",
-        connectionTimeout: "连接超时，请检查网络! {ip} {port} ",
-        connectionClosed: "连接断开，正在重新连接...",
-    }
+    
 }

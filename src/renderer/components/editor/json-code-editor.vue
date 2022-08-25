@@ -186,6 +186,10 @@ export default {
         //  this.$refs.cm.codemirror.setValue((JSON.stringify(JSON.parse(content), null, 2)))
       // });
     },
+    fullScreen(){
+      this.$refs.cm.codemirror.setSize("auto", "auto")
+      // this.$refs.cm.codemirror.setOption("fullScreen", true)
+    }
   },
   mounted() {
     // 代码提示功能 当用户有输入时，显示提示信息

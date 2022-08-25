@@ -1,5 +1,7 @@
 import common from "./common";
 const axios = require('axios').default;
+import configuration from '@/utils/Configuration';
+import qs from 'qs'
 
 async function getServiceList(registryConfig) {
 
@@ -64,8 +66,7 @@ function doGetServiceList(url, params) {
 
 }
 
-function getProviderList(serviceName, registryConfig) {
-
+async function getProviderList(serviceName, registryConfig) {
     // http://127.0.0.1:8848/nacos/v1/ns/instance/list
     let url = `${registryConfig.address}/nacos/v1/ns/instance/list`;
 
@@ -74,32 +75,33 @@ function getProviderList(serviceName, registryConfig) {
         namespaceId: registryConfig.namespaceId || ""
     }
 
-    return new Promise((resolve, reject) => {
-        axios.get(url, {
-                params
-            }).then(function (response) {
-                if (response.status != 200) {
-                    reject(new Error("查询服务列表错误! 原因" + response.data))
-                    return;
-                }
+    try {
+        let response = await axios.get(url, {
+            params
+        });
 
-                if (!response.data || !response.data.hosts) {
-                    return resolve(new Array());
-                }
+        if (!response.data || !response.data.hosts) {
+            return [];
+        }
 
-                let array = new Array();
-                for (let i = 0; i < response.data.hosts.length; i++) {
-                    const host = response.data.hosts[i];
-                    array.push(parseProvderInfo(host))
-                }
+        let array = new Array();
+        for (let i = 0; i < response.data.hosts.length; i++) {
+            const host = response.data.hosts[i];
 
-                return resolve(array);
-            })
-            .catch(function (error) {
-                reject(new Error("查询服务列表错误! 原因" + error))
-            })
+            let providerInfo = parseProvderInfo(host);
 
-    });
+            let disableInfo = await getDisableInfo(registryConfig, providerInfo);
+            if (disableInfo && disableInfo.find(item => item === '0.0.0.0' || item === providerInfo.address)) {
+                providerInfo.disabled = true;
+                providerInfo.disabledType = "service";
+            }
+            array.push(providerInfo)
+        }
+
+        return array;
+    } catch (error) {
+        throw new Error("查询服务列表错误! 原因" + error);
+    }
 }
 
 
@@ -212,13 +214,142 @@ function getMetaData(providerInfo, registryConfig) {
     });
 }
 
+
 // eslint-disable-next-line no-unused-vars
-function disableProvider(serviceName, registryConfig, address, version){
-    throw new Error("nacos不支持")
+async function getCurrentConfiguration(registryConfig, providerInfo) {
+
+    let config = await getConfiguration(registryConfig, providerInfo);
+
+
+    let configData = configuration.yamlToJSON(config);
+
+    if(configData){
+        return configData;
+    }
+
+    return configuration.createDefaultConfiguration(providerInfo.serviceName);
 }
+
+
+
 // eslint-disable-next-line no-unused-vars
-function enableProvider(serviceName, registryConfig, address, version){
-    throw new Error("nacos不支持")
+async function getConfiguration(registryConfig, providerInfo) {
+
+    // http://127.0.0.1:8848/nacos/v1/cs/configs
+    let url = `${registryConfig.address}/nacos/v1/cs/configs`;
+
+    let {
+        serviceName,
+        version,
+        group
+    } = providerInfo;
+    version = version || "";
+    let dataId = `${serviceName}:${version}:${group || ''}.configurators`;
+
+    let params = {
+        dataId: dataId,
+        group: "dubbo",
+        namespaceId: registryConfig.namespaceId || "",
+        tenant: registryConfig.namespaceId || ""
+    }
+
+    return new Promise((resolve, reject) => {
+        axios.get(url, {
+                params
+            }).then(function (response) {
+                if (!response.data) {
+                    return resolve("");
+                }
+
+                resolve(response.data);
+            })
+            .catch(function (error) {
+                if (error.response.status == 404) {
+                    resolve("");
+                    return;
+                }
+                reject(new Error("查询服务列表错误! 原因" + error))
+            })
+
+    });
+}
+
+// eslint-disable-next-line no-unused-vars
+async function saveConfiguration(registryConfig, providerInfo, doc) {
+    // http://127.0.0.1:8848/nacos/v1/cs/configs
+    let url = `${registryConfig.address}/nacos/v1/cs/configs`;
+
+    let params = {
+        dataId: buildDataId(providerInfo),
+        group: "dubbo",
+        namespaceId: registryConfig.namespaceId || "",
+        tenant: registryConfig.namespaceId || "",
+    }
+    if (doc && doc.configs && doc.configs.length > 0) {
+        params.content = configuration.JSONToYaml(doc);
+        try {
+            let response = await axios.post(url, qs.stringify(params));
+            if (response.status != 200) {
+                throw new Error("保存动态配置失败, 原因：" + response.data);
+            }
+        } catch (e) {
+            throw new Error("保存动态配置失败, 原因：" + e);
+        }
+
+        return;
+    } else {
+        let response = await axios.delete(url, {
+            params
+        });
+
+        // 成功
+        if (!response.success) {
+            console.log("调用失败了");
+        }
+
+    }
+}
+
+
+
+/**
+ * 
+ * @param {string} serviceName 
+ * @param {string[]} versions 多个版本
+ */
+ async function getDisableInfo(registryConfig, providerInfo) {
+    let doc = await getCurrentConfiguration(registryConfig, providerInfo);
+    let addressList = [];
+    if (doc && doc.configs) {
+      let configs = doc.configs;
+      for (let j = 0; j < configs.length; j++) {
+        let config = configs[j];
+        // 规则不是开启的，忽略
+        if (!config.enabled) {
+          continue;
+        }
+
+        if (!config.parameters || !config.parameters.disabled || config.parameters.disabled != true) {
+          continue;
+        }
+
+        addressList = addressList.concat(config.addresses);
+      }
+    }
+
+  return addressList;
+}
+
+
+
+function buildDataId(providerInfo) {
+    let {
+        serviceName,
+        version,
+        group
+    } = providerInfo;
+    version = version || "";
+    return `${serviceName}:${version}:${group || ''}.configurators`;
 }
 
 export default {
@@ -226,6 +357,7 @@ export default {
     getProviderList,
     getConsumerList,
     getMetaData,
-    disableProvider,
-    enableProvider
+    getConfiguration,
+    getCurrentConfiguration,
+    saveConfiguration
 }

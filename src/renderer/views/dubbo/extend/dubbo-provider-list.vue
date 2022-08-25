@@ -139,6 +139,17 @@ export default {
       }
       this.$emit("openNewTab", tabData);
     },
+    openConfiguration(data) {
+      let tabData = {
+        id: `configuration-${data.serviceName}-${data.version}`,
+        label: `configuration ${data.version}`,
+        componentName: "dubboProviderConfiguration",
+        extendData: {
+          provider: data
+        },
+      }
+      this.$emit("openNewTab", tabData);
+    },
     openMenu(row, column, event) {
       // 菜单模板
       const menuTemplate = [
@@ -159,24 +170,30 @@ export default {
         {
           label: "服务维度-禁用",
           click: async () => {
-            await registry.disableProvider(row.serviceName, this.registryCenterId, row.address, row.version);
+            await registry.disableProvider(this.registryCenterId, row);
             this.refreshProviderList();
           }
         },
         {
           label: "服务维度-启用",
           click: async () => {
-            await registry.enableProvider(row.serviceName, this.registryCenterId, row.address, row.version);
+            await registry.enableProvider(this.registryCenterId, row);
             this.refreshProviderList();
           }
         },
         { type: 'separator' },
         {
-          label: "应用维度-禁用",
+          label: "编辑服务动态配置",
           click: async () => {
-
+            this.openConfiguration(row);
           }
-        }
+        },
+        // {
+        //   label: "应用维度-禁用",
+        //   click: async () => {
+
+        //   }
+        // }
       ];
 
       // // 构建菜单项

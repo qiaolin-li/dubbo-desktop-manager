@@ -2,7 +2,7 @@ import common from "./common";
 import zookeeperClient from "node-zookeeper-client";
 import urlUtils from "@/utils/urlUtils.js";
 import i18n from '../../i18n'
-import Configuration from "./zookeeper/Configuration";
+import configuration from '@/utils/Configuration';
 
 const PRIVDER_PREFIX = "/dubbo";
 
@@ -50,23 +50,14 @@ async function getProviderList(serviceName, registryConfig) {
       }
 
       let array = [];
-      let versionSet = new Set();
       for (let i = 0; i < children.length; i++) {
         let providerInfo = parseProvderInfo(children[i]);
-        versionSet.add(providerInfo.version);
-        array.push(providerInfo);
-      }
-      let versions = Array.from(versionSet);
-      let versionDisableInfo = await Configuration.getDisableInfo(registryConfig, serviceName, versions);
-     
-      for (let i = 0; i < array.length; i++) {
-        let providerInfo = array[i];
-        let version = providerInfo.version;
-        let disableInfo = versionDisableInfo[version];
-        if (disableInfo && disableInfo.find(item => item === providerInfo.address)) {
+        let disableInfo = await getDisableInfo(registryConfig, providerInfo);
+        if (disableInfo && disableInfo.find(item => item === '0.0.0.0' || item === providerInfo.address)) {
           providerInfo.disabled = true;
           providerInfo.disabledType = "service";
         }
+        array.push(providerInfo);
       }
       resolve(array);
     });
@@ -118,8 +109,6 @@ async function getMetaData(providerInfo, registryConfig) {
 
 
 
-
-
 async function getConsumerList(serviceName, registryConfig) {
   let zk = await createConncetion(registryConfig);
 
@@ -141,6 +130,141 @@ async function getConsumerList(serviceName, registryConfig) {
       }
       resolve(array);
     });
+  });
+}
+
+
+
+async function getCurrentConfiguration(registryConfig, providerInfo) {
+
+  let config = await getConfiguration(registryConfig, providerInfo);
+
+  let configData = configuration.yamlToJSON(config)
+  
+  if(configData){
+    return configData;
+  }
+
+  return configuration.createDefaultConfiguration(providerInfo.serviceName);
+}
+
+
+async function getConfiguration(registryConfig, providerInfo) {
+  let zk = await createConncetion(registryConfig);
+
+  let {serviceName, version} = providerInfo;
+  let path = getPath(serviceName, version);
+  return new Promise((resolve, reject) => {
+    // eslint-disable-next-line no-unused-vars
+    zk.getData(path, async function (error, data, stat) {
+
+      if (error) {
+        // 不存在节点，那么创建一个默认对象
+        if (error && error.code == -101) {
+          resolve("");
+          return;
+        }
+        reject(error);
+        return;
+      }
+
+      resolve(data.toString("utf8"));
+    });
+  });
+
+}
+
+
+async function saveConfiguration(registryConfig,providerInfo, doc) {
+  let zkClient = await createConncetion(registryConfig);
+  let {serviceName, version} = providerInfo;
+  let path = getPath(serviceName, version);
+
+  if (doc && doc.configs && doc.configs.length > 0) {
+    // eslint-disable-next-line no-unused-vars
+    zkClient.setData(path, Buffer.from(configuration.JSONToYaml(doc)), -1, function (error, stat) {
+      if (error && error.code == -101) {
+        // eslint-disable-next-line no-unused-vars
+        zkClient.create(path, Buffer.from(configuration.JSONToYaml(doc)), zookeeperClient.CreateMode.PERSISTENT, function (error, stat) {
+          if (error) {
+            console.log(error.stack);
+            return;
+          }
+        });
+        return;
+      }
+      console.log(error);
+    });
+
+    return;
+  } else {
+    zkClient.remove(path, -1, function (error) {
+      if (error) {
+        console.log(error);
+        throw new Error();
+      }
+  
+    });
+  }
+
+}
+
+
+/**
+ * 
+ * @param {string} serviceName 
+ * @param {string[]} versions 多个版本
+ */
+async function getDisableInfo(registryConfig, providerInfo) {
+    let doc = await getCurrentConfiguration(registryConfig, providerInfo);
+    let addressList = [];
+    if (doc && doc.configs) {
+      let configs = doc.configs;
+      for (let j = 0; j < configs.length; j++) {
+        let config = configs[j];
+        // 规则不是开启的，忽略
+        if (!config.enabled) {
+          continue;
+        }
+
+        if (!config.parameters || !config.parameters.disabled || config.parameters.disabled != true) {
+          continue;
+        }
+
+        addressList = addressList.concat(config.addresses);
+      }
+    }
+
+  return addressList;
+}
+
+
+function getPath(serviceName, version) {
+  return `/dubbo/config/dubbo/${serviceName}:${version ? version : ""}:.configurators`;
+}
+
+
+
+function createConncetion(registryConfig) {
+  let {
+    address
+  } = registryConfig;
+
+  const OPTIONS = {
+    sessionTimeout: registryConfig.sessionTimeout,
+  };
+
+  return new Promise((resolve, reject) => {
+    let zk = zookeeperClient.createClient(address, OPTIONS);
+    zk.on("connected", function () {
+      resolve(zk);
+    });
+
+    setTimeout(() => {
+      reject(i18n.t("base.connectTimeOut"));
+    }, OPTIONS.sessionTimeout);
+
+    zk.connect();
   });
 }
 
@@ -169,43 +293,12 @@ function parseConsumerInfo(data) {
   });
 }
 
-async function disableProvider(serviceName, registryConfig, address, version) {
-    return await Configuration.disableProvider(serviceName, registryConfig, address, version);
-}
-
-async function enableProvider(serviceName, registryConfig, address, version) {
-    return await Configuration.enableProvider(serviceName, registryConfig, address, version);
-}
-
-
-function createConncetion(registryConfig) {
-  let {
-    address
-  } = registryConfig;
-
-  const OPTIONS = {
-    sessionTimeout: registryConfig.sessionTimeout,
-  };
-
-  return new Promise((resolve, reject) => {
-    let zk = zookeeperClient.createClient(address, OPTIONS);
-    zk.on("connected", function () {
-      resolve(zk);
-    });
-
-    setTimeout(() => {
-      reject(i18n.t("base.connectTimeOut"));
-    }, OPTIONS.sessionTimeout);
-
-    zk.connect();
-  });
-}
-
 export default {
   getServiceList,
   getProviderList,
   getMetaData,
   getConsumerList,
-  disableProvider,
-  enableProvider
+  getConfiguration,
+  getCurrentConfiguration,
+  saveConfiguration
 }

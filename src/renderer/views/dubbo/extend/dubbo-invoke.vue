@@ -55,7 +55,7 @@
       <div class="invoke-dubbo-dialog-content-code">
         <div class="contentCode broder">
 
-          <codeEditor :codeConfig="codeConfig" :lint="true">
+          <jsonCodeEditor :codeConfig="codeConfig" :lint="true">
             <template v-slot:titel>
               {{$t('dubbo.invokePage.requestParam')}}
               <el-popover placement="top-start" :title="$t('dubbo.invokePage.requestParamStrategyTitle')" width="200" trigger="hover" :content="$t('dubbo.invokePage.paramGenerateStrategyDesc')">
@@ -73,15 +73,15 @@
                 <i class="el-icon-lollipop" @click="formatContent"></i>
               </el-tooltip>
             </template>
-          </codeEditor>
+          </jsonCodeEditor>
         </div>
 
         <div class="contentCode broder">
-          <codeEditor :codeConfig="invokeReulst">
+          <jsonCodeEditor :codeConfig="invokeReulst">
             <template v-slot:titel>
               {{$t('dubbo.invokePage.responseInfo')}} {{ invokeReulst.elapsedTime }}
             </template>
-          </codeEditor>
+          </jsonCodeEditor>
         </div>
       </div>
 
@@ -107,13 +107,13 @@ import dubboInvoke from "@/main/invoker/";
 import invokeHisotryRecord from "@/main/repository/invokeHistoryRepository.js";
 import registry from "@/main/registry";
 import resolveMateData from "@/utils/resolveMateData";
-import codeEditor from "@/renderer/components/editor/code-editor.vue";
+import jsonCodeEditor from "@/renderer/components/editor/json-code-editor.vue";
 import Loading from "@/utils/MyLoading";
 import appConfig from "@/main/repository/appConfig.js";
 
 export default {
   components: {
-    codeEditor,
+    jsonCodeEditor,
   },
   data() {
     return {
@@ -149,9 +149,9 @@ export default {
   created(){
     this.contentElementId = `invoke-dubbo-content-${this.provider.serviceName.replace(/\./g, '-')}-${this.provider.address.replace(/./g, '-')}`;
   },
-  mounted() {
+  async mounted() {
     this.currentInvoker = this.invokerType = appConfig.getProperty("invokerType") || "telnet";
-    this.getMataData();
+    await this.getMataData();
 
     if (this.provider && this.provider.methods) {
       this.method = this.provider.methods[0];
