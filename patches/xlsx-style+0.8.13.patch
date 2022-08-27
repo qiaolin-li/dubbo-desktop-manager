@@ -1,0 +1,13 @@
+diff --git a/node_modules/xlsx-style/dist/cpexcel.js b/node_modules/xlsx-style/dist/cpexcel.js
+index f821c7a..cbe7cbd 100644
+--- a/node_modules/xlsx-style/dist/cpexcel.js
++++ b/node_modules/xlsx-style/dist/cpexcel.js
+@@ -804,7 +804,7 @@ if (typeof module !== 'undefined' && module.exports) module.exports = cptable;
+   "use strict";
+   if(typeof cptable === "undefined") {
+     if(typeof require !== "undefined"){
+-      var cpt = require('./cpt' + 'able');
++      var cpt = cptable;
+       if (typeof module !== 'undefined' && module.exports) module.exports = factory(cpt);
+       else root.cptable = factory(cpt);
+     } else throw new Error("cptable not found");
