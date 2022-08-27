@@ -37,36 +37,25 @@
           {{ provider.revision }}
         </el-descriptions-item>
 
-        <el-descriptions-item span="2">
-          <template slot="label"> {{$t('dubbo.invokePage.method')}} </template>
+        <el-descriptions-item span="3">
+          <template slot="label"> {{$t('dubbo.invokePage.operate')}} </template>
           <el-select v-model="method" @change="methodChange" class="methodSelect">
             <el-option v-for="item in provider.methods" :key="item" :label="item" :value="item">
             </el-option>
           </el-select>
-        </el-descriptions-item>
-        <el-descriptions-item>
-          <template slot="label"> {{$t('dubbo.invokePage.operate')}}</template>
-          <el-button-group>
-            <el-tooltip class="item" effect="light" :content="$t('dubbo.invokePage.call')" placement="top">
-              <el-button plain type="primary" icon="el-icon-thumb" @click="invokeDubbo()"></el-button>
-            </el-tooltip>
-            <el-tooltip class="item" effect="light" :content="$t('dubbo.invokePage.generateParam')" placement="top">
-              <el-button plain type="primary" icon="el-icon-news" @click="generateParam()"></el-button>
-            </el-tooltip>
-            <el-tooltip class="item" effect="light" :content="$t('dubbo.invokePage.generateCommand')" placement="top">
-              <el-button plain type="primary" icon="el-icon-magic-stick" @click="generateInvokeCommand()"></el-button>
-
-            </el-tooltip>
-          </el-button-group>
+          <el-select v-model="currentInvoker" class="invokerSelect">
+            <el-option v-for="invokerType in invokerTypes" :key="invokerType.code" :label="invokerType.name" :value="invokerType.code"></el-option>
+          </el-select>
+          <el-button plain type="primary" icon="el-icon-thumb" @click="invokeDubbo()" :disabled="invokeing" >{{invokeing ?  $t('dubbo.invokePage.calling') : $t('dubbo.invokePage.call')}}</el-button>
         </el-descriptions-item>
       </el-descriptions>
     </div>
 
-    <div id="invoke-dubbo-dialog-content" class="invoke-dubbo-dialog-content ">
+    <div :id="contentElementId" class="invoke-dubbo-dialog-content ">
       <div class="invoke-dubbo-dialog-content-code">
         <div class="contentCode broder">
 
-          <codeEditor :codeConfig="codeConfig" :lint="true">
+          <jsonCodeEditor :codeConfig="codeConfig" :lint="true">
             <template v-slot:titel>
               {{$t('dubbo.invokePage.requestParam')}}
               <el-popover placement="top-start" :title="$t('dubbo.invokePage.requestParamStrategyTitle')" width="200" trigger="hover" :content="$t('dubbo.invokePage.paramGenerateStrategyDesc')">
@@ -74,19 +63,25 @@
               </el-popover>
             </template>
             <template v-slot:content>
+              <el-tooltip class="item" effect="light" :content="$t('dubbo.invokePage.generateParam')" placement="top">
+                <i class="el-icon-news" @click="generateParam"></i>
+              </el-tooltip>
+              <el-tooltip class="item" effect="light" :content="$t('dubbo.invokePage.generateCommand')" placement="top">
+                <i class="el-icon-magic-stick" @click="generateInvokeCommand"></i>
+              </el-tooltip>
               <el-tooltip class="item" effect="light" :content="$t('dubbo.invokePage.format')" placement="top-start">
                 <i class="el-icon-lollipop" @click="formatContent"></i>
               </el-tooltip>
             </template>
-          </codeEditor>
+          </jsonCodeEditor>
         </div>
 
         <div class="contentCode broder">
-          <codeEditor :codeConfig="invokeReulst">
+          <jsonCodeEditor :codeConfig="invokeReulst">
             <template v-slot:titel>
               {{$t('dubbo.invokePage.responseInfo')}} {{ invokeReulst.elapsedTime }}
             </template>
-          </codeEditor>
+          </jsonCodeEditor>
         </div>
       </div>
 
@@ -106,34 +101,58 @@
 </template>
 
 <script>
+
 import dubboInvokeUtils from "@/utils/dubboInvokeUtils.js";
+import dubboInvoke from "@/main/invoker/";
 import invokeHisotryRecord from "@/main/repository/invokeHistoryRepository.js";
 import registry from "@/main/registry";
-import codeEditor from "@/renderer/components/editor/code-editor.vue";
-import { Loading } from 'element-ui';
+import resolveMateData from "@/utils/resolveMateData";
+import jsonCodeEditor from "@/renderer/components/editor/json-code-editor.vue";
+import Loading from "@/utils/MyLoading";
+import appConfig from "@/main/repository/appConfig.js";
 
 export default {
   components: {
-    codeEditor,
+    jsonCodeEditor,
   },
   data() {
     return {
+      contentElementId :"",
       codeConfig: {
         code: "[]",
       },
+      metadata: {},
       invokeReulst: {
         code: "",
         elapsedTime: "",
       },
       method: "",
       invokeHisotryList: [],
+      currentInvoker: "",
+      invokeing: false,
+      invokerTypes: [
+        {
+          code: "telnet",
+          name: "Telnet"
+        },
+        {
+          code: "java",
+          name: "Java"
+        }
+      ]
     };
   },
   props: {
     registryCenterId: String,
     provider: Object,
   },
-  mounted() {
+  created(){
+    this.contentElementId = `invoke-dubbo-content-${this.provider.serviceName.replace(/\./g, '-')}-${this.provider.address.replace(/./g, '-')}`;
+  },
+  async mounted() {
+    this.currentInvoker = this.invokerType = appConfig.getProperty("invokerType") || "telnet";
+    await this.getMataData();
+
     if (this.provider && this.provider.methods) {
       this.method = this.provider.methods[0];
       this.methodChange();
@@ -152,73 +171,49 @@ export default {
     },
     async invokeDubbo() {
 
-      try{
+      try {
         JSON.parse(this.codeConfig.code);
       } catch (e) {
-         this.$message({
-            type: "error",
-            message: this.$t('dubbo.invokePage.callParamError'),
-          });
-          return;
+        this.$message({
+          type: "error",
+          message: this.$t('dubbo.invokePage.callParamError'),
+        });
+        return;
       }
 
-      let loadingInstance = Loading.service({
-        target: "#invoke-dubbo-dialog-content",
-        text: this.$t("dubbo.invokePage.invokeProgress"),
-        spinner: "0",
-        background: 'rgba(0, 0, 0, 0.2)'
+      let rejectFun = () => { };
+
+      let loadingInstance = Loading.service(
+        `#${this.contentElementId}`,
+        this.$t("dubbo.invokePage.invokeProgress"), 
+        this.$t("dubbo.invokePage.cancelInvoke"), () => {
+        rejectFun(this.$t('dubbo.invokePage.cancelInvoke'));
       });
 
+      try {
+        this.invokeing = true;
 
-      let cancelFunction = () => { };
-      let cancelPromise = new Promise(reject => {
-        cancelFunction = reject;
-      });
-
-      let button = document.createElement("input");
-      button.type = "button";
-      button.value = this.$t("dubbo.invokePage.cancelInvoke")
-      button.className = "cancel-button";
-      button.addEventListener("click", () => {
-        cancelFunction(this.$t("dubbo.invokePage.cancelInvoke"));
-      });
-      loadingInstance.$el.firstElementChild.appendChild(button)
-
-
-      dubboInvokeUtils.invokeMethod(
-        this.provider,
-        this.method,
-        this.codeConfig.code,
-        cancelPromise
-      ).then(async response => {
+        let response = await new Promise((resolve, reject) => {
+          rejectFun = reject;
+          dubboInvoke.invokeMethod(
+            this.provider,
+            this.metadata,
+            this.method,
+            this.codeConfig.code,
+            this.currentInvoker
+          ).then(resolve).catch(reject);
+        });
         this.invokeReulst.code = response.code;
         this.invokeReulst.elapsedTime = response.elapsedTime;
-        // 保存调用记录
-        let invokeHistory = {
-          serviceName: this.provider.serviceName,
-          method: this.method,
-          param: this.codeConfig.code,
-        };
-        await invokeHisotryRecord.save(invokeHistory);
         this.$message({
           type: "success",
           message: this.$t('dubbo.invokePage.callDubboServiceSuccess'),
         });
-
-        loadingInstance.close();
         this.flushInvokeHistoryList();
-      }).catch(e => {
-        this.$message({
-          type: "error",
-          message: this.$t('dubbo.invokePage.callDubboServiceFail', { e }),
-        });
+      } finally {
         loadingInstance.close();
-      })
-
-
-    },
-
-    cancelInvoke() {
+        this.invokeing = false;
+      }
 
     },
     async generateInvokeCommand() {
@@ -236,17 +231,13 @@ export default {
       this.invokeHisotryList = await invokeHisotryRecord.findList(this.provider.serviceName, this.method, 1, 50);
     },
     generateParam() {
-      // 生成参数
-      registry.getMethodFillObject(this.provider, this.registryCenterId, this.method)
-        .then((code) => {
-          this.codeConfig.code = code || "[]";
-        }).catch((error) => {
-          this.$message({
-            message: this.$t('dubbo.invokePage.generateParamError', { error }),
-            type: 'warning'
-          });
-          this.codeConfig.code = "[]";
-        });
+
+      //  生成参数
+      let code = resolveMateData.generateParam(this.metadata, this.method);
+      this.codeConfig.code = code || "[]";
+    },
+    async getMataData() {
+      this.metadata = await registry.getMetaData(this.provider, this.registryCenterId);
     },
     getInvokeHisotryTitle(invokeHistory) {
       return this.$moment(new Date(invokeHistory.createTime)).format(
@@ -321,7 +312,8 @@ export default {
 }
 
 .methodSelect {
-  width: 100%;
+  margin-right: 10px;
+  width: 300px;
 }
 
 .contentCode {
@@ -352,5 +344,19 @@ export default {
 .cancel-button:active {
   position: relative;
   top: 1px;
+}
+
+.item {
+  margin-left: 2px;
+  padding: 4px;
+}
+.item:hover {
+ background-color: #ccc;
+  border-radius: 50%;
+}
+
+.invokerSelect {
+  width: 100px;
+  padding-right: 10px;
 }
 </style>

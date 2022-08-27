@@ -7,11 +7,12 @@
     "email": "992004863@qq.com",
     "url": "https://github.com/qiaolin-li/dubbo-desktop-manager"
   },
-  "version": "1.0.4",
+  "version": "1.0.5",
   "private": true,
   "scripts": {
     "lint": "vue-cli-service lint",
     "build": "vue-cli-service electron:build",
+    "devDebug": "vue-cli-service electron:serve --inspect=5858",
     "dev": "vue-cli-service electron:serve",
     "postinstall": "patch-package && electron-builder install-app-deps",
     "postuninstall": "electron-builder install-app-deps",
@@ -28,12 +29,12 @@
     "codemirror": "^5.64.0",
     "core-js": "^3.6.5",
     "electron": "^13.0.0",
-    "electron-builder": "^23.0.6",
     "electron-devtools-installer": "^3.1.0",
     "electron-find": "^1.0.7",
     "element-ui": "^2.15.6",
     "file": "^0.2.2",
     "fs-extra": "^10.1.0",
+    "js-yaml": "^4.1.0",
     "json-bigint": "^1.0.0",
     "jsonlint": "^1.6.3",
     "lowdb": "^1.0.0",
@@ -42,7 +43,7 @@
     "nedb": "^1.8.0",
     "node-zookeeper-client": "^1.1.1",
     "os-locale": "^5.0.0",
-    "patch-package": "^6.4.7",
+    "qs": "^6.11.0",
     "system": "^2.0.1",
     "telnet-stream": "^1.0.5",
     "urijs": "^1.19.7",
@@ -52,6 +53,8 @@
     "vue-router": "^3.5.3",
     "vue-splitpane": "^1.0.6",
     "vuex": "^3.6.2",
+    "xlsx": "^0.18.5",
+    "xlsx-style": "^0.8.13",
     "xterm": "^4.17.0",
     "xterm-addon-fit": "^0.5.0",
     "xterm-addon-search": "^0.8.2"
@@ -64,7 +67,9 @@
     "eslint": "^6.7.2",
     "eslint-plugin-vue": "^6.2.2",
     "vue-cli-plugin-electron-builder": "~2.1.1",
-    "vue-template-compiler": "^2.6.11"
+    "vue-template-compiler": "^2.6.11",
+    "patch-package": "^6.4.7",
+    "electron-builder": "^23.0.6"
   },
   "eslintConfig": {
     "root": true,

@@ -68,20 +68,20 @@ export default {
       // 菜单模板
       const menuTemplate = [
         {
-          label: '关闭',
+          label: this.$t('tab.close'),
           click: async () => {
             this.removeTab(this.rightClickTabName)
           }
 
         },
         {
-          label: '关闭其他',
+          label: this.$t('tab.closeOther'),
           click: async () => {
             this.removeOtherTab(this.rightClickTabName)
           }
         },
         {
-          label: '关闭全部',
+          label: this.$t('tab.closeAll'),
           click: async () => {
             this.removeAllTab(this.rightClickTabName)
           }
@@ -120,20 +120,21 @@ export default {
   methods: {
 
     clickServiceInfo(data) {
-      let { serviceName, registryCenterId } = data;
+      let { serviceName, interfaceName, registryCenterId } = data;
       let exist = this.dubboListList.find(tab => tab.serviceName == serviceName);
 
       // 不存在，新增一个
       if (!exist) {
-        let title = serviceName.split(".")[serviceName.split(".").length - 1];
+        let title = interfaceName.split(".")[interfaceName.split(".").length - 1];
 
-        this.dubboListList.push({
+        let data = {
           id: serviceName,
           title: title,
           serviceName,
           registryCenterId: registryCenterId
-        });
+        };
 
+        this.dubboListList.push(data);
       }
 
       this.currentTabId = serviceName;

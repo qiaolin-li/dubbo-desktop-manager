@@ -43,7 +43,8 @@ export default {
           return callback(new Error(this.$t('connect.validateMessage.timeOutNotNull')));
         }
         setTimeout(() => {
-          if (!Number.isInteger(value)) {
+          let timeOutTime = parseInt(value);
+          if (Number.isNaN(timeOutTime)) {
             callback(new Error(this.$t('connect.validateMessage.inputNumber')));
           } else {
             if (value < 10) {
@@ -89,10 +90,9 @@ export default {
   methods: {
     async init() {
       if (this.id) {
-        let connect = await connectRepository.findById(this.id);
-        this.form = connect;
+        this.form = await connectRepository.findById(this.id);
       } else {
-        this.form.type = "zookeeper"
+        this.form.type = "nacos"
         this.form.name = "";
         this.form.address = "127.0.0.1:2181";
         this.form.namespaceId = "";
@@ -100,16 +100,15 @@ export default {
       }
     },
     saveZkConnectInfo() {
-      this.$refs.form.validate((valid) => {
+      this.$refs.form.validate(async (valid) => {
         if (valid) {
-          connectRepository.save(this.form).then(() => {
-            let data = { ...this.form };
-            this.form.name = "";
-            this.form.address = "127.0.0.1:2181";
-            this.form.sessionTimeout = 5000;
-            this.form.namespaceId = "";
-            this.$emit("saveSuccess", data);
-          });
+          await connectRepository.save(this.form);
+          let data = { ...this.form };
+          this.form.name = "";
+          this.form.address = "127.0.0.1:2181";
+          this.form.sessionTimeout = 5000;
+          this.form.namespaceId = "";
+          this.$emit("saveSuccess", data);
         } else {
           return false;
         }

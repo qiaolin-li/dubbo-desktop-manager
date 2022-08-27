@@ -1,12 +1,14 @@
 import common from "./common";
 const axios = require('axios').default;
-import resolveMateData from "./resolveMateData";
+import configuration from '@/utils/Configuration';
+import i18n from '../../i18n'
+import qs from 'qs'
 
 async function getServiceList(registryConfig) {
 
     let params = {
         pageNo: 1,
-        pageSize: 1,
+        pageSize: 100,
         namespaceId: registryConfig.namespaceId || ""
     }
     // `http://127.0.0.1:8848/nacos/v1/ns/service/list?pageNo=1&pageSize=20`
@@ -33,7 +35,7 @@ async function getServiceList(registryConfig) {
                 continue;
             }
 
-            array.push(new common.ServiceInfo(datas[1], serviceName));
+            array.push(new common.ServiceInfo(datas[1], serviceName, datas.length == 4 ? datas[3] : ""));
         }
 
         count = data.doms.length;
@@ -44,29 +46,16 @@ async function getServiceList(registryConfig) {
 }
 
 
-function doGetServiceList(url, params) {
-
-    return new Promise((resolve, reject) => {
-        axios.get(url, {
-                params
-            }).then(function (response) {
-                if (response.status != 200) {
-                    reject(new Error("查询服务列表错误! 原因" + response.data))
-                    return;
-                }
-
-                return resolve(response.data);
-            })
-            .catch(function (error) {
-                reject(new Error("查询服务列表错误! 原因" + error))
-            })
-
-    });
-
+async function doGetServiceList(url, params) {
+    try {
+        let response = await axios.get(url, {params});
+        return response.data;
+    } catch(error){
+        throw new Error(i18n.t("connect.exportService.nacos.getServiceList.error", { e: error}));
+    }
 }
 
-function getProviderList(serviceName, registryConfig) {
-
+async function getProviderList(serviceName, registryConfig) {
     // http://127.0.0.1:8848/nacos/v1/ns/instance/list
     let url = `${registryConfig.address}/nacos/v1/ns/instance/list`;
 
@@ -75,32 +64,31 @@ function getProviderList(serviceName, registryConfig) {
         namespaceId: registryConfig.namespaceId || ""
     }
 
-    return new Promise((resolve, reject) => {
-        axios.get(url, {
-                params
-            }).then(function (response) {
-                if (response.status != 200) {
-                    reject(new Error("查询服务列表错误! 原因" + response.data))
-                    return;
-                }
+    try {
+        let response = await axios.get(url, { params});
 
-                if (!response.data || !response.data.hosts) {
-                    return resolve(new Array());
-                }
+        if (!response.data || !response.data.hosts) {
+            return [];
+        }
 
-                let array = new Array();
-                for (let i = 0; i < response.data.hosts.length; i++) {
-                    const host = response.data.hosts[i];
-                    array.push(parseProvderInfo(host))
-                }
+        let array = new Array();
+        for (let i = 0; i < response.data.hosts.length; i++) {
+            const host = response.data.hosts[i];
 
-                return resolve(array);
-            })
-            .catch(function (error) {
-                reject(new Error("查询服务列表错误! 原因" + error))
-            })
+            let providerInfo = parseProvderInfo(host);
 
-    });
+            let disableInfo = await getDisableInfo(registryConfig, providerInfo);
+            if (disableInfo && disableInfo.find(item => item === '0.0.0.0' || item === providerInfo.address)) {
+                providerInfo.disabled = true;
+                providerInfo.disabledType = "service";
+            }
+            array.push(providerInfo)
+        }
+
+        return array;
+    } catch (error) {
+        throw new Error(i18n.t("connect.exportService.nacos.getProviderList.error", { e: error}));
+    }
 }
 
 
@@ -120,12 +108,13 @@ function parseProvderInfo(data) {
         dubboVersion: metadata.dubbo,
         deprecated: metadata.deprecated,
         weight: data.weight,
-        enabled: data.enabled
+        enabled: data.enabled,
+        group: metadata.group,
     });
 }
 
 
-function getConsumerList(serviceName, registryConfig) {
+async function getConsumerList(serviceName, registryConfig) {
 
     // http://127.0.0.1:8848/nacos/v1/ns/instance/list
     let url = `${registryConfig.address}/nacos/v1/ns/instance/list`;
@@ -135,35 +124,26 @@ function getConsumerList(serviceName, registryConfig) {
         namespaceId: registryConfig.namespaceId || ""
     }
 
-    return new Promise((resolve, reject) => {
-        axios.get(url, {
-                params
-            }).then(function (response) {
-                if (response.status != 200) {
-                    reject(new Error("查询服务列表错误! 原因" + response.data))
-                    return;
-                }
-
-                if (!response.data || !response.data.hosts) {
-                    return resolve(new Array());
-                }
-
-                let array = new Array();
-                for (let i = 0; i < response.data.hosts.length; i++) {
-                    const host = response.data.hosts[i];
-                    array.push(parseProvderInfo(host))
-                }
-
-                return resolve(array);
-            })
-            .catch(function (error) {
-                reject(new Error("查询服务列表错误! 原因" + error))
-            })
-
-    });
+    try {
+        let response = await axios.get(url, { params });
+    
+        if (!response.data || !response.data.hosts) {
+            return [];
+        }
+    
+        let array = new Array();
+        for (let i = 0; i < response.data.hosts.length; i++) {
+            const host = response.data.hosts[i];
+            array.push(parseProvderInfo(host))
+        }
+    
+        return array;
+    } catch(error){
+        throw new Error(i18n.t("connect.exportService.nacos.getConsumerList.error", { e: error}));
+    }
 }
 
-function getMethodFillObject(providerInfo, registryConfig, methodName) {
+async function getMetaData(providerInfo, registryConfig) {
 
     // http://127.0.0.1:8848/nacos/v1/cs/configs
     let url = `${registryConfig.address}/nacos/v1/cs/configs`;
@@ -171,48 +151,150 @@ function getMethodFillObject(providerInfo, registryConfig, methodName) {
     let {
         application,
         serviceName,
-        version
+        version,
+        group
     } = providerInfo;
     version = version || "";
-    let dataId = `${serviceName}:${version}::provider:${application}`;
+    let dataId = `${serviceName}:${version}:${group || ''}:provider:${application}`;
 
     let params = {
         dataId: dataId,
         group: "dubbo",
+        namespaceId: registryConfig.namespaceId || "",
         tenant: registryConfig.namespaceId || ""
     }
 
-    return new Promise((resolve, reject) => {
-        axios.get(url, {
-                params
-            }).then(function (response) {
+    try {
+        let response = await axios.get(url, { params });
+        return response.data || [];
+    } catch(error){
+        throw new Error(i18n.t("connect.exportService.nacos.getMetaData.error", { e: error}));
+    }
+}
 
-                if (response.status == 404) {
-                    reject(new Error("未找到元数据信息"));
-                    return;
-                }
 
-                if (response.status != 200) {
-                    reject(new Error("查询元数据错误! 原因" + response.data))
-                    return;
-                }
+// eslint-disable-next-line no-unused-vars
+async function getCurrentConfiguration(registryConfig, providerInfo) {
 
-                if (!response.data) {
-                    return resolve("[]");
-                }
+    let config = await getConfiguration(registryConfig, providerInfo);
 
-                resolve(resolveMateData.generateParam(response.data, methodName));
-            })
-            .catch(function (error) {
-                reject(new Error("查询服务列表错误! 原因" + error))
-            })
 
-    });
+    let configData = configuration.yamlToJSON(config);
+
+    if(configData){
+        return configData;
+    }
+
+    return configuration.createDefaultConfiguration(providerInfo.serviceName);
+}
+
+
+
+// eslint-disable-next-line no-unused-vars
+async function getConfiguration(registryConfig, providerInfo) {
+
+    // http://127.0.0.1:8848/nacos/v1/cs/configs
+    let url = `${registryConfig.address}/nacos/v1/cs/configs`;
+
+    let {
+        serviceName,
+        version,
+        group
+    } = providerInfo;
+    version = version || "";
+    let dataId = `${serviceName}:${version}:${group || ''}.configurators`;
+
+    let params = {
+        dataId: dataId,
+        group: "dubbo",
+        namespaceId: registryConfig.namespaceId || "",
+        tenant: registryConfig.namespaceId || ""
+    }
+
+    try {
+        let response = await axios.get(url, { params  })
+        return response.data || null;
+    } catch(error) {
+        if (error.response.status == 404) {
+            return null;
+        }
+        throw new Error(i18n.t("connect.exportService.nacos.getMetaData.error", { e: error}));
+    }
+}
+
+// eslint-disable-next-line no-unused-vars
+async function saveConfiguration(registryConfig, providerInfo, doc) {
+    // http://127.0.0.1:8848/nacos/v1/cs/configs
+    let url = `${registryConfig.address}/nacos/v1/cs/configs`;
+
+    let params = {
+        dataId: buildDataId(providerInfo),
+        group: "dubbo",
+        namespaceId: registryConfig.namespaceId || "",
+        tenant: registryConfig.namespaceId || "",
+    }
+
+    try {
+        // 有配置项，保存，反之删除
+        if(doc && doc.configs && doc.configs.length > 0){
+            params.content = configuration.JSONToYaml(doc);
+            await axios.post(url, qs.stringify(params));
+        } else {
+            await axios.delete(url, { params });
+        }
+    } catch (error) {
+        throw new Error(i18n.t("connect.exportService.nacos.saveConfiguration.error", { e: error}));
+    }
+}
+
+
+
+/**
+ * 
+ * @param {string} serviceName 
+ * @param {string[]} versions 多个版本
+ */
+ async function getDisableInfo(registryConfig, providerInfo) {
+    let doc = await getCurrentConfiguration(registryConfig, providerInfo);
+    let addressList = [];
+    if (doc && doc.configs) {
+      let configs = doc.configs;
+      for (let j = 0; j < configs.length; j++) {
+        let config = configs[j];
+        // 规则不是开启的，忽略
+        if (!config.enabled) {
+          continue;
+        }
+
+        if (!config.parameters || !config.parameters.disabled || config.parameters.disabled != true) {
+          continue;
+        }
+
+        addressList = addressList.concat(config.addresses);
+      }
+    }
+
+  return addressList;
+}
+
+
+
+function buildDataId(providerInfo) {
+    let {
+        serviceName,
+        version,
+        group
+    } = providerInfo;
+    version = version || "";
+    return `${serviceName}:${version}:${group || ''}.configurators`;
 }
 
 export default {
     getServiceList,
     getProviderList,
     getConsumerList,
-    getMethodFillObject
+    getMetaData,
+    getConfiguration,
+    getCurrentConfiguration,
+    saveConfiguration
 }

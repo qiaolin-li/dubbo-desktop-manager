@@ -20,7 +20,7 @@ export default {
   },
   props: {
     ip: String,
-    port: String,
+    port: [String, Number],
     terminalKey : String
   },
   mounted() {
@@ -47,20 +47,20 @@ export default {
       this.tSocket = tSocket;
       //   tSocket.setTimeout(1000);
       tSocket.on('connect', () => {
-        this.$refs.terminal.writeDataIn(this.$t('telnetTerminal.connecting', {
+        this.$refs.terminal.writeDataIn(this.$t('dubbo.telnetTerminal.connecting', {
           ip: this.ip,
           port: this.port
         }));
       });
       tSocket.on('error', () => {
-        this.$refs.terminal.writeDataIn(this.$t('telnetTerminal.connectionTimeout', {
+        this.$refs.terminal.writeDataIn(this.$t('dubbo.telnetTerminal.connectionTimeout', {
           ip: this.ip,
           port: this.port
         }));
       });
 
       tSocket.on("close", () => {
-        this.$refs.terminal.writeDataIn(this.$t('telnetTerminal.connectionClosed', this));
+        this.$refs.terminal.writeDataIn(this.$t('dubbo.telnetTerminal.connectionClosed', this));
         this.connect();
       });
 

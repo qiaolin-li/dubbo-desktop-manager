@@ -8,14 +8,19 @@ module.exports = {
       nodeModulesPath: ['./node_modules'],
       builderOptions: {
         "productName": 'Dubbo-Desktop-Manager',
-        "appId": "indi.qiaolin.dubbo.desktop.manager", 
+        "appId": "indi.qiaolin.dubbo.desktop.manager",
         "win": {
           "target": "nsis"
         },
         "nsis": {
           "oneClick": false,
           "allowToChangeInstallationDirectory": true
-        }
+        },
+        asar: true,
+        // 这里其实是相对打包后的位置，不是打包前工程所在的位置
+        "asarUnpack": [
+          "./jar/**"
+        ]
       }
     }
   }

@@ -20,7 +20,6 @@ let locale =  appConfig.getProperty("systemLocale");
 if(!locale && process.type != "renderer"){
     let osLocale = locale = sync();
     appConfig.setProperty("systemLocale", osLocale);
-    console.log("获取了系统语言", osLocale);
 }
 
 // 通过选项创建 VueI18n 实例

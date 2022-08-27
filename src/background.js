@@ -10,11 +10,15 @@ import template from "./main/menuList.js";
 import communication from "@/main/communication/index.js";
 import connectRepository from "@/main/repository/connectRepository.js";
 import invokeHisotryRecord from "@/main/repository/invokeHistoryRepository.js";
-import appConfig from "@/main/repository/appConfig.js";
 import {setWindow} from '@/main/holder/WindowHolder.js';
+import invoke from "@/main/invoker/index.js";
+import registry from "@/main/registry/index.js";
+import ExcelExportUtils from "@/utils/ExcelExportUtils.js";
 connectRepository.install(communication)
 invokeHisotryRecord.install(communication)
-appConfig.install(communication)
+invoke.install(communication)
+registry.install(communication)
+ExcelExportUtils.install(communication)
 
 // Scheme must be registered before the app is ready
 protocol.registerSchemesAsPrivileged([
@@ -58,24 +62,6 @@ async function createWindow() {
   }
 }
 
-const menu = new Menu()
-menu.append(new MenuItem({
-  label: 'DDM',
-  submenu: [{
-    role: 'help',
-    accelerator: process.platform === 'darwin' ? 'Cmd+F' : 'Alt+Shift+I',
-    click: () => {
-      dialog.showMessageBox({
-        type: 'info',
-        message: '成功!',
-        detail: '你按下了一个全局注册的快捷键绑定.',
-        buttons: ['好的']
-      })
-    }
-  }]
-}))
-
-Menu.setApplicationMenu(menu)
 Menu.setApplicationMenu(Menu.buildFromTemplate(template));
 
 app.setAboutPanelOptions({

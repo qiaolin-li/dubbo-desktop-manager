@@ -1,64 +1,4 @@
-import net from "net";
-import telnetSocket from "telnet-stream";
 import JSONFormater from "./JSONFormater";
-import i18n from '../i18n'
-
-/**
- * 调用Dubbo接口
- * @param {Provider} provder 提供者信息
- * @param {*} method 方法名
- * @param {*} code 参数信息
- * @returns 
- */
-function invokeMethod(provder, method, code, cancelPromise) {
-    let {
-        ip,
-        port,
-        serviceName
-    } = provder;
-    let params = JSON.parse(code);
-
-    // eslint-disable-next-line no-unused-vars
-    return new Promise((resolve, reject) => {
-
-        let socket = net.createConnection(port, ip);
-
-        let tSocket = new telnetSocket.TelnetSocket(socket);
-        let mainBuffer = Buffer.from("");
-        tSocket.on("data", function (buffer) {
-       
-            mainBuffer = Buffer.concat([mainBuffer, buffer], mainBuffer.length + buffer.length);
-
-            let result = mainBuffer.toString("utf8");
-
-            // 数据还未接收完，再等等
-            if (!result.endsWith("dubbo>")) {
-                return;
-            }
-
-            // 解析结果
-            resolve(resolveResponse(result));
-        });
-
-        socket.setTimeout(30000);
-        socket.on("timeout", () => {
-            reject(i18n.t("dubbo.invokePage.invokeTimeOut") )
-            socket.end();
-        })
-
-        tSocket.write(buildInvokeCommand({
-            serviceName,
-            method,
-            params
-        }));
-
-        cancelPromise.then((message) => {
-            reject(message)
-            socket.end();
-        });
-    });
-}
-
 
 /** 
  * 构建invoke命令 
@@ -124,5 +64,5 @@ function InvokeResult(data, elapsedTime) {
 
 export default {
     buildInvokeCommand,
-    invokeMethod
+    resolveResponse
 }

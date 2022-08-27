@@ -4,9 +4,10 @@
  * @param {*} name 简化名称
  * @param {*} serviceName 
  */
-function ServiceInfo(name, serviceName){
+function ServiceInfo(name, serviceName, group){
     this.name = name ;
     this.serviceName = serviceName;
+    this.group = group;
 }
 
 
@@ -24,6 +25,7 @@ function ProviderInfo(data){
     this.version = data.version;
     this.weight = data.weight;
     this.enabled = data.enabled;
+    this.group = data.group;
 }
 
 // consumer://10.255.189.77/com.indi.qiaolin.test.api.facade.TestFacade?

@@ -38,7 +38,8 @@ export default {
           return callback(new Error(this.$t('connect.validateMessage.timeOutNotNull')));
         }
         setTimeout(() => {
-          if (!Number.isInteger(value)) {
+          let timeOutTime = parseInt(value);
+          if (Number.isNaN(timeOutTime)) {
             callback(new Error(this.$t('connect.validateMessage.inputNumber')));
           } else {
             if (value < 10) {
@@ -56,12 +57,12 @@ export default {
           {
             min: 1,
             max: 32,
-            message:  this.$t('connect.validateMessage.rangeLimit'),
+            message: this.$t('connect.validateMessage.rangeLimit'),
             trigger: "blur",
           },
         ],
         address: [
-          { required: true, message:  this.$t('connect.validateMessage.inputConnectionAddress'), trigger: "blur" },
+          { required: true, message: this.$t('connect.validateMessage.inputConnectionAddress'), trigger: "blur" },
         ],
         sessionTimeout: [{ validator: checkTimeout, trigger: "blur" }],
       }
@@ -72,7 +73,6 @@ export default {
   props: {
     id: String
   },
-
   watch: {
     id: {
       handler() {
@@ -82,7 +82,6 @@ export default {
   },
   async mounted() {
     this.init();
-
   },
   methods: {
     async init() {
@@ -96,16 +95,15 @@ export default {
         this.form.sessionTimeout = 5000;
       }
     },
-    saveZkConnectInfo() {
-      this.$refs.form.validate((valid) => {
+    async saveZkConnectInfo() {
+      this.$refs.form.validate(async (valid) => {
         if (valid) {
-          connectRepository.save(this.form).then(() => {
-            let data = { ...this.form };
-            this.form.name = "";
-            this.form.address = "127.0.0.1:2181";
-            this.form.sessionTimeout = 5000;
-            this.$emit("saveSuccess", data);
-          });
+          await connectRepository.save(this.form);
+          let data = { ...this.form };
+          this.form.name = "";
+          this.form.address = "127.0.0.1:2181";
+          this.form.sessionTimeout = 5000;
+          this.$emit("saveSuccess", data);
         } else {
           return false;
         }

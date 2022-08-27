@@ -7,13 +7,15 @@ import dubboProviderList from "./dubbo-provider-list.vue";
 import dubboConsumerList from "./dubbo-consumer-list.vue";
 import dubboTelnet from "./dubbo-telnet.vue";
 import dubboInvoke from "./dubbo-invoke.vue";
+import dubboProviderConfiguration from "./dubbo-provider-configuration.vue";
 
 export default {
   components: {
     dubboProviderList,
     dubboConsumerList,
     dubboTelnet,
-    dubboInvoke
+    dubboInvoke,
+    dubboProviderConfiguration
   },
   props: {
     registryCenterId: String,

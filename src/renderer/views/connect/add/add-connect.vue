@@ -20,6 +20,7 @@ export default {
   data() {
     return {
       componentName: "zookeeperAdd",
+      createConnect : true,
       options: [
         {
           value: "zookeeperAdd",
@@ -58,13 +59,19 @@ export default {
           }
           element.disabled = true;
         }
+        this.createConnect = false;
       } else {
         for (let index = 0; index < this.options.length; index++) {
           this.options[index].disabled = false;
         }
+        this.createConnect = true;
       }
     },
     saveZkConnectInfo(data) {
+      this.$message({
+        type: "success",
+        message: this.createConnect ? this.$t('connect.createSuccess') : this.$t('connect.updateSuccess'),
+      });
       this.$emit("saveSuccess", data);
     }
   },

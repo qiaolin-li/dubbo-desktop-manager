@@ -1,6 +1,14 @@
 export default {
     code: "zh-CN",
     name: "中文",
+    version : {
+        message: "发现新版本{latest}\n{releaseBody}",
+        simpleMessage : "发现新版本{latest}，更新了很多功能，是否去下载最新的版本？",
+        title : "发现新版本",
+        noRemindCurrnetVersion : "不再提醒更新当前版本",
+        yes : "是",
+        no : "否"
+    },
     base: {
         confirm: "确认",
         cancel: "取消",
@@ -25,9 +33,25 @@ export default {
         version : "版本："
     },
     settings: {
-        baseSettings: "基本设置",
-        language: "语言",
+        baseSettings: {
+            title: "基本设置",
+            language: "语言",
+        },
         apply: "应用",
+        invokerSettings : {
+            title:"执行器设置",
+            invokerType : "默认执行器类型",
+            invokerTypeTips : "使用Java执行器时，请先安装Java环境，Java调用相对Telnet执行器较慢，但是Java调用返回的信息更加完整。",
+        }
+    },
+    tab : {
+        close : "关闭",
+        closeOther : "关闭其他",
+        closeAll : "关闭全部",
+    },
+    editor : {
+        copy : "复制",
+        copySuccess : "复制成功"
     },
     connect: {
         addConnect: "新增连接",
@@ -44,10 +68,48 @@ export default {
             rangeLimit: "长度在 1 到 32 个字符",
             inputConnectionAddress: "请输入链接地址",
         },
+        createSuccess:"新增连接成功!",
+        updateSuccess:"修改连接成功!",
         searchContent: "搜一搜",
         refreshSuccess: "刷新服务列表完成",
         refreshError: "刷新服务列表失败！原因：{e}",
-        confirmDeleteConnect: "此操作将永久删除改链接, 是否继续?"
+        confirmDeleteConnect: "此操作将永久删除改链接, 是否继续?",
+        exportService : {
+            zookeeper : {
+                getServiceList : {
+                    error:"获取服务列表错误! 原因: {e}"
+                },
+                getProviderList : {
+                    error:"获取提供者列表错误! 原因: {e}"
+                },
+                getConsumerList : {
+                    error:"获取提消费者列表错误! 原因: {e}"
+                },
+                getMetaData : {
+                    error:"获取元数据列表错误! 原因: {e}"
+                },
+                saveConfiguration : {
+                    error:"获取动态配置错误! 原因: {e}"
+                },
+            },
+            nacos : {
+                getServiceList : {
+                    error:"获取服务列表错误! 原因: {e}"
+                },
+                getProviderList : {
+                    error:"获取提供者列表错误! 原因: {e}"
+                },
+                getConsumerList : {
+                    error:"获取提消费者列表错误! 原因: {e}"
+                },
+                getMetaData : {
+                    error:"获取元数据列表错误! 原因: {e}"
+                },
+                saveConfiguration : {
+                    error:"获取动态配置错误! 原因: {e}"
+                },
+            }
+        }
     },
     dubbo: {
         serviceTab: {
@@ -58,19 +120,37 @@ export default {
             address: "地址",
             application: "所属应用",
             version: "版本号",
+            disabled: "禁用",
             methodCount: "方法数量",
             operate: "操作",
+            disableTypeMap : {
+                service: "服务维度",
+                application: "应用维度"
+            },
             call: "调用",
             callTitle: "调用 {address}",
+            exportExcel:"导出Excel",
+            selectExportDirectory : "选择导出目录",
+            exportSuccess : "导出成功", 
+            exportError : "导出失败, 原因:{}",
+            serviceEnable : "服务维度-启用",
+            serviceDisable : "服务维度-禁用",
+            editConfiguration : "编辑服务动态配置",
         },
 
         consumerPage: {
+            ip : "地址",
             application: "所属应用",
             version: "版本号",
             check: "检查",
             enable: "是否可用",
             timeout: "超时",
             retries: "重试",
+            exportExcel:"导出Excel",
+            selectExportDirectory : "选择导出目录",
+            exportSuccess : "导出成功", 
+            exportError : "导出失败, 原因:{}"
+
         },
         invokePage: {
             serviceName: "接口",
@@ -83,6 +163,7 @@ export default {
             method: "方法",
             operate: "操作",
             call: "调用",
+            calling: "调用中",
             generateParam: "生成参数",
             generateCommand: "生成命令",
             requestParam: "请求参数",
@@ -98,11 +179,20 @@ export default {
             invokeProgress: "正在调用..",
             cancelInvoke: "取消调用",
             invokeTimeOut: "调用Dubbo接口超时",
+            connectProviderError: "连接提供者服务器失败！",
+            notFoundJDK:"如果需要使用Java调用器，请先安装JDK",
+        },
+        telnetTerminal: {
+            connecting: "正在连接 {ip} {port}",
+            connectionTimeout: "连接超时，请检查网络! {ip} {port} ",
+            connectionClosed: "连接断开，正在重新连接...",
+        },
+        configurationPage: {
+            title : "配置信息",
+            save : "保存配置",
+            invalidFormat : "配置格式错误",
+            saveSuccess:"保存成功"
         }
     },
-    telnetTerminal: {
-        connecting: "正在连接 {ip} {port}",
-        connectionTimeout: "连接超时，请检查网络! {ip} {port} ",
-        connectionClosed: "连接断开，正在重新连接...",
-    }
+    
 }
