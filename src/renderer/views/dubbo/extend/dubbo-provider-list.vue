@@ -2,6 +2,11 @@
   <div class="dubboProviderListContainer">
     <el-table :data="providerList" class="content" @row-contextmenu="openMenu" ref="report-table" :highlight-current-row="true" :stripe="true" :header-row-class-name="providerListTableHeaderRowClassName" size="medium">
       <el-table-column type="expand">
+        <template slot="header">
+          <el-tooltip class="item" effect="light" :content="$t('dubbo.providePage.exportExcel')" placement="top-start">
+            <i class="el-icon-document" @click="exportExcel"></i>
+          </el-tooltip>
+        </template>
         <template slot-scope="props">
           <div v-for="method in props.row.methods" :key="method">{{method}}</div><br />
         </template>
@@ -16,8 +21,8 @@
         </template>
       </el-table-column>
       <el-table-column prop="disabled" :label="$t('dubbo.providePage.disabled')" :show-overflow-tooltip="true">
-        <template slot-scope="scope">
-          <span class="versionSpan">{{ scope.row.disabled ? disableTypeMap[scope.row.disabledType] :''  }} </span>
+        <template slot-scope="scope" v-if="scope.row.disabled ">
+          <span class="versionSpan">{{ scope.row.disabled ? $t(`dubbo.providePage.disableTypeMap.${scope.row.disabledType}`) : ''  }} </span>
         </template>
       </el-table-column>
       <el-table-column prop="methods" :label="$t('dubbo.providePage.methodCount')" :show-overflow-tooltip="true">
@@ -26,11 +31,6 @@
         </template>
       </el-table-column>
       <el-table-column :label="$t('dubbo.providePage.operate')" fixed="right" width="150px">
-        <template slot="header">
-          <el-tooltip class="item" effect="light" :content="$t('dubbo.providePage.exportExcel')" placement="top-start">
-            <i class="el-icon-document" @click="exportExcel"></i>
-          </el-tooltip>
-        </template>
         <template slot-scope="scope">
           <el-button size="mini" @click="openInvokeDrawer(scope.row)">{{$t('dubbo.providePage.call')}}</el-button>
           <el-button size="mini" @click="openTelnet(scope.row)">telnet</el-button>
@@ -43,9 +43,8 @@
 
 <script>
 import registry from "@/main/registry";
+import ExcelExportUtils from "@/utils/ExcelExportUtilsClient.js";
 const remote = require("@electron/remote");
-const XLSX = require("xlsx");
-
 
 export default {
   components: {
@@ -53,10 +52,6 @@ export default {
   },
   data() {
     return {
-      disableTypeMap: {
-        service: "服务维度",
-        application: "应用维度"
-      },
       providerList: []
     };
   },
@@ -74,12 +69,12 @@ export default {
     this.refreshProviderList();
   },
   methods: {
-    providerListTableHeaderRowClassName(row, column, cell, event) {
+    providerListTableHeaderRowClassName() {
       return "provider-list-table-header";
     },
     exportExcel() {
       let filePaths = remote.dialog.showOpenDialogSync({
-        title: "选择导出文件",
+        title: this.$t('dubbo.consumerPage.selectExportDirectory'),
         defaultPath: "./",
 
         filters: [{
@@ -93,23 +88,52 @@ export default {
       })
 
       if (filePaths) {
-        const $e = this.$refs['report-table'].$el;
-        // 如果表格加了fixed属性，则导出的文件会生产两份一样的数据，所以可在这里判断一下
-        let $table = $e.querySelector('.el-table__fixed');
-        if (!$table) {
-          $table = $e;
-        }
-        // 为了返回单元格原始字符串，设置{ raw: true }
-        const wb = XLSX.utils.table_to_book($table, { raw: true });
-        const wbout = XLSX.write(wb, { bookType: 'xlsx', bookSST: true, type: 'array' });
-        try {
-          require("fs").writeFileSync(filePaths[0] + "/提供者列表.xlsx", Buffer.from(wbout), "binary");
-        } catch (e) {
-          if (typeof console !== 'undefined') {
-            console.log(e, wbout)
+        let headerList = [
+          {
+            key: 'address',
+            title: this.$t('dubbo.providePage.address'),
+            width: 30
+          },
+          {
+            key: 'application',
+            title: this.$t('dubbo.providePage.application'),
+          },
+          {
+            key: 'version',
+            title: this.$t('dubbo.providePage.version'),
+          },
+          {
+            title: this.$t('dubbo.providePage.disabled'),
+            getContent: (row) => {
+              return row.disabled ? this.$t(`dubbo.providePage.disableTypeMap.${row.disabledType}`) : '';
+            }
+          },
+          {
+            title: this.$t('dubbo.providePage.methodCount'),
+            getContent: (row) => {
+              return row.methods.length;
+            }
+          },
+          {
+            title:"操作"
           }
+        ]
+
+        let filePath = filePaths[0] + `/${this.$t('dubbo.serviceTab.providerList')}.xlsx`;
+        try {
+
+          ExcelExportUtils.generateExcelAndWriterFile(headerList, this.providerList, filePath);
+          this.$message({
+            type: "success",
+            message: this.$t('dubbo.providePage.exportSuccess'),
+          });
+        } catch (e) {
+          this.$message({
+            type: "error",
+            message: this.$t('dubbo.providePage.exportError'),
+          });
+          console.log(e)
         }
-        return wbout
       }
 
     },
@@ -161,29 +185,29 @@ export default {
           }
         },
         {
-          label: "telnet",
+          label: "Telnet",
           click: async () => {
             this.openTelnet(row);
           }
         },
         { type: 'separator' },
-        {
-          label: "服务维度-禁用",
-          click: async () => {
-            await registry.disableProvider(this.registryCenterId, row);
-            this.refreshProviderList();
-          }
-        },
-        {
-          label: "服务维度-启用",
+        row.disabled ? {
+          label: this.$t('dubbo.providePage.serviceEnable'),
           click: async () => {
             await registry.enableProvider(this.registryCenterId, row);
             this.refreshProviderList();
           }
-        },
+        } : {
+          label: this.$t('dubbo.providePage.serviceDisable'),
+          click: async () => {
+            await registry.disableProvider(this.registryCenterId, row);
+            this.refreshProviderList();
+          }
+        }
+        ,
         { type: 'separator' },
         {
-          label: "编辑服务动态配置",
+          label: this.$t('dubbo.providePage.editConfiguration'),
           click: async () => {
             this.openConfiguration(row);
           }

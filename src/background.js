@@ -13,10 +13,12 @@ import invokeHisotryRecord from "@/main/repository/invokeHistoryRepository.js";
 import {setWindow} from '@/main/holder/WindowHolder.js';
 import invoke from "@/main/invoker/index.js";
 import registry from "@/main/registry/index.js";
+import ExcelExportUtils from "@/utils/ExcelExportUtils.js";
 connectRepository.install(communication)
 invokeHisotryRecord.install(communication)
 invoke.install(communication)
 registry.install(communication)
+ExcelExportUtils.install(communication)
 
 // Scheme must be registered before the app is ready
 protocol.registerSchemesAsPrivileged([

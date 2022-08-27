@@ -36,9 +36,10 @@ export default {
             invokerTypeTips : "Before using the Java actuator, install the Java environment first. Java invocation is slower than Telnet invocation, but the information returned by the Java invocation is more complete.",
         }
     },
-    main: {
-        addConnect: "New Connect",
-        settings: "Settings"
+    tab : {
+        close : "close",
+        closeOther : "close Other",
+        closeAll : "Close All",
     },
     connect: {
         addConnect: "New Connection",
@@ -74,18 +75,33 @@ export default {
             disabled: "disabled",
             methodCount: "methodCount",
             operate: "operate",
+            disableTypeMap : {
+                service: "service",
+                application: "application"
+            },
             call: "call",
             callTitle: "call {address}",
-            exportExcel:"Export Excel"
+            exportExcel:"Export Excel",
+            selectExportDirectory : "Selecting an Export Directory",
+            exportSuccess : "Export success", 
+            exportError : "The export fails. Possible cause:{}",
+            serviceEnable : "Service Dimension - Enabled",
+            serviceDisable : "Service Dimension - Disabled",
+            editConfiguration : "Edit the service dynamic configuration",
         },
 
         consumerPage: {
+            ip : "ip",
             application: "application",
             version: "version",
             check: "check",
             enable: "enable",
             timeout: "timeout",
             retries: "retries",
+            exportExcel:"Export Excel",
+            selectExportDirectory : "Selecting an Export Directory",
+            exportSuccess : "Export success", 
+            exportError : "The export fails. Possible cause:{}"
         },
 
         invokePage: {

@@ -68,20 +68,20 @@ export default {
       // 菜单模板
       const menuTemplate = [
         {
-          label: '关闭',
+          label: this.$t('tab.close'),
           click: async () => {
             this.removeTab(this.rightClickTabName)
           }
 
         },
         {
-          label: '关闭其他',
+          label: this.$t('tab.closeOther'),
           click: async () => {
             this.removeOtherTab(this.rightClickTabName)
           }
         },
         {
-          label: '关闭全部',
+          label: this.$t('tab.closeAll'),
           click: async () => {
             this.removeAllTab(this.rightClickTabName)
           }

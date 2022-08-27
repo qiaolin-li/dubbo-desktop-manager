@@ -36,6 +36,11 @@ export default {
             invokerTypeTips : "使用Java执行器时，请先安装Java环境，Java调用相对Telnet执行器较慢，但是Java调用返回的信息更加完整。",
         }
     },
+    tab : {
+        close : "关闭",
+        closeOther : "关闭其他",
+        closeAll : "关闭全部",
+    },
     connect: {
         addConnect: "新增连接",
         name: "链接名称",
@@ -70,18 +75,34 @@ export default {
             disabled: "禁用",
             methodCount: "方法数量",
             operate: "操作",
+            disableTypeMap : {
+                service: "服务维度",
+                application: "应用维度"
+            },
             call: "调用",
             callTitle: "调用 {address}",
-            exportExcel:"导出Excel"
+            exportExcel:"导出Excel",
+            selectExportDirectory : "选择导出目录",
+            exportSuccess : "导出成功", 
+            exportError : "导出失败, 原因:{}",
+            serviceEnable : "服务维度-启用",
+            serviceDisable : "服务维度-禁用",
+            editConfiguration : "编辑服务动态配置",
         },
 
         consumerPage: {
+            ip : "地址",
             application: "所属应用",
             version: "版本号",
             check: "检查",
             enable: "是否可用",
             timeout: "超时",
             retries: "重试",
+            exportExcel:"导出Excel",
+            selectExportDirectory : "选择导出目录",
+            exportSuccess : "导出成功", 
+            exportError : "导出失败, 原因:{}"
+
         },
         invokePage: {
             serviceName: "接口",
