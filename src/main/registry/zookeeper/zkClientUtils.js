@@ -2,6 +2,7 @@ import zookeeperClient from "node-zookeeper-client";
 import i18n from '@/i18n'
 
 
+
 function createConncetion(registryConfig) {
     let { address } = registryConfig;
   
@@ -16,7 +17,7 @@ function createConncetion(registryConfig) {
         });
     
         setTimeout(() => {
-          reject(i18n.t("base.connectTimeOut"));
+          reject(new Error(i18n.t("base.connectTimeOut")));
         }, OPTIONS.sessionTimeout);
     
         zk.connect();

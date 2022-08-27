@@ -5,15 +5,13 @@
         <slot name="titel"></slot>
       </div>
       <div class="toolbar-right">
-          <slot name="content"></slot>
+        <slot name="content"></slot>
+        <el-tooltip class="item" effect="light" :content="$t('editor.copy')" placement="top-start">
+          <i class="el-icon-document-copy" @click="copy"></i>
+        </el-tooltip>
       </div>
     </div>
-    <codemirror
-      ref="cm"
-      v-model="codeConfig.code"
-      :options="cmOptions"
-      @input="inputChange"
-    ></codemirror>
+    <codemirror ref="cm" v-model="codeConfig.code" :options="cmOptions" @input="inputChange"></codemirror>
   </div>
 </template>
 
@@ -164,7 +162,7 @@ export default {
             try {
               var parsed = JSON.parse(toParse);
               count = Object.keys(parsed).length;
-            } catch (e) {}
+            } catch (e) { }
 
             return count ? `\u21A4${count}\u21A6` : "\u2194";
           },
@@ -174,7 +172,7 @@ export default {
   },
   props: {
     codeConfig: Object,
-    lint : {
+    lint: {
       type: Boolean,
       default: false
     }
@@ -182,13 +180,20 @@ export default {
   methods: {
     inputChange(content) {
       // this.$nextTick(() => {
-        //  this.$refs.cm.codemirror.setValue((JSON.stringify(JSON.parse(content), null, 2)))
+      //  this.$refs.cm.codemirror.setValue((JSON.stringify(JSON.parse(content), null, 2)))
       // });
     },
-    fullScreen(){
+    fullScreen() {
       this.$refs.cm.codemirror.setSize("auto", "auto")
       // this.$refs.cm.codemirror.setOption("fullScreen", true)
-    }
+    },
+    copy() {
+      navigator.clipboard.writeText(this.codeConfig.code)
+      this.$message({
+        type: "success",
+        message: this.$t('editor.copySuccess'),
+      });
+    },
   },
   mounted() {
     // 代码提示功能 当用户有输入时，显示提示信息
@@ -235,12 +240,12 @@ export default {
   line-height: 25px;
   padding-left: 10px;
   padding-right: 10px;
-}  
+}
 
 .CodeMirror {
   /* border: 1px solid #eee; */
   height: 30vh;
   font-size: 13px;
-   line-height : 120%;
+  line-height: 120%;
 }
 </style>

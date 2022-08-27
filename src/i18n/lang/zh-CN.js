@@ -1,6 +1,14 @@
 export default {
     code: "zh-CN",
     name: "中文",
+    version : {
+        message: "发现新版本{latest}\n{releaseBody}",
+        simpleMessage : "发现新版本{latest}，更新了很多功能，是否去下载最新的版本？",
+        title : "发现新版本",
+        noRemindCurrnetVersion : "不再提醒更新当前版本",
+        yes : "是",
+        no : "否"
+    },
     base: {
         confirm: "确认",
         cancel: "取消",
@@ -41,6 +49,10 @@ export default {
         closeOther : "关闭其他",
         closeAll : "关闭全部",
     },
+    editor : {
+        copy : "复制",
+        copySuccess : "复制成功"
+    },
     connect: {
         addConnect: "新增连接",
         name: "链接名称",
@@ -61,7 +73,43 @@ export default {
         searchContent: "搜一搜",
         refreshSuccess: "刷新服务列表完成",
         refreshError: "刷新服务列表失败！原因：{e}",
-        confirmDeleteConnect: "此操作将永久删除改链接, 是否继续?"
+        confirmDeleteConnect: "此操作将永久删除改链接, 是否继续?",
+        exportService : {
+            zookeeper : {
+                getServiceList : {
+                    error:"获取服务列表错误! 原因: {e}"
+                },
+                getProviderList : {
+                    error:"获取提供者列表错误! 原因: {e}"
+                },
+                getConsumerList : {
+                    error:"获取提消费者列表错误! 原因: {e}"
+                },
+                getMetaData : {
+                    error:"获取元数据列表错误! 原因: {e}"
+                },
+                saveConfiguration : {
+                    error:"获取动态配置错误! 原因: {e}"
+                },
+            },
+            nacos : {
+                getServiceList : {
+                    error:"获取服务列表错误! 原因: {e}"
+                },
+                getProviderList : {
+                    error:"获取提供者列表错误! 原因: {e}"
+                },
+                getConsumerList : {
+                    error:"获取提消费者列表错误! 原因: {e}"
+                },
+                getMetaData : {
+                    error:"获取元数据列表错误! 原因: {e}"
+                },
+                saveConfiguration : {
+                    error:"获取动态配置错误! 原因: {e}"
+                },
+            }
+        }
     },
     dubbo: {
         serviceTab: {
@@ -131,6 +179,7 @@ export default {
             invokeProgress: "正在调用..",
             cancelInvoke: "取消调用",
             invokeTimeOut: "调用Dubbo接口超时",
+            connectProviderError: "连接提供者服务器失败！",
             notFoundJDK:"如果需要使用Java调用器，请先安装JDK",
         },
         telnetTerminal: {

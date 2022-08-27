@@ -43,7 +43,8 @@ export default {
           return callback(new Error(this.$t('connect.validateMessage.timeOutNotNull')));
         }
         setTimeout(() => {
-          if (!Number.isInteger(value)) {
+          let timeOutTime = parseInt(value);
+          if (Number.isNaN(timeOutTime)) {
             callback(new Error(this.$t('connect.validateMessage.inputNumber')));
           } else {
             if (value < 10) {

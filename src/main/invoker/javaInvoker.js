@@ -49,11 +49,13 @@ async function invokeMethod(provder, metadata, method, code) {
  
     let data = await executeJar(outFile);
 
-    if(data){
-        data["elapsedTime"] = `${data["elapsedTime"]} ms`; 
+    data["elapsedTime"] = `${data["elapsedTime"]} ms`;
+    if(data.success){
+        return new InvokeResult(JSONFormater(JSON.stringify(data.data)), data.elapsedTime);
     }
-
-    return new InvokeResult(JSONFormater(JSON.stringify(data.data)), data.elapsedTime);
+    
+    let errorMessage = data["data"]; //.replace(/\n\tat/g, '\n')
+    return new InvokeResult(errorMessage, data.elapsedTime);
 }
 
 // org.apache.dubbo.demo.provider.TestFacade 172.21.144.191:20880 test "[\"java.lang.String\",\"java.lang.Integer\",\"java.lang.Integer\"]" "[\"王老八\",\"18\",\"0\"]" /Users/qiaolin/.dubbo-desktop-manager/temp/aa.json
@@ -65,7 +67,6 @@ function executeJar(outFile) {
         '-jar', jarPath,
         outFile
     ];
-    debugger
     const config = {
         // maxBuffer: 100 * 1024 * 1024 * 1024, // 1G
     }
@@ -75,15 +76,11 @@ function executeJar(outFile) {
         execFile(javaCommandPath, commandArgs, config, (error, stdout, stderr) => {
             if (error) {
                 let tempError = error.message || stderr || stdout;
-                debugger
                 // JDK不存在
                 if(/spawn .* ENOENT/.test(tempError)){
                     tempError = i18n.t("dubbo.invokePage.notFoundJDK");
                 }
-                reject({
-                    success: false,
-                    message: tempError
-                });
+                reject(new Error(tempError));
                 return;
             }
 

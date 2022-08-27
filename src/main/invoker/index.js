@@ -27,7 +27,6 @@ function doInvokeMethod(provder, metadata, method, code, currentInvoker) {
         return telnetInvoker.invokeMethod(provder, metadata, method, code);
     }
 
-    // throw new Error("哈哈哈哈");
     return javaInvoker.invokeMethod(provder, metadata, method, code);
 }
 

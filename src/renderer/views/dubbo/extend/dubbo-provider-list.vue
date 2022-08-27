@@ -1,7 +1,6 @@
 <template>
   <div class="dubboProviderListContainer">
-    <el-table :data="providerList" class="content" @row-contextmenu="openMenu" ref="report-table" :highlight-current-row="true" :stripe="true" 
-        :header-row-class-name="providerListTableHeaderRowClassName" size="medium" :border="true">
+    <el-table :data="providerList" class="content" @row-contextmenu="openMenu" ref="report-table" :highlight-current-row="true" :stripe="true" :header-row-class-name="providerListTableHeaderRowClassName" size="medium" :border="true">
       <el-table-column type="expand">
         <template slot="header">
           <el-tooltip class="item" effect="light" :content="$t('dubbo.providePage.exportExcel')" placement="top-start">
@@ -21,7 +20,7 @@
           <span class="versionSpan">{{ scope.row.revision  }} </span>
         </template>
       </el-table-column>
-      <el-table-column prop="disabled" width="100px"  :label="$t('dubbo.providePage.disabled')" :show-overflow-tooltip="true">
+      <el-table-column prop="disabled" width="100px" :label="$t('dubbo.providePage.disabled')" :show-overflow-tooltip="true">
         <template slot-scope="scope" v-if="scope.row.disabled ">
           <span class="versionSpan">{{ scope.row.disabled ? $t(`dubbo.providePage.disableTypeMap.${scope.row.disabledType}`) : ''  }} </span>
         </template>
@@ -73,7 +72,7 @@ export default {
     providerListTableHeaderRowClassName() {
       return "provider-list-table-header";
     },
-    exportExcel() {
+    async exportExcel() {
       let filePaths = remote.dialog.showOpenDialogSync({
         title: this.$t('dubbo.consumerPage.selectExportDirectory'),
         defaultPath: "./",
@@ -122,7 +121,6 @@ export default {
       let suffix = this.$moment(new Date()).format("YYYYMMDD_HHmmss");
       let filePath = filePaths[0] + `/${this.$t('dubbo.serviceTab.providerList').replace(/\s/g, '_')}-${suffix}.xlsx`;
       try {
-
         ExcelExportUtils.generateExcelAndWriterFile(headerList, this.providerList, filePath);
         this.$message({
           type: "success",
@@ -245,11 +243,12 @@ export default {
 }
 
 .provider-list-table-header .el-table__cell {
+  /* border-right : 0px !important; */
   background-color: rgb(249, 249, 249) !important;
-  border-left: 1px solid rgb(234, 234, 234) !important;
+  /* border-left: 1px solid rgb(234, 234, 234) !important; */
 }
 
-.provider-list-table-header .el-table__cell {
-  border-right : 0px
+.el-table__cell {
+  /* border-right : 0px !important; */
 }
 </style>

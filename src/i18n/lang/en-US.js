@@ -1,6 +1,14 @@
 export default {
     code: "en-US",
     name: "English",
+    version : {
+        message: "Discover a new version {latest}\n{releaseBody}",
+        simpleMessage : "Find a new version {latest} with many new features. Do you want to download the latest version?",
+        title : "Discover a new version",
+        noRemindCurrnetVersion : "No longer reminded to update the current version",
+        yes : "yes",
+        no : "no"
+    },
     base: {
         confirm: "confirm",
         cancel: "cancel",
@@ -41,6 +49,10 @@ export default {
         closeOther : "close Other",
         closeAll : "Close All",
     },
+    editor : {
+        copy : "copy",
+        copySuccess : "Copy success"
+    },
     connect: {
         addConnect: "New Connection",
         name: "name",
@@ -61,7 +73,43 @@ export default {
         searchContent: "search content",
         refreshSuccess: "Refreshing the service list is complete",
         refreshError: "Failed to refresh the service list! The reason: {e}",
-        confirmDeleteConnect: "This operation will permanently delete the changed link. Do you want to continue?"
+        confirmDeleteConnect: "This operation will permanently delete the changed link. Do you want to continue?",
+        exportService : {
+            zookeeper : {
+                getServiceList : {
+                    error:"Error getting service list! The reason:{e}"
+                },
+                getProviderList : {
+                    error:"Error getting provider list! The reason:{e}"
+                },
+                getConsumerList : {
+                    error:"Error getting list of fetch consumers! The reason:{e}"
+                },
+                getMetaData : {
+                    error:"Error getting list of fetch consumers! The reason: {e}"
+                },
+                saveConfiguration : {
+                    error:"Error getting dynamic configuration! The reason:{e}"
+                },
+            },
+            nacos : {
+                getServiceList : {
+                    error:"Error getting service list! The reason:{e}"
+                },
+                getProviderList : {
+                    error:"Error getting provider list! The reason:{e}"
+                },
+                getConsumerList : {
+                    error:"Error getting list of fetch consumers! The reason:{e}"
+                },
+                getMetaData : {
+                    error:"Error getting list of fetch consumers! The reason: {e}"
+                },
+                saveConfiguration : {
+                    error:"Error getting dynamic configuration! The reason:{e}"
+                },
+            }
+        }
     },
     dubbo: {
         serviceTab: {
@@ -131,6 +179,7 @@ export default {
             invokeProgress: "Call in progress",
             cancelInvoke: "Cancel",
             invokeTimeOut: "The call to the Dubbo interface timed out.",
+            connectProviderError: "Connecting to the provider server failed!",
             notFoundJDK:"If you need to use the Java caller, install the JDK first",
         },
         telnetTerminal: {

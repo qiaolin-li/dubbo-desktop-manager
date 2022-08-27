@@ -1,8 +1,7 @@
 import consumer from "@/main/communication/consumer.js";
 
 
-
-// 这里只是一个空壳
+// 这里只是一个空壳，最终会调用主进程的方法
 let data = {
     name: "excelUtils",
     generateExcel() {},
@@ -12,7 +11,6 @@ let data = {
 }
 
 let ExcelExportUtils = consumer.wrapper(data);
-
 
 /**
  * 导出到Excel

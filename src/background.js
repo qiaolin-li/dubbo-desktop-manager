@@ -62,24 +62,6 @@ async function createWindow() {
   }
 }
 
-const menu = new Menu()
-menu.append(new MenuItem({
-  label: 'DDM',
-  submenu: [{
-    role: 'help',
-    accelerator: process.platform === 'darwin' ? 'Cmd+F' : 'Alt+Shift+I',
-    click: () => {
-      dialog.showMessageBox({
-        type: 'info',
-        message: '成功!',
-        detail: '你按下了一个全局注册的快捷键绑定.',
-        buttons: ['好的']
-      })
-    }
-  }]
-}))
-
-Menu.setApplicationMenu(menu)
 Menu.setApplicationMenu(Menu.buildFromTemplate(template));
 
 app.setAboutPanelOptions({

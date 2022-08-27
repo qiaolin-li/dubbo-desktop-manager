@@ -1,6 +1,7 @@
 import common from "./common";
 const axios = require('axios').default;
 import configuration from '@/utils/Configuration';
+import i18n from '../../i18n'
 import qs from 'qs'
 
 async function getServiceList(registryConfig) {
@@ -45,25 +46,13 @@ async function getServiceList(registryConfig) {
 }
 
 
-function doGetServiceList(url, params) {
-
-    return new Promise((resolve, reject) => {
-        axios.get(url, {
-                params
-            }).then(function (response) {
-                if (response.status != 200) {
-                    reject(new Error("查询服务列表错误! 原因" + response.data))
-                    return;
-                }
-
-                return resolve(response.data);
-            })
-            .catch(function (error) {
-                reject(new Error("查询服务列表错误! 原因" + error))
-            })
-
-    });
-
+async function doGetServiceList(url, params) {
+    try {
+        let response = await axios.get(url, {params});
+        return response.data;
+    } catch(error){
+        throw new Error(i18n.t("connect.exportService.nacos.getServiceList.error", { e: error}));
+    }
 }
 
 async function getProviderList(serviceName, registryConfig) {
@@ -76,9 +65,7 @@ async function getProviderList(serviceName, registryConfig) {
     }
 
     try {
-        let response = await axios.get(url, {
-            params
-        });
+        let response = await axios.get(url, { params});
 
         if (!response.data || !response.data.hosts) {
             return [];
@@ -100,7 +87,7 @@ async function getProviderList(serviceName, registryConfig) {
 
         return array;
     } catch (error) {
-        throw new Error("查询服务列表错误! 原因" + error);
+        throw new Error(i18n.t("connect.exportService.nacos.getProviderList.error", { e: error}));
     }
 }
 
@@ -127,7 +114,7 @@ function parseProvderInfo(data) {
 }
 
 
-function getConsumerList(serviceName, registryConfig) {
+async function getConsumerList(serviceName, registryConfig) {
 
     // http://127.0.0.1:8848/nacos/v1/ns/instance/list
     let url = `${registryConfig.address}/nacos/v1/ns/instance/list`;
@@ -137,35 +124,26 @@ function getConsumerList(serviceName, registryConfig) {
         namespaceId: registryConfig.namespaceId || ""
     }
 
-    return new Promise((resolve, reject) => {
-        axios.get(url, {
-                params
-            }).then(function (response) {
-                if (response.status != 200) {
-                    reject(new Error("查询服务列表错误! 原因" + response.data))
-                    return;
-                }
-
-                if (!response.data || !response.data.hosts) {
-                    return resolve(new Array());
-                }
-
-                let array = new Array();
-                for (let i = 0; i < response.data.hosts.length; i++) {
-                    const host = response.data.hosts[i];
-                    array.push(parseProvderInfo(host))
-                }
-
-                return resolve(array);
-            })
-            .catch(function (error) {
-                reject(new Error("查询服务列表错误! 原因" + error))
-            })
-
-    });
+    try {
+        let response = await axios.get(url, { params });
+    
+        if (!response.data || !response.data.hosts) {
+            return [];
+        }
+    
+        let array = new Array();
+        for (let i = 0; i < response.data.hosts.length; i++) {
+            const host = response.data.hosts[i];
+            array.push(parseProvderInfo(host))
+        }
+    
+        return array;
+    } catch(error){
+        throw new Error(i18n.t("connect.exportService.nacos.getConsumerList.error", { e: error}));
+    }
 }
 
-function getMetaData(providerInfo, registryConfig) {
+async function getMetaData(providerInfo, registryConfig) {
 
     // http://127.0.0.1:8848/nacos/v1/cs/configs
     let url = `${registryConfig.address}/nacos/v1/cs/configs`;
@@ -186,32 +164,12 @@ function getMetaData(providerInfo, registryConfig) {
         tenant: registryConfig.namespaceId || ""
     }
 
-    return new Promise((resolve, reject) => {
-        axios.get(url, {
-                params
-            }).then(function (response) {
-
-                if (response.status == 404) {
-                    reject(new Error("未找到元数据信息"));
-                    return;
-                }
-
-                if (response.status != 200) {
-                    reject(new Error("查询元数据错误! 原因" + response.data))
-                    return;
-                }
-
-                if (!response.data) {
-                    return resolve("[]");
-                }
-
-                resolve(response.data);
-            })
-            .catch(function (error) {
-                reject(new Error("查询服务列表错误! 原因" + error))
-            })
-
-    });
+    try {
+        let response = await axios.get(url, { params });
+        return response.data || [];
+    } catch(error){
+        throw new Error(i18n.t("connect.exportService.nacos.getMetaData.error", { e: error}));
+    }
 }
 
 
@@ -253,25 +211,15 @@ async function getConfiguration(registryConfig, providerInfo) {
         tenant: registryConfig.namespaceId || ""
     }
 
-    return new Promise((resolve, reject) => {
-        axios.get(url, {
-                params
-            }).then(function (response) {
-                if (!response.data) {
-                    return resolve("");
-                }
-
-                resolve(response.data);
-            })
-            .catch(function (error) {
-                if (error.response.status == 404) {
-                    resolve("");
-                    return;
-                }
-                reject(new Error("查询服务列表错误! 原因" + error))
-            })
-
-    });
+    try {
+        let response = await axios.get(url, { params  })
+        return response.data || null;
+    } catch(error) {
+        if (error.response.status == 404) {
+            return null;
+        }
+        throw new Error(i18n.t("connect.exportService.nacos.getMetaData.error", { e: error}));
+    }
 }
 
 // eslint-disable-next-line no-unused-vars
@@ -285,28 +233,17 @@ async function saveConfiguration(registryConfig, providerInfo, doc) {
         namespaceId: registryConfig.namespaceId || "",
         tenant: registryConfig.namespaceId || "",
     }
-    if (doc && doc.configs && doc.configs.length > 0) {
-        params.content = configuration.JSONToYaml(doc);
-        try {
-            let response = await axios.post(url, qs.stringify(params));
-            if (response.status != 200) {
-                throw new Error("保存动态配置失败, 原因：" + response.data);
-            }
-        } catch (e) {
-            throw new Error("保存动态配置失败, 原因：" + e);
+
+    try {
+        // 有配置项，保存，反之删除
+        if(doc && doc.configs && doc.configs.length > 0){
+            params.content = configuration.JSONToYaml(doc);
+            await axios.post(url, qs.stringify(params));
+        } else {
+            await axios.delete(url, { params });
         }
-
-        return;
-    } else {
-        let response = await axios.delete(url, {
-            params
-        });
-
-        // 成功
-        if (!response.success) {
-            console.log("调用失败了");
-        }
-
+    } catch (error) {
+        throw new Error(i18n.t("connect.exportService.nacos.saveConfiguration.error", { e: error}));
     }
 }
 

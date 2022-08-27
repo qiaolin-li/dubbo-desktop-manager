@@ -2,7 +2,7 @@ import fs from "fs";
 import XLSXStyle from 'xlsx-style'
 
 // ################### 为什么要有这个类 ？
-// 因为
+// 因为打包后出现了很奇怪的错误
 //
 
 /**

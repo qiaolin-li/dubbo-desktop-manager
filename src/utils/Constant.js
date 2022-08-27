@@ -9,7 +9,6 @@ const APPLICATION_TEMP_DIR = `${APPLICATION_DIR}/temp/`;
 const APPLICATION_JAVA_INVOKE_DIR = `${APPLICATION_TEMP_DIR}/java-invoke/`;
 
 const JAVA_COMMAND_PATH = process.env.JAVA_HOME ? `${process.env.JAVA_HOME}/bin/java` : 'java';
-debugger
 // 防止目录不存在
 checkAndCreateDir(APPLICATION_DIR);
 checkAndCreateDir(APPLICATION_DATA_DIR);

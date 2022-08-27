@@ -9,6 +9,7 @@ import {
   lt
 } from 'semver'
 import appConfig from "@/main/repository/appConfig.js";
+import i18n from '@/i18n'
 
 const currentVersion = pkg.version
 const repostoryName = "qiaolin-li/dubbo-desktop-manager"
@@ -25,8 +26,8 @@ const checkVersion = async () => {
     if (res.status === 200) {
       let releaseBody = res.data.body;
       let latest = res.data.name;
-      let message = releaseBody ? `发现新版本${latest}\n${releaseBody}` :
-        `发现新版本${latest}，更新了很多功能，是否去下载最新的版本？`;
+      let message = releaseBody ? i18n.t("version.message", {latest, releaseBody}) 
+                                : i18n.t("version.simpleMessage", {latest});
       checkUpdate(latest, message);
     }
   } catch (err) {
@@ -42,7 +43,7 @@ async function backupCheckUpdateUrl() {
     res = await axios.get(releaseUrlBackup);
     if (res.status === 200) {
       const latest = res.data.version || res.data.name
-      checkUpdate(latest, `发现新版本${latest}，更新了很多功能，是否去下载最新的版本？`);
+      checkUpdate(latest, i18n.t("version.simpleMessage", {latest}));
     }
   } catch (err) {
     console.log(err)
@@ -64,10 +65,10 @@ function checkUpdate(lastVersion, message) {
   }
   dialog.showMessageBox({
     type: 'info',
-    title: '发现新版本',
-    buttons: ['Yes', 'No'],
+    title: i18n.t("version.title"),
+    buttons: [i18n.t("version.yes"), i18n.t("version.no")],
     message: message,
-    checkboxLabel: '以后不再提醒',
+    checkboxLabel: i18n.t("version.noRemindCurrnetVersion"),
     checkboxChecked: false
   }).then(res => {
     if (res.response === 0) {
