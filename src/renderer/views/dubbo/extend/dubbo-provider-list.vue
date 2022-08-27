@@ -1,6 +1,7 @@
 <template>
   <div class="dubboProviderListContainer">
-    <el-table :data="providerList" class="content" @row-contextmenu="openMenu" ref="report-table" :highlight-current-row="true" :stripe="true" :header-row-class-name="providerListTableHeaderRowClassName" size="medium">
+    <el-table :data="providerList" class="content" @row-contextmenu="openMenu" ref="report-table" :highlight-current-row="true" :stripe="true" 
+        :header-row-class-name="providerListTableHeaderRowClassName" size="medium" :border="true">
       <el-table-column type="expand">
         <template slot="header">
           <el-tooltip class="item" effect="light" :content="$t('dubbo.providePage.exportExcel')" placement="top-start">
@@ -20,12 +21,12 @@
           <span class="versionSpan">{{ scope.row.revision  }} </span>
         </template>
       </el-table-column>
-      <el-table-column prop="disabled" :label="$t('dubbo.providePage.disabled')" :show-overflow-tooltip="true">
+      <el-table-column prop="disabled" width="100px"  :label="$t('dubbo.providePage.disabled')" :show-overflow-tooltip="true">
         <template slot-scope="scope" v-if="scope.row.disabled ">
           <span class="versionSpan">{{ scope.row.disabled ? $t(`dubbo.providePage.disableTypeMap.${scope.row.disabledType}`) : ''  }} </span>
         </template>
       </el-table-column>
-      <el-table-column prop="methods" :label="$t('dubbo.providePage.methodCount')" :show-overflow-tooltip="true">
+      <el-table-column prop="methods" width="120px" :label="$t('dubbo.providePage.methodCount')" :show-overflow-tooltip="true">
         <template slot-scope="scope">
           {{scope.row.methods.length}}
         </template>
@@ -87,55 +88,53 @@ export default {
         ]
       })
 
-      if (filePaths) {
-        let headerList = [
-          {
-            key: 'address',
-            title: this.$t('dubbo.providePage.address'),
-            width: 30
-          },
-          {
-            key: 'application',
-            title: this.$t('dubbo.providePage.application'),
-          },
-          {
-            key: 'version',
-            title: this.$t('dubbo.providePage.version'),
-          },
-          {
-            title: this.$t('dubbo.providePage.disabled'),
-            getContent: (row) => {
-              return row.disabled ? this.$t(`dubbo.providePage.disableTypeMap.${row.disabledType}`) : '';
-            }
-          },
-          {
-            title: this.$t('dubbo.providePage.methodCount'),
-            getContent: (row) => {
-              return row.methods.length;
-            }
-          },
-          {
-            title:"操作"
-          }
-        ]
-
-        let filePath = filePaths[0] + `/${this.$t('dubbo.serviceTab.providerList')}.xlsx`;
-        try {
-
-          ExcelExportUtils.generateExcelAndWriterFile(headerList, this.providerList, filePath);
-          this.$message({
-            type: "success",
-            message: this.$t('dubbo.providePage.exportSuccess'),
-          });
-        } catch (e) {
-          this.$message({
-            type: "error",
-            message: this.$t('dubbo.providePage.exportError'),
-          });
-          console.log(e)
-        }
+      if (!filePaths) {
+        return;
       }
+      let headerList = [
+        {
+          key: 'address',
+          title: this.$t('dubbo.providePage.address'),
+          width: 30
+        },
+        {
+          key: 'application',
+          title: this.$t('dubbo.providePage.application'),
+        },
+        {
+          key: 'version',
+          title: this.$t('dubbo.providePage.version'),
+        },
+        {
+          title: this.$t('dubbo.providePage.disabled'),
+          getContent: (row) => {
+            return row.disabled ? this.$t(`dubbo.providePage.disableTypeMap.${row.disabledType}`) : '';
+          }
+        },
+        {
+          title: this.$t('dubbo.providePage.methodCount'),
+          getContent: (row) => {
+            return row.methods.length;
+          }
+        }
+      ]
 
+      let suffix = this.$moment(new Date()).format("YYYYMMDD_HHmmss");
+      let filePath = filePaths[0] + `/${this.$t('dubbo.serviceTab.providerList').replace(/\s/g, '_')}-${suffix}.xlsx`;
+      try {
+
+        ExcelExportUtils.generateExcelAndWriterFile(headerList, this.providerList, filePath);
+        this.$message({
+          type: "success",
+          message: this.$t('dubbo.providePage.exportSuccess'),
+        });
+      } catch (e) {
+        this.$message({
+          type: "error",
+          message: this.$t('dubbo.providePage.exportError'),
+        });
+        console.log(e)
+      }
     },
     async refreshProviderList() {
       this.providerList = await registry.getProviderList(this.serviceName, this.registryCenterId);
@@ -248,10 +247,9 @@ export default {
 .provider-list-table-header .el-table__cell {
   background-color: rgb(249, 249, 249) !important;
   border-left: 1px solid rgb(234, 234, 234) !important;
-  border-top: 1px solid rgb(234, 234, 234) !important;
-  border-bottom: 1px solid rgb(234, 234, 234) !important;
 }
 
 .provider-list-table-header .el-table__cell {
+  border-right : 0px
 }
 </style>
