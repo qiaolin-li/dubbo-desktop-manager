@@ -54,7 +54,7 @@ async function invokeMethod(provder, metadata, method, code) {
         return new InvokeResult(JSONFormater(JSON.stringify(data.data)), data.elapsedTime);
     }
     
-    let errorMessage = data["data"]; //.replace(/\n\tat/g, '\n')
+    let errorMessage = data["data"]; 
     return new InvokeResult(errorMessage, data.elapsedTime);
 }
 
@@ -80,7 +80,11 @@ function executeJar(outFile) {
                 if(/spawn .* ENOENT/.test(tempError)){
                     tempError = i18n.t("dubbo.invokePage.notFoundJDK");
                 }
-                reject(new Error(tempError));
+                resolve({
+                    success : false,
+                    data :  tempError,
+                    elapsedTime : 0
+                });
                 return;
             }
 
