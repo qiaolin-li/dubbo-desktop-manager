@@ -61,5 +61,5 @@
 ## #、其他
 
 1. [如何自己构建DDM](./docs/build.md)
-2. [参考资料](./docs/build.md)
+2. [参考资料](./docs/reference.md)
 
