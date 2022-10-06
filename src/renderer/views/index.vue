@@ -37,7 +37,7 @@ import dubboList from "./dubbo/index.vue";
 
 import registryList from "./connect/index.vue";
 import welcome from "./welcome.vue";
-import settings from "./settings/settings.vue";
+import settings from "./settings/index.vue";
 // import { ipcRenderer, remote, Menu } from 'electron'
 const remote = require("@electron/remote");
 import { ipcRenderer } from 'electron'

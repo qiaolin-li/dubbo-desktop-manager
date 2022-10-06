@@ -1,7 +1,5 @@
 import yaml from "js-yaml";
 
-
-
 function yamlToJSON(data) {
   if(!data){
     return null;
