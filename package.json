@@ -12,8 +12,8 @@
   "scripts": {
     "lint": "vue-cli-service lint",
     "build": "vue-cli-service electron:build",
-    "devDebug": "vue-cli-service electron:serve --inspect=5858",
-    "dev": "vue-cli-service electron:serve",
+    "debugStart": "vue-cli-service electron:serve --inspect=5858",
+    "start": "vue-cli-service electron:serve",
     "postinstall": "patch-package && electron-builder install-app-deps",
     "postuninstall": "electron-builder install-app-deps",
     "release": "vue-cli-service electron:build  --publish always",
