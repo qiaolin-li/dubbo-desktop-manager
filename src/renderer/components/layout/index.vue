@@ -68,6 +68,11 @@ export default {
   align-items: center;
   background-color: #ECECEC;
 }
+
+.el-main {
+  padding: 0px !important;
+}
+
 .menu-div{
   width: 50px;
   height: 50px;
