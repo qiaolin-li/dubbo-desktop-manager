@@ -154,9 +154,9 @@ export default {
 <style >
 .dubbo-list-main-container {
   height: 100vh;
-  margin: 5px 0px;
+  /* margin: 5px 0px;
   margin-left: 5px;
-  margin-right: 5px;
+  margin-right: 5px; */
   background-color: white;
   border-radius: 5px;
 }

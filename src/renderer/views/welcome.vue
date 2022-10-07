@@ -13,7 +13,6 @@
       <div>
 
         <iframe src="https://ghbtns.com/github-btn.html?user=qiaolin-li&repo=dubbo-desktop-manager&type=watch&count=true" frameborder="0" scrolling="0" width="120" height="20" title="GitHub"></iframe>
-
         <iframe src="https://ghbtns.com/github-btn.html?user=qiaolin-li&repo=dubbo-desktop-manager&type=fork&count=true" frameborder="0" scrolling="0" width="120" height="20" title="GitHub"></iframe>
         <iframe src="https://ghbtns.com/github-btn.html?user=qiaolin-li&repo=dubbo-desktop-manager&type=watch&count=true&v=2" frameborder="0" scrolling="0" width="120" height="20" title="GitHub"></iframe>
       </div>
@@ -58,17 +57,12 @@ export default {
 
 <style>
 .welcomeContainer {
-  /* position : absolute; */
-  /* width: 100%; */
   background-color: #fff;
   height: 100vh;
   overflow-y: auto;
-  margin: 5px 0px;
-  margin-left: 5px;
-  margin-right: 5px;
-  background-color: white;
   overflow-y: auto;
   border-radius: 5px;
+  -webkit-app-region: drag;
 }
 
 .contentContainer {

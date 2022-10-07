@@ -1,6 +1,5 @@
 <template>
   <div class="main-container">
-
     <div class="content-container">
       <split-pane split="vertical" :min-percent="25" :default-percent="25">
         <template slot="paneL">
@@ -215,11 +214,13 @@ export default {
 }
 
 .left-container {
-  margin: 5px 5px;
+  /* margin: 5px 5px; */
   background-color: white;
   overflow-y: auto;
   border-radius: 5px;
   height: 100%;
+  padding-top: 20px;
+  -webkit-app-region: drag;
 }
 .right-container {
   overflow-y: auto;
@@ -228,22 +229,12 @@ export default {
 .right-tab-container {
   height: 5vh;
   background-color: white;
-  margin-top: 5px;
+  /* margin-top: 5px;
   margin-left: 5px;
-  margin-right: 5px;
+  margin-right: 5px; */
+    padding-top: 10px;
+  -webkit-app-region: drag;
 }
-
-/* .el-tabs__nav-scroll {
-  overflow-x: auto;
-} */
-
-/* .el-tabs__header {
-  overflow: auto !important;
-}
-
-.el-tabs__nav-wrap {
-  overflow: auto !important;
-} */
 
 .el-tabs__nav-scroll {
   overflow: auto !important;
