@@ -2,16 +2,17 @@
   <div>
     <el-container>
       <el-aside class="menu-aside" width="70px">
-          <router-link :to="routing.path"  v-for="routing in routesList" :key="routing.path">
-            <div class="menu-div">
+          <router-link :to="routing.path" class="route"
+            v-for="routing in routesList" :key="routing.path">
+            <div class="menu-div" :class="[$route.name == routing.name?'active':'']"  >
               <i class="el-icon-menu"></i>  
-              <span class="aa">{{routing.meta.title}}</span>
+              <span class="menu-txt">{{routing.meta.title}}</span>
             </div>
           </router-link>
-
       </el-aside>
+
       <el-main>
-        <!-- 功能页面 -->
+        <!-- 功能页面 --> 
         <router-view></router-view>
       </el-main>
     </el-container>
@@ -33,6 +34,9 @@ export default {
   data() {
     return {
       routesList: [],
+      menuBg:'rgba(225,226,226,.8)',
+      menuText:'#3FB24F',
+      menuActiveText:'#3FB24F'
     }
   },
   created() {
@@ -45,39 +49,43 @@ export default {
         }
       }
     }
-    debugger
+    // debugger
     this.routesList = routesList;
   }
-
 }
 </script>
 
 <style>
+.route {
+  text-decoration: none;
+}
+.menu-aside, .menu-div {
+  display: flex;
+  flex-direction: column;
+}
 .menu-aside {
   padding-top: 20px;
+  align-items: center;
+  background-color: #ECECEC;
 }
-
 .menu-div{
   width: 50px;
   height: 50px;
-  display: flex;
-  justify-content: center;
-  flex-direction: column;
-  background-color: pink;
-  margin: 10px;
+  justify-content: space-evenly;
   align-items: center;
+  margin-top: 10px;
+  border-radius: 10%;
+  color: #666666;
 }
-
-.el-icon-menu{
-  background-color: aqua;
-  width: 20px;
-  height: 20px;
+.active {
+  background-color: rgba(225,226,226,.8);
+  color: #3FB24F;
 }
-
-.aa{
-  background-color: bisque;
-  font-size: 12px;
+.el-icon-menu {
+  font-size: 22px;
 }
-
+.menu-txt{
+  font-size: 11px;
+}
 
 </style>
