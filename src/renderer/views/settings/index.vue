@@ -68,5 +68,7 @@ export default {
   padding: 10px;
   background-color: white;
   border-radius: 5px;
+  position: fixed;
+  top:0;
 }
 </style>

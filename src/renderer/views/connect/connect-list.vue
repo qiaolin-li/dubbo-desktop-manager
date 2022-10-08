@@ -90,15 +90,14 @@ export default {
 
 <style>
 .mainContainer {
-  background-color: white;
-  margin-top: 10px;
+  margin-bottom: 10px;
+  margin-left: 10px;
 }
 
 .connectContainer {
   display: flex;
   justify-content: space-between;
   line-height: 30px;
-  padding-left: 10px;
   white-space: nowrap;
 }
 

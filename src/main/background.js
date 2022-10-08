@@ -25,7 +25,7 @@ protocol.registerSchemesAsPrivileged([
 let init = false;
 
 // 禁用同源策略
-app.commandLine.appendSwitch("disable-site-isolation-trials");
+// app.commandLine.appendSwitch("disable-site-isolation-trials");
 
 
 let window = null;
