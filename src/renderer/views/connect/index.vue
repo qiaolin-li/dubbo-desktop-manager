@@ -1,6 +1,10 @@
 <template>
   <div id="connectDiv">
 
+    <div class="btn-plus" @click="openAddConnectDialog">
+      <i class="el-icon-plus"></i>
+    </div>
+
     <connectList ref="connectList" @clickServiceInfo="clickServiceInfo" @editConnect="openAddConnectDialog"></connectList>
 
     <el-dialog :title="$t('connect.addConnect')" width="40%" :visible.sync="dialogVisible" :close-on-click-modal="false">
@@ -88,4 +92,11 @@ export default {
   width: 100%;
   overflow: auto;
 }
+
+.btn-plus {
+  height: 30px;
+  line-height: 30px;
+  margin-left:10px;
+}
+
 </style>

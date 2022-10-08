@@ -1,7 +1,7 @@
 <template>
   <div class="interfaceContainer" v-show="connectInfo.isShow">
     <div class="searchTool">
-      <el-input v-model="searchKeyword" :placeholder="$t('connect.searchContent')" @input="searchKeywordChange($event)"></el-input>
+      <el-input v-model="searchKeyword" :placeholder="$t('connect.searchContent')" @input="searchKeywordChange($event)" size="mini"></el-input>
       <span class="serviceSizeTool">{{this.connectInfo.serviceSize}}</span>
     </div>
 

@@ -7,14 +7,8 @@
       <div class="descContainer">
         <span class="title">{{$t("welcome.productName")}}</span>
       </div>
-      <div>
+      <div style="margin-top:5px;">
         <span class="version">{{$t("welcome.version")}}{{version}} </span>
-      </div>
-      <div>
-
-        <iframe src="https://ghbtns.com/github-btn.html?user=qiaolin-li&repo=dubbo-desktop-manager&type=watch&count=true" frameborder="0" scrolling="0" width="120" height="20" title="GitHub"></iframe>
-        <iframe src="https://ghbtns.com/github-btn.html?user=qiaolin-li&repo=dubbo-desktop-manager&type=fork&count=true" frameborder="0" scrolling="0" width="120" height="20" title="GitHub"></iframe>
-        <iframe src="https://ghbtns.com/github-btn.html?user=qiaolin-li&repo=dubbo-desktop-manager&type=watch&count=true&v=2" frameborder="0" scrolling="0" width="120" height="20" title="GitHub"></iframe>
       </div>
     </div>
 
@@ -70,7 +64,8 @@ export default {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center; /* 水平居中 */
+  justify-content: center;
+  /* 水平居中 */
   height: 100%;
 }
 
@@ -79,9 +74,7 @@ export default {
   font-weight: bold;
   color: #333;
 }
-
 .version {
-  font-size: 20px;
   color: #333;
 }
 </style>

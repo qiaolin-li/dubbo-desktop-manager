@@ -33,10 +33,7 @@ export default {
   },
   data() {
     return {
-      routesList: [],
-      menuBg:'rgba(225,226,226,.8)',
-      menuText:'#3FB24F',
-      menuActiveText:'#3FB24F'
+      routesList: []
     }
   },
   created() {
@@ -59,11 +56,14 @@ export default {
 .route {
   text-decoration: none;
 }
+
 .menu-aside, .menu-div {
   display: flex;
   flex-direction: column;
 }
+
 .menu-aside {
+  height: 100vh;
   padding-top: 20px;
   align-items: center;
   background-color: #ECECEC;
@@ -82,10 +82,12 @@ export default {
   border-radius: 10%;
   color: #666666;
 }
+
 .active {
   background-color: rgba(225,226,226,.8);
   color: #3FB24F;
 }
+
 .el-icon-menu {
   font-size: 22px;
 }

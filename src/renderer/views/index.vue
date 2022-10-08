@@ -214,12 +214,9 @@ export default {
 }
 
 .left-container {
-  /* margin: 5px 5px; */
   background-color: white;
   overflow-y: auto;
-  border-radius: 5px;
   height: 100%;
-  padding-top: 20px;
   -webkit-app-region: drag;
 }
 .right-container {
