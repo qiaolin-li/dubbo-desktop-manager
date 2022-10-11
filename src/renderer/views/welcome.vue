@@ -56,7 +56,6 @@ export default {
   overflow-y: auto;
   overflow-y: auto;
   border-radius: 5px;
-  -webkit-app-region: drag;
 }
 
 .contentContainer {

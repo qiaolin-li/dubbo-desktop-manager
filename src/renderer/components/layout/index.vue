@@ -2,7 +2,7 @@
   <div>
     <el-container>
       <el-aside class="menu-aside" width="70px">
-          <router-link :to="routing.path" class="route"
+          <router-link :to="routing.path" class="route" ondragstart="return false"
             v-for="routing in routesList" :key="routing.path">
             <div class="menu-div" :class="[$route.name == routing.name?'active':'']"  >
               <i class="el-icon-menu"></i>  
@@ -81,6 +81,7 @@ export default {
   margin-top: 10px;
   border-radius: 10%;
   color: #666666;
+  -webkit-user-drag:none;
 }
 
 .active {

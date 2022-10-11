@@ -9,24 +9,21 @@
         </template>
         <template slot="paneR">
           <div class="right-tab-container" v-show="dubboListList.length > 0">
-            <el-tabs id="dubboListTabs" v-model="currentTabId" type="card" closable @tab-remove="removeTab">
+            <el-tabs id="dubboListTabs" v-model="currentTabId" type="border-card" closable @tab-remove="removeTab">
               <el-tab-pane class="tabPane" v-for="(item, index) in dubboListList" :key="item.id" :name="item.id">
                 <span slot="label" class="notSelect"><i class="el-icon-date"></i> {{item.title}}</span>
               </el-tab-pane>
-            </el-tabs>
+            </el-tabs>  
           </div>
           <div class="right-container" :min-percent="30" :default-percent="30" v-show="dubboListList.length > 0">
             <div v-for="(item, index) in dubboListList" :key="item.serviceName">
-              <settings v-if="item.id == 'settings'" v-show="currentTabId == item.id"></settings>
-              <dubbo-list v-else v-show="currentTabId == item.serviceName" :registryCenterId="item.registryCenterId" :serviceName="item.serviceName" />
+              <dubbo-list v-show="currentTabId == item.serviceName" :registryCenterId="item.registryCenterId" :serviceName="item.serviceName" />
             </div>
           </div>
           <welcome v-if="dubboListList.length == 0" />
-
         </template>
       </split-pane>
     </div>
-
   </div>
 </template>
 
@@ -199,10 +196,15 @@ export default {
 </script>
 
 <style >
+body {
+  -webkit-app-region: drag;
+}
+.menu-div,.el-dialog,.el-table,table,.invoke-dubbo-dialog-content,.container,span,i,i:hover {
+  -webkit-app-region: no-drag !important;
+}
 .main-container {
-  width: 100vw;
   margin: 0px;
-  background-color: rgb(229, 226, 228);
+  background-color: rgb(236, 236, 237);
   height: 100vh;
   overflow-y: hidden;
   display: flex;
@@ -217,7 +219,6 @@ export default {
   background-color: white;
   overflow-y: auto;
   height: 100%;
-  -webkit-app-region: drag;
 }
 .right-container {
   overflow-y: auto;
@@ -225,13 +226,14 @@ export default {
 
 .right-tab-container {
   height: 5vh;
-  background-color: white;
-  /* margin-top: 5px;
-  margin-left: 5px;
-  margin-right: 5px; */
-    padding-top: 10px;
-  -webkit-app-region: drag;
+  margin:5px;
+  margin-bottom: 10px;
 }
+
+.el-tabs__item {
+  color: #303133 !important;
+  border: 1px solid rgb(236, 236, 237) !important ;
+ }
 
 .el-tabs__nav-scroll {
   overflow: auto !important;

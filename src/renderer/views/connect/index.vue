@@ -1,8 +1,10 @@
 <template>
   <div id="connectDiv">
 
-    <div class="btn-plus" @click="openAddConnectDialog">
-      <i class="el-icon-plus"></i>
+    <div class="btn-plus">
+      <el-tooltip effect="light" content="新增" placement="right-start">
+          <i class="el-icon-plus" @click="openAddConnectDialog"></i>
+      </el-tooltip>
     </div>
 
     <connectList ref="connectList" @clickServiceInfo="clickServiceInfo" @editConnect="openAddConnectDialog"></connectList>
@@ -45,6 +47,7 @@ export default {
 
     // 菜单键点击
     connectDiv.addEventListener('contextmenu', ev => {
+      debugger
       // 菜单模板
       const menuTemplate = [
         {
@@ -96,7 +99,24 @@ export default {
 .btn-plus {
   height: 30px;
   line-height: 30px;
-  margin-left:10px;
+  margin: 3px 0 0 10px;
+}
+
+.btn-plus i {
+  padding: 4px;
+}
+
+.btn-plus i:hover {
+  background-color: #ccc;
+  border-radius: 50%;
+}
+
+.is-light{
+  border-color: #ECECEC !important;
+}
+
+.popper__arrow {
+  border-right-color: #ECECEC !important;
 }
 
 </style>

@@ -194,4 +194,8 @@ export default {
   border-radius: 50%;
   display: inline-block;
 }
+.el-input.is-active .el-input__inner, .el-input__inner:focus {
+    border-color: rgb(62, 177, 78) !important;
+    outline: 0;
+}
 </style>
