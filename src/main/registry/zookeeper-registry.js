@@ -209,6 +209,7 @@ function getPath(serviceName, version) {
 }
 
 
+
 function parseProvderInfo(data) {
   let content = decodeURIComponent(data);
   let urlData = urlUtils.parseURL(content);
@@ -221,10 +222,11 @@ function parseProvderInfo(data) {
     generic: urlData.params.generic,
     version: urlData.params.version,
     revision: urlData.params.revision,
-    dubboVersion: urlData.params.dubbo,
+    dubboVersion: urlData.params.release,
     deprecated: urlData.params.deprecated,
     weight: urlData.params.weight,
-    enabled: urlData.params.enabled
+    enabled: urlData.params.enabled,
+    qosPort: urlData.params["qos.port"]
   });
 }
 

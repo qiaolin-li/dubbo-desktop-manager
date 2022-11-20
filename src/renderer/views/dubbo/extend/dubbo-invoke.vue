@@ -106,7 +106,7 @@ import dubboInvokeUtils from "@/utils/dubboInvokeUtils.js";
 import dubboInvoke from "@/main/invoker/";
 import invokeHisotryRecord from "@/main/repository/invokeHistoryRepository.js";
 import registry from "@/main/registry";
-import resolveMateData from "@/utils/resolveMateData";
+import paramGenerator from "@/main/param/index.js";
 import jsonCodeEditor from "@/renderer/components/editor/json-code-editor.vue";
 import Loading from "@/utils/MyLoading";
 import appConfig from "@/main/repository/appConfig.js";
@@ -203,6 +203,7 @@ export default {
             this.currentInvoker
           ).then(resolve).catch(reject);
         });
+        debugger
         this.invokeReulst.code = response.code;
         this.invokeReulst.elapsedTime = response.elapsedTime;
         this.$message({
@@ -231,10 +232,8 @@ export default {
       this.invokeHisotryList = await invokeHisotryRecord.findList(this.provider.serviceName, this.method, 1, 50);
     },
     generateParam() {
-
-      //  生成参数
-      let code = resolveMateData.generateParam(this.metadata, this.method);
-      this.codeConfig.code = code || "[]";
+      let code = paramGenerator.generateParam(this.metadata, this.method);
+      this.codeConfig.code = JSON.stringify(code, null, 2) || "[]";
     },
     async getMataData() {
       this.metadata = await registry.getMetaData(this.provider, this.registryCenterId);

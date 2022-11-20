@@ -11,9 +11,10 @@ import dubboInvokeUtils from "@/utils/dubboInvokeUtils.js";
  * @returns 
  */
 function invokeMethod( provder,metadata,  method, code) {
+    const telnetPort = metadata.parameters["qos.port"] || provder.port;
+    debugger
     let {
         ip,
-        port,
         serviceName
     } = provder;
     let params = JSON.parse(code);
@@ -21,14 +22,16 @@ function invokeMethod( provder,metadata,  method, code) {
     // eslint-disable-next-line no-unused-vars
     return new Promise((resolve, reject) => {
 
-        let socket = net.createConnection(port, ip);
+        let socket = net.createConnection(telnetPort, ip);
 
         socket.on('error', function(error) {
-            // if(error && error.code === "ECONNREFUSED") {
-            //     reject(i18n.t("dubbo.invokePage.connectProviderError") )
-            // }
-            reject(new Error(i18n.t("dubbo.invokePage.connectProviderError", {e : error})))
+            resolve({
+                success : false,
+                code :  i18n.t("dubbo.invokePage.connectProviderError", {e : error}),
+                elapsedTime : 0
+            });
             socket.end();
+            return;
         });
 
         let tSocket = new telnetSocket.TelnetSocket(socket);
@@ -38,6 +41,16 @@ function invokeMethod( provder,metadata,  method, code) {
             mainBuffer = Buffer.concat([mainBuffer, buffer], mainBuffer.length + buffer.length);
 
             let result = mainBuffer.toString("utf8");
+
+            // dubbo 3.0 未开启ip访问
+            if(result.indexOf("Foreign Ip Not Permitted.") >= 0){
+                resolve({
+                    success : false,
+                    code :  "Dubbo 已开启禁止外网连接，请确保配置当前客户端IP可以连接或者使用Java方式进行调用",
+                    elapsedTime : 0
+                });
+                return;
+            }
 
             // 数据还未接收完，再等等
             if (!result.endsWith("dubbo>")) {

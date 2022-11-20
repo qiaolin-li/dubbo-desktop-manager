@@ -105,11 +105,11 @@ function parseProvderInfo(data) {
         generic: metadata.generic,
         version: metadata.version,
         revision: metadata.revision,
-        dubboVersion: metadata.dubbo,
+        dubboVersion: metadata.release,
         deprecated: metadata.deprecated,
         weight: data.weight,
         enabled: data.enabled,
-        group: metadata.group,
+        group: metadata.group
     });
 }
 

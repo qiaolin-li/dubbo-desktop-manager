@@ -71,6 +71,7 @@ function executeJar(outFile) {
         // maxBuffer: 100 * 1024 * 1024 * 1024, // 1G
     }
 
+    // eslint-disable-next-line no-unused-vars
     return new Promise((resolve, reject) => {
 
         execFile(javaCommandPath, commandArgs, config, (error, stdout, stderr) => {
@@ -103,7 +104,13 @@ function executeJar(outFile) {
 
 function getMethodParameterTypes(metadata, method) {
     let methodInfo = metadata.methods.find(m => m.name == method);
-    return methodInfo.parameterTypes;
+    return methodInfo.parameterTypes.map(paramterType => {
+        if(paramterType.indexOf("<")) {
+            return paramterType.substring(0, paramterType.indexOf("<"));
+
+        }
+        return paramterType;
+    });
 }
 
 
