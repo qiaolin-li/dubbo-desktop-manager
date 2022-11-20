@@ -105,7 +105,7 @@ function executeJar(outFile) {
 function getMethodParameterTypes(metadata, method) {
     let methodInfo = metadata.methods.find(m => m.name == method);
     return methodInfo.parameterTypes.map(paramterType => {
-        if(paramterType.indexOf("<")) {
+        if(paramterType.indexOf("<") >= 0) {
             return paramterType.substring(0, paramterType.indexOf("<"));
 
         }
