@@ -27,7 +27,7 @@
 </template>
 
 <script>
-import connectRepository from "@/main/repository/connectRepository.js";
+import connectRepository from "@/renderer/api/connectManangerClient.js";
 import connectItem from "./connect-item.vue";
 
 export default {

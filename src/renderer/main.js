@@ -13,7 +13,7 @@ import splitPane from 'vue-splitpane'
 import jsonlint from 'jsonlint' 
 window.jsonlint = jsonlint
 
-import i18n from '@/i18n'
+import i18n from '@/renderer/common/i18n'
 
 if(process.platform === 'win32'){
   import("./assets/style/windows.css")

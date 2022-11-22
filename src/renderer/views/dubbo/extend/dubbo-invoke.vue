@@ -102,14 +102,14 @@
 
 <script>
 
-import dubboInvokeUtils from "@/utils/dubboInvokeUtils.js";
-import dubboInvoke from "@/main/invoker/";
-import invokeHisotryRecord from "@/main/repository/invokeHistoryRepository.js";
-import registry from "@/main/registry";
-import paramGenerator from "@/main/param/index.js";
+import registry from "@/renderer/api/registryClient.js";
+import dubboInvoke from "@/renderer/api/dubboInvokerClient.js";
+import invokeHisotryRecord from "@/renderer/api/invokeHistoryClient.js";
+import paramGenerator from "@/renderer/api/dubboParamGeneratorClient.js";
+import appConfig from "@/renderer/api/appConfig.js";
+
 import jsonCodeEditor from "@/renderer/components/editor/json-code-editor.vue";
-import Loading from "@/utils/MyLoading";
-import appConfig from "@/main/repository/appConfig.js";
+import Loading from "@/renderer/common/utils/MyLoading";
 
 export default {
   components: {
@@ -150,7 +150,7 @@ export default {
     this.contentElementId = `invoke-dubbo-content-${this.provider.serviceName.replace(/\./g, '-')}-${this.provider.address.replace(/./g, '-')}`;
   },
   async mounted() {
-    this.currentInvoker = this.invokerType = appConfig.getProperty("invokerType") || "telnet";
+    this.currentInvoker = this.invokerType = await appConfig.getProperty("invokerType") || "telnet";
     await this.getMataData();
 
     if (this.provider && this.provider.methods) {
@@ -203,7 +203,7 @@ export default {
             this.currentInvoker
           ).then(resolve).catch(reject);
         });
-        debugger
+        
         this.invokeReulst.code = response.code;
         this.invokeReulst.elapsedTime = response.elapsedTime;
         this.$message({
@@ -223,7 +223,7 @@ export default {
         method: this.method,
         params: JSON.parse(this.codeConfig.code),
       };
-      this.invokeReulst.code = dubboInvokeUtils.buildInvokeCommand(param);
+      this.invokeReulst.code = dubboInvoke.buildInvokeCommand(param);
     },
     copy(invokeHistory) {
       this.codeConfig.code = invokeHistory.param;

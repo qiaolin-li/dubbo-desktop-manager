@@ -1,5 +1,4 @@
-import dbUtils from "../../utils/DBUtils.js";
-import consumer from "@/main/communication/consumer.js";
+import dbUtils from "@/main/common/utils/DBUtils.js";
 let dbOperator = dbUtils("invokeHistory");
 
 
@@ -49,14 +48,9 @@ function findList(serviceName, method, page, size) {
     return dbOperator.find(queryParam, sortParam, pageParam);
 }
 let data = {
-    name:"invokeHistoryRepository",
     save,
     findList,
     InvokeHistory,
-    install(communication){
-        communication.registry(data);
-    }
 }
 
-let proxy = consumer.wrapper(data);
-export default proxy
+export default data

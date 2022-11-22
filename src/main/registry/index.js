@@ -1,7 +1,7 @@
 import zookeeperRegistry from "./zookeeper-registry";
 import nacosRegistry from "./nacos-registry";
 import connectRepository from "@/main/repository/connectRepository.js";
-import consumer from "@/main/communication/consumer.js";
+import configuration from '@/main/common/utils/Configuration';
 
 const map = new Map();
 
@@ -40,11 +40,29 @@ async function getConfiguration(providerInfo, registryCenterId) {
     
     let registry = getRealRegistry(registryConfig);
 
-    return registry.getConfiguration(registryConfig, providerInfo);
+    const config = registry.getConfiguration(registryConfig, providerInfo);
+    if(config){
+        return config;
+    }
+
+    // 不存在，生成默认的yam
+    return configuration.JSONToYaml(configuration.createDefaultConfiguration(this.provider.serviceName));
 }
 
 
-async function saveConfiguration(registryCenterId, providerInfo, doc) {
+async function saveConfiguration(registryCenterId, providerInfo, ymal) {
+    let doc = null;
+      try {
+        doc = configuration.yamlToJSON(ymal);
+      } catch (e) {
+        this.$message({
+            type: "error",
+            message: this.$t('dubbo.configurationPage.invalidFormat'),
+        });
+        return;
+    }
+
+
     let registryConfig = await connectRepository.findById(registryCenterId);
     
     let registry = getRealRegistry(registryConfig);
@@ -173,7 +191,6 @@ function deleteConfigration(doc, address) {
 
 
 let data = {
-    name: "registry",
     getServiceList,
     getProviderList,
     getConsumerList,
@@ -182,9 +199,6 @@ let data = {
     saveConfiguration,
     disableProvider,
     enableProvider,
-    install(communication) {
-        communication.registry(data);
-    }
 }
 
-export default consumer.wrapper(data);
+export default data;

@@ -1,0 +1,14 @@
+{
+    /*指定编译文件，指定一个包含相对或绝对文件路径的列表*/
+	"files": ["./config/index.ts"],
+    /*指定编译文件，属性指定一个文件glob匹配模式列表*/
+    "include": ["./src/main/*.ts"],
+    /*指定不编译文件，属性指定一个文件glob匹配模式列表*/
+    "exclude": ["node_modules"],
+    "compilerOptions": {
+    	"target": "es5",
+    	"module": "es6",
+        "allowJs": true,
+        "outDir": "./dist"
+    }
+}

@@ -18,8 +18,8 @@
 </template>
 
 <script>
-import registry from "@/main/registry";
-import treeUtils from "@/utils/treeUtils.js";
+import registry from "@/renderer/api/registryClient.js";
+import treeUtils from "@/renderer/common/utils/treeUtils.js";
 
 export default {
   components: {

@@ -19,7 +19,7 @@
 </template>
 
 <script>
-import connectRepository from "@/main/repository/connectRepository.js";
+import connectRepository from "@/renderer/api/connectManangerClient.js";
 
 export default {
   data() {

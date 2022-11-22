@@ -1,69 +1,19 @@
 import { app, protocol, BrowserWindow, Menu, session } from 'electron'
-import { createProtocol } from 'vue-cli-plugin-electron-builder/lib'
-import installExtension, { VUEJS_DEVTOOLS } from 'electron-devtools-installer'
-const isDevelopment = process.env.NODE_ENV !== 'production'
-import updateChecker from './autoupdate/updateChecker.js';
-import template from "./menuList.js";
-import communication from "@/main/communication/index.js";
-import connectRepository from "@/main/repository/connectRepository.js";
-import invokeHisotryRecord from "@/main/repository/invokeHistoryRepository.js";
-import {setWindow} from '@/main/holder/WindowHolder.js';
-import invoke from "@/main/invoker/index.js";
-import registry from "@/main/registry/index.js";
-import ExcelExportUtils from "@/utils/ExcelExportUtils.js";
-connectRepository.install(communication)
-invokeHisotryRecord.install(communication)
-invoke.install(communication)
-registry.install(communication)
-ExcelExportUtils.install(communication)
+import updateChecker from '@/main/common/autoupdate/updateChecker.js';
+import windowHolder  from '@/main/common/holder/WindowHolder.js';
+import Constant      from '@/main/common/Constant.js'
+import template      from "./menuList.js";
+import apiExportor   from '@/main/api/'
+
+console.log("laile ");
 
 // Scheme must be registered before the app is ready
 protocol.registerSchemesAsPrivileged([
   { scheme: 'app', privileges: { secure: true, standard: true } }
 ])
 
-let init = false;
-
 // 禁用同源策略
 // app.commandLine.appendSwitch("disable-site-isolation-trials");
-
-
-let window = null;
-async function createWindow() {
-  // Create the browser window.
-  const win = new BrowserWindow({
-    width: 1200,
-    height: 800,
-    title: "Dubbo-Desktop-Manager",
-    titleBarStyle: 'hidden',
-    webPreferences: {
-      // Use pluginOptions.nodeIntegration, leave this alone
-      // See nklayman.github.io/vue-cli-plugin-electron-builder/guide/security.html#node-integration for more info
-      nodeIntegration: process.env.ELECTRON_NODE_INTEGRATION,
-      contextIsolation: !process.env.ELECTRON_NODE_INTEGRATION,
-      webSecurity: false
-    }
-  })
-
-  window = win;
-  setWindow(win);
-  // win.webContents.openDevTools()
-  const remote = require('@electron/remote/main');
-  if (!init) {
-    remote.initialize()
-    init = true;
-  }
-  remote.enable(win.webContents);
-  if (process.env.WEBPACK_DEV_SERVER_URL) {
-    // Load the url of the dev server if in development mode
-    await win.loadURL(process.env.WEBPACK_DEV_SERVER_URL)
-    if (!process.env.IS_TEST) win.webContents.openDevTools()
-  } else {
-    createProtocol('app')
-    // Load the index.html when not in development
-    win.loadURL('app://./index.html')
-  }
-}
 
 Menu.setApplicationMenu(Menu.buildFromTemplate(template));
 
@@ -84,10 +34,13 @@ app.on('window-all-closed', () => {
   }
 })
 
+
 app.on('activate', () => {
   // On macOS it's common to re-create a window in the app when the
   // dock icon is clicked and there are no other windows open.
-  if (BrowserWindow.getAllWindows().length === 0) createWindow()
+  if (BrowserWindow.getAllWindows().length === 0) {
+    windowHolder.createMainWindow()
+  }
 })
 
 // 这个方法将在Electron完成后被调用 
@@ -97,15 +50,7 @@ app.on('ready', async () => {
  
   updateChecker();
   
-  if (isDevelopment && !process.env.IS_TEST) {
-    // Install Vue Devtools
-    try {
-      await installExtension(VUEJS_DEVTOOLS)
-    } catch (e) {
-      console.error('Vue Devtools failed to install:', e.toString())
-    }
-  }
-  createWindow()
+  windowHolder.createMainWindow()
 
   // 统计时需要
   const xxx_filter = {
@@ -115,14 +60,14 @@ app.on('ready', async () => {
     details.requestHeaders['Referer'] = 'http://localhost:8080/'
     callback({ requestHeaders: details.requestHeaders })
   })
-
+ 
   // const ret = globalShortcut.register('CommandOrControl+X', () => {
   //   ('CommandOrControl+X is pressed')
   // }); 
 })
 
 // Exit cleanly on request from parent process in development mode.
-if (isDevelopment) {
+if (Constant.IS_DEVELOPMENT) {
   if (process.platform === 'win32') {
     process.on('message', (data) => {
       if (data === 'graceful-exit') {

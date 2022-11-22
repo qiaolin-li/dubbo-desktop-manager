@@ -14,9 +14,8 @@
 </template>
 
 <script>
-import registry from "@/main/registry";
+import registry from "@/renderer/api/registryClient.js";
 import yamlCodeEditor from "@/renderer/components/editor/yaml-code-editor.vue";
-import configuration from '@/utils/Configuration';
 
 export default {
   components: {
@@ -41,27 +40,10 @@ export default {
   },
   methods: {
     async getConfiguration() {
-      let config = await registry.getConfiguration(this.provider, this.registryCenterId);
-      if(config){
-        this.codeConfig.code = config;
-        return;
-      }
-      config = configuration.createDefaultConfiguration(this.provider.serviceName);
-      this.codeConfig.code = configuration.JSONToYaml(config);
+      this.codeConfig.code = await registry.getConfiguration(this.provider, this.registryCenterId);
     },
     async save() {
-      let doc = null;
-      try {
-        doc = configuration.yamlToJSON(this.codeConfig.code);
-      } catch (e) {
-        this.$message({
-          type: "error",
-          message: this.$t('dubbo.configurationPage.invalidFormat'),
-        });
-        return;
-      }
-
-      await registry.saveConfiguration(this.registryCenterId, this.provider, doc);
+      await registry.saveConfiguration(this.registryCenterId, this.provider, this.codeConfig.code);
       this.$message({
         type: "success",
         message: this.$t('dubbo.configurationPage.saveSuccess'),

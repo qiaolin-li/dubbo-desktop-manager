@@ -23,8 +23,8 @@
 
 <script>
 
-import i18n from '@/i18n/index.js';
-import appConfig from "@/main/repository/appConfig.js";
+import i18n      from '@/renderer/common/i18n'
+import appConfig from "@/renderer/api/appConfig.js";
 export default {
   data() {
     return {
@@ -44,9 +44,9 @@ export default {
     }
   },
   async created() {
-    this.selectMessage =  appConfig.getProperty("systemLocale");
+    this.selectMessage = await appConfig.getProperty("systemLocale");
     this.messages = i18n.messages;
-    this.invokerType =  appConfig.getProperty("invokerType") || "telnet";
+    this.invokerType =  await appConfig.getProperty("invokerType") || "telnet";
   },
   methods: {
     async saveConfig() {

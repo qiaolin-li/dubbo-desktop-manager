@@ -46,7 +46,6 @@ export default {
         }
       }
     }
-    // debugger
     this.routesList = routesList;
   }
 }

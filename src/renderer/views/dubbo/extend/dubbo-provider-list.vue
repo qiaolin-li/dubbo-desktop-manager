@@ -42,8 +42,8 @@
 </template>
 
 <script>
-import registry from "@/main/registry";
-import ExcelExportUtils from "@/utils/ExcelExportUtilsClient.js";
+import registry from "@/renderer/api/registryClient.js";
+import ExcelExportUtils from "@/renderer/api/excelExporterClient.js";
 const remote = require("@electron/remote");
 
 export default {

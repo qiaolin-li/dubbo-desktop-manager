@@ -1,7 +1,7 @@
 import common from "./common";
 const axios = require('axios').default;
-import configuration from '@/utils/Configuration';
-import i18n from '../../i18n'
+import configuration from '@/main/common/utils/Configuration';
+import i18n from '@/main/common/i18n'
 import qs from 'qs'
 
 async function getServiceList(registryConfig) {

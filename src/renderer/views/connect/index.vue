@@ -3,7 +3,7 @@
 
     <div class="btn-plus">
       <el-tooltip effect="light" content="新增" placement="right-start">
-          <i class="el-icon-plus" @click="openAddConnectDialog"></i>
+          <i class="el-icon-plus" @click="openAddConnectDialog()"></i>
       </el-tooltip>
     </div>
 
@@ -18,7 +18,6 @@
 
 <script>
 import addConnect from "./add/add-connect.vue";
-
 import connectList from "./connect-list.vue";
 import { ipcRenderer } from 'electron'
 const remote = require("@electron/remote");
@@ -39,15 +38,12 @@ export default {
     ipcRenderer.on('openAddConnectDialogEvent', (event) => {
       this.openAddConnectDialog();
     });
-
-
   },
   mounted() {
     let connectDiv = document.getElementById("connectDiv");
 
     // 菜单键点击
     connectDiv.addEventListener('contextmenu', ev => {
-      debugger
       // 菜单模板
       const menuTemplate = [
         {
