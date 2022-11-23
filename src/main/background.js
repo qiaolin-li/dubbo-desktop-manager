@@ -2,10 +2,11 @@ import { app, protocol, BrowserWindow, Menu, session } from 'electron'
 import updateChecker from '@/main/common/autoupdate/updateChecker.js';
 import windowHolder  from '@/main/common/holder/WindowHolder.js';
 import Constant      from '@/main/common/Constant.js'
+import logger        from '@/main/common/logger';
 import template      from "./menuList.js";
 import apiExportor   from '@/main/api/'
 
-console.log("laile ");
+
 
 // Scheme must be registered before the app is ready
 protocol.registerSchemesAsPrivileged([
@@ -82,5 +83,6 @@ if (Constant.IS_DEVELOPMENT) {
 }
 
 process.on('uncaughtException', function (error) {
-  console.log(`发生了异常`, error);
+  logger.error(`发生了异常`, error);
+  
 })

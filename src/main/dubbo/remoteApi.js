@@ -3,7 +3,7 @@ import dubboParamGenerator from './generator/param'
 
 export default [
     {
-        name: "invoke",
+        name: "dubboInvoke",
         target: dubboInvoke,
     },
     {

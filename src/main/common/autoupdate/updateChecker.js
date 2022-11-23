@@ -10,6 +10,7 @@ import {
 } from 'semver'
 import appConfig from "@/main/common/config/appConfig.js";
 import i18n from '@/main/common/i18n'
+import logger        from '@/main/common/logger';
 
 const currentVersion = pkg.version
 const repostoryName = "qiaolin-li/dubbo-desktop-manager"
@@ -32,7 +33,7 @@ const checkVersion = async () => {
     }
   } catch (err) {
     backupCheckUpdateUrl();
-    console.log(err)
+    logger.error(err)
   }
 
 }
@@ -46,7 +47,7 @@ async function backupCheckUpdateUrl() {
       checkUpdate(latest, i18n.t("version.simpleMessage", {latest}));
     }
   } catch (err) {
-    console.log(err)
+    logger.error(err)
   }
 }
 
@@ -76,7 +77,7 @@ function checkUpdate(lastVersion, message) {
     }
     appConfig.setProperty(key, !res.checkboxChecked)
   }).catch(e => {
-    console.log(e)
+    logger.error(e)
   });
 
 }

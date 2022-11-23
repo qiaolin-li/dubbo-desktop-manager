@@ -78,6 +78,7 @@ class WindowHolder {
         const settingWindowConfig = {
             width: 800,
             height: 600,
+            title: "设置",
             parent: this.window,
             webPreferences: {
                 // Use pluginOptions.nodeIntegration, leave this alone
@@ -88,11 +89,10 @@ class WindowHolder {
             }
         }
 
-        const url = "http://localhost:8080#setting" ;
+        const url = process.env.WEBPACK_DEV_SERVER_URL ? `${process.env.WEBPACK_DEV_SERVER_URL}#setting` : 'app://./index.html#setting' ;
 
         this.settingWindow = new BrowserWindow(settingWindowConfig);
         createWindow(this.settingWindow, url)
-        // this.settingWindow.loadURL(`${process.env.WEBPACK_DEV_SERVER_URL || 'app://./index.html'}#setting`)
     }
 }
 

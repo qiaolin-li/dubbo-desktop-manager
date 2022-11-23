@@ -1,5 +1,5 @@
 <template>
-  <div class="dubboProviderListContainer">
+  <div class="dubboProviderListContainer" >
     <el-table :data="providerList" class="content" @row-contextmenu="openMenu" ref="report-table" :highlight-current-row="true" :stripe="true" :header-row-class-name="providerListTableHeaderRowClassName" size="medium" :border="true">
       <el-table-column type="expand">
         <template slot="header">

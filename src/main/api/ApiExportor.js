@@ -1,7 +1,7 @@
 import {
     ipcMain
 } from 'electron'
-import windowHolder  from '@/main/common/holder/WindowHolder.js';
+import logger  from '@/main/common/logger';
 
 const COMMUNICATION_CHANEL = "ipc-main-unify";
 const COMMUNICATION_CONSUMER_CHANEL = "ipc-rendenerer-unify";
@@ -33,10 +33,6 @@ class ApiExportor {
     
         try{
             let obj = ALREADY_REGISTERED_MODULES.get(moduleName);
-
-            if(obj == null){
-
-            }
             
             let result = Reflect.apply(obj[method], obj, args)
             
@@ -47,7 +43,7 @@ class ApiExportor {
             }
             currentWindow.webContents.send(COMMUNICATION_CONSUMER_CHANEL, new Response(requestId, true, result));
         }catch(e){
-            console.log(`调用接口异常 moduleName:${moduleName}, method:${method}, args:${JSON.stringify(args)}`, e);
+            logger.error(`调用接口异常 moduleName:${moduleName}, method:${method}, args:${JSON.stringify(args)}`, e);
             currentWindow.webContents.send(COMMUNICATION_CONSUMER_CHANEL, new Response(requestId, false, null, e.message));
         }
     }

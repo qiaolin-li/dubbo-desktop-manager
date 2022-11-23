@@ -18,14 +18,14 @@ class Consumer{
         // 注册监听通道
         ipcRenderer.on(COMMUNICATION_CONSUMER_CHANEL, (event, response) => this.handlerResponse(event, response));
     
-        console.log("消费者监听器注册成功");
+        console.info("消费者监听器注册成功");
     }
 
     handlerResponse(event, response){
         let waitResponsePromise = waitResponsePromiseMap.get(response.requestId);
 
         if(!waitResponsePromise){
-            console.log("消费者监听器收到未能处理的消息" + JSON.stringify(response));
+            console.warn("消费者监听器收到未能处理的消息" + JSON.stringify(response));
             return;
         }
 
