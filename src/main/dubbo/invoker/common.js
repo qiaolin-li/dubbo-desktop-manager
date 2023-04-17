@@ -31,7 +31,7 @@ function buildInvokeCommand({
  */
 class InvokeResult {
     constructor(data, elapsedTime) {
-        this.code = data;
+        this.data = data;
         this.elapsedTime = elapsedTime;
     }
 }

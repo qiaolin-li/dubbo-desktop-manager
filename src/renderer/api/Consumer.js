@@ -3,7 +3,7 @@ const {
 } = require('electron')
 
 const COMMUNICATION_CHANEL = "ipc-main-unify";
-const COMMUNICATION_CONSUMER_CHANEL = "ipc-rendenerer-unify";
+const COMMUNICATION_CONSUMER_CHANNEL = `ipc-rendenerer-unify_${Math.random()}`;
 const waitResponsePromiseMap = new Map();
 
 
@@ -16,7 +16,7 @@ class Consumer{
 
     startListener(){
         // 注册监听通道
-        ipcRenderer.on(COMMUNICATION_CONSUMER_CHANEL, (event, response) => this.handlerResponse(event, response));
+        ipcRenderer.on(COMMUNICATION_CONSUMER_CHANNEL, (event, response) => this.handlerResponse(event, response));
     
         console.info("消费者监听器注册成功");
     }
@@ -65,13 +65,14 @@ class Consumer{
                 return async function () {
                     // 将所有参数转为数组
                     const args = [...arguments];
-                    const requestId = `${COMMUNICATION_CONSUMER_CHANEL}-${moduleName}-${method}-${Math.random()}`;
+                    const requestId = `${COMMUNICATION_CONSUMER_CHANNEL}-${moduleName}-${method}-${Math.random()}`;
                     // 将参数包装
                     let invocation = {
                         moduleName,
                         method,
                         requestId : requestId,
-                        args
+                        args,
+                        replyChannel: COMMUNICATION_CONSUMER_CHANNEL,
                     }
                     
                     // 和主进程进行通讯

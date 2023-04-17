@@ -204,7 +204,7 @@ export default {
           ).then(resolve).catch(reject);
         });
         
-        this.invokeReulst.code = response.code;
+        this.invokeReulst.code = response.data;
         this.invokeReulst.elapsedTime = response.elapsedTime;
         this.$message({
           type: "success",
@@ -259,8 +259,7 @@ export default {
 .invoke-dubbo-dialog {
   height: 90vh;
   overflow-y: hidden;
-  margin-left: 5px;
-  margin-right: 5px;
+  background-color: white
 }
 
 .invoke-dubbo-dialog-content {

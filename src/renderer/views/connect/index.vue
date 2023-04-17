@@ -1,16 +1,14 @@
 <template>
   <div id="connectDiv">
-
-    <div class="btn-plus">
-      <el-tooltip effect="light" content="新增" placement="right-start">
-          <i class="el-icon-plus" @click="openAddConnectDialog()"></i>
-      </el-tooltip>
+    <div class="addConnectDialog">
+      <span class="btn-plus" @click="openAddConnectDialog()">
+        <i class="el-icon-plus"></i>新建链接</span>
     </div>
-
+    <el-divider class="my-divider"></el-divider>
     <connectList ref="connectList" @clickServiceInfo="clickServiceInfo" @editConnect="openAddConnectDialog"></connectList>
 
     <el-dialog :title="$t('connect.addConnect')" width="40%" :visible.sync="dialogVisible" :close-on-click-modal="false">
-      <addConnect @saveSuccess="saveConnectSuccess" :id="currentConnectId" :key="addConnectKey"/>
+      <addConnect @saveSuccess="saveConnectSuccess" :id="currentConnectId" :key="addConnectKey" />
     </el-dialog>
   </div>
 
@@ -27,9 +25,12 @@ export default {
     addConnect,
     connectList
   },
+  props: {
+    tab: Object,
+  },  
   data() {
     return {
-      addConnectKey : 1,
+      addConnectKey: 1,
       dialogVisible: false,
       currentConnectId: "",
     };
@@ -73,9 +74,19 @@ export default {
       this.dialogVisible = false;
     },
     clickServiceInfo(data) {
-      this.$emit("clickServiceInfo", data);
+      let { serviceName, interfaceName, registryCenterId } = data;
+      this.tab.addTab({
+        title: interfaceName.split(".")[interfaceName.split(".").length - 1],
+        fullTitle: interfaceName,
+        componentName: 'dubboPage',
+        params: {
+          registryCenterId,
+          interfaceName,
+          serviceName
+        }
+      });
     },
-     openAddConnectDialog(id) {
+    openAddConnectDialog(id) {
       this.addConnectKey++;
       this.dialogVisible = true;
       this.currentConnectId = id || "";
@@ -85,6 +96,9 @@ export default {
 </script>
 
 <style>
+.my-divider {
+  margin: 2px 0px;
+}
 
 #connectDiv {
   height: 100%;
@@ -92,27 +106,27 @@ export default {
   overflow: auto;
 }
 
+.addConnectDialog {
+  margin: 6px 10px;
+  -webkit-app-region: drag;
+}
+
 .btn-plus {
   height: 30px;
   line-height: 30px;
-  margin: 3px 0 0 10px;
+  padding: 5px 10px;
 }
 
-.btn-plus i {
-  padding: 4px;
-}
-
-.btn-plus i:hover {
+.btn-plus:hover {
   background-color: #ccc;
-  border-radius: 50%;
+  border-radius: 4px;
 }
 
-.is-light{
-  border-color: #ECECEC !important;
+.is-light {
+  border-color: #ececec !important;
 }
 
 .popper__arrow {
-  border-right-color: #ECECEC !important;
+  border-right-color: #ececec !important;
 }
-
 </style>

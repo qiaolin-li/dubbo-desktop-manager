@@ -12,7 +12,8 @@ async function invokeMethod(provder, metadata, method, code, currentInvoker) {
     let invokeHistory = {
         serviceName: provder.serviceName,
         method: method,
-        param: code
+        param: code,
+        result: JSON.stringify(result.data),
     };
     await invokeHisotryRecord.save(invokeHistory);
 

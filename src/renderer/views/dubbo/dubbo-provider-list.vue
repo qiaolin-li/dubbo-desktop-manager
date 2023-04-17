@@ -1,5 +1,5 @@
 <template>
-  <div class="dubboProviderListContainer" >
+  <div class="dubboProviderListContainer">
     <el-table :data="providerList" class="content" @row-contextmenu="openMenu" ref="report-table" :highlight-current-row="true" :stripe="true" :header-row-class-name="providerListTableHeaderRowClassName" size="medium" :border="true">
       <el-table-column type="expand">
         <template slot="header">
@@ -56,6 +56,7 @@ export default {
     };
   },
   props: {
+    tab: Object,
     registryCenterId: {
       type: String,
       required: true,
@@ -137,39 +138,44 @@ export default {
     async refreshProviderList() {
       this.providerList = await registry.getProviderList(this.serviceName, this.registryCenterId);
     },
-    openInvokeDrawer(data) {
+    openInvokeDrawer(provider) {
       let tabData = {
-        id: `invoke-${data.serviceName}-${data.address}`,
-        label: this.$t('dubbo.providePage.callTitle', data),
-        componentName: "dubboInvoke",
-        extendData: {
-          provider: data
-        },
+        title: this.$t('dubbo.providePage.callTitle', provider),
+        componentName: 'dubboInvoke',
+        params: {
+          registryCenterId: this.registryCenterId,
+          serviceName: this.serviceName,
+          provider
+        }
       }
-      this.$emit("openNewTab", tabData);
+
+      this.tab.openNewTab(tabData);
     },
 
-    openTelnet(data) {
+    openTelnet(provider) {
       let tabData = {
-        id: `telnet-${data.serviceName}-${data.address}`,
-        label: `telnet ${data.address}`,
-        componentName: "dubboTelnet",
-        extendData: {
-          provider: data
-        },
+        title: `telnet ${provider.address}`,
+        componentName: 'dubboTelnet',
+        params: {
+          registryCenterId: this.registryCenterId,
+          serviceName: this.serviceName,
+          provider
+        }
       }
-      this.$emit("openNewTab", tabData);
+      this.tab.openNewTab(tabData);
     },
-    openConfiguration(data) {
+    openConfiguration(provider) {
       let tabData = {
-        id: `configuration-${data.serviceName}-${data.version}`,
-        label: `configuration ${data.version}`,
-        componentName: "dubboProviderConfiguration",
-        extendData: {
-          provider: data
-        },
+        title: `configuration ${provider.version}`,
+        componentName: 'dubboProviderConfiguration',
+        params: {
+          registryCenterId: this.registryCenterId,
+          serviceName: this.serviceName,
+          provider
+        }
       }
-      this.$emit("openNewTab", tabData);
+
+      this.tab.openNewTab(tabData);
     },
     openMenu(row, column, event) {
       // 菜单模板

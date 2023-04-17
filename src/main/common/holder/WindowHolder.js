@@ -2,7 +2,6 @@ import { BrowserWindow, ipcMain} from 'electron'
 import { createProtocol } from 'vue-cli-plugin-electron-builder/lib'
 import installExtension, { VUEJS_DEVTOOLS } from 'electron-devtools-installer'
 import Constant from '@/main/common/Constant.js'
-
 const OPEN_WINDOW_CHANEL = "ipc-main-open-window";
 
 async function instanllDevTools(){
@@ -51,48 +50,20 @@ class WindowHolder {
     async createMainWindow() {
 
         const url = process.env.WEBPACK_DEV_SERVER_URL || 'app://./index.html' ;
-
         const mainWindowConfig = {
             width: 1200,
             height: 800,
             title: "Dubbo-Desktop-Manager",
             titleBarStyle: 'hidden',
             webPreferences: {
-                // Use pluginOptions.nodeIntegration, leave this alone
-                // See nklayman.github.io/vue-cli-plugin-electron-builder/guide/security.html#node-integration for more info
-                nodeIntegration: process.env.ELECTRON_NODE_INTEGRATION,
-                contextIsolation: !process.env.ELECTRON_NODE_INTEGRATION,
-                webSecurity: false
+                nodeIntegration: true,
+                contextIsolation: false,
+                webSecurity: false,
+                webviewTag: true
             }
         }
         this.window  = new BrowserWindow(mainWindowConfig)
         createWindow(this.window, url)
-    }
-
-    async createSettingWindow(){
-        if(this.settingWindow && !this.settingWindow.isDestroyed()){
-            this.settingWindow.focus();
-            return;
-        }
-
-        const settingWindowConfig = {
-            width: 800,
-            height: 600,
-            title: "设置",
-            parent: this.window,
-            webPreferences: {
-                // Use pluginOptions.nodeIntegration, leave this alone
-                // See nklayman.github.io/vue-cli-plugin-electron-builder/guide/security.html#node-integration for more info
-                nodeIntegration: process.env.ELECTRON_NODE_INTEGRATION,
-                contextIsolation: !process.env.ELECTRON_NODE_INTEGRATION,
-                webSecurity: false
-            }
-        }
-
-        const url = process.env.WEBPACK_DEV_SERVER_URL ? `${process.env.WEBPACK_DEV_SERVER_URL}#setting` : 'app://./index.html#setting' ;
-
-        this.settingWindow = new BrowserWindow(settingWindowConfig);
-        createWindow(this.settingWindow, url)
     }
 }
 

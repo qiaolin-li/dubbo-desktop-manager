@@ -28,7 +28,7 @@ function invokeMethod( provder,metadata,  method, code) {
         socket.on('error', function(error) {
             resolve({
                 success : false,
-                code :  i18n.t("dubbo.invokePage.connectProviderError", {e : error}),
+                data :  i18n.t("dubbo.invokePage.connectProviderError", {e : error}),
                 elapsedTime : 0
             });
             socket.end();
@@ -47,7 +47,7 @@ function invokeMethod( provder,metadata,  method, code) {
             if(result.indexOf("Foreign Ip Not Permitted.") >= 0){
                 resolve({
                     success : false,
-                    code :  "Dubbo 已开启禁止外网连接，请确保配置当前客户端IP可以连接或者使用Java方式进行调用",
+                    data :  "Dubbo 已开启禁止外网连接，请确保配置当前客户端IP可以连接或者使用Java方式进行调用",
                     elapsedTime : 0
                 });
                 return;

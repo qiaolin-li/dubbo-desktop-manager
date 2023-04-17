@@ -11,4 +11,6 @@
   }
 
 
-
+.dragRegion {
+    -webkit-app-region: drag;
+}

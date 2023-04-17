@@ -15,9 +15,9 @@ protocol.registerSchemesAsPrivileged([
 
 // 禁用同源策略
 // app.commandLine.appendSwitch("disable-site-isolation-trials");
+app.allowRendererProcessReuse = true;
 
 Menu.setApplicationMenu(Menu.buildFromTemplate(template));
-
 app.setAboutPanelOptions({
   applicationName: "DDM",
   applicationVersion: "1.0.0",

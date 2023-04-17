@@ -1,44 +1,15 @@
 <template>
   <div id="app">
-    <router-view />
+    <mainPage />
   </div>
 </template>
 
 <script>
-import { FindInPage } from "electron-find";
-import { ipcRenderer } from "electron";
-
-const remote = require("@electron/remote");
-let webContent = remote.getCurrentWebContents();
-let findInPage = new FindInPage(webContent, {
-  boxBgColor: "#333",
-  boxShadowColor: "#000",
-  inputColor: "#aaa",
-  inputBgColor: "#222",
-  inputFocusColor: "#555",
-  textColor: "#aaa",
-  textHoverBgColor: "#555",
-  caseSelectedColor: "#555",
-});
+import mainPage from '@/renderer/views/index.vue';
 export default {
-  data() {
-    return {
-      catch_components: [],
-      editableTabsValue: "2",
-      editableTabs: [],
-      tabIndex: 2,
-      ccc: "",
-    };
+  components: {
+    mainPage
   },
-  mounted() {
-    ipcRenderer.on("asynchronous-reply", function () {
-      // 接收到Main进程返回的消息
-      findInPage.openFindWindow();
-    });
-
-  },
-  computed: {},
-  methods: {},
 };
 </script>
 <style>
@@ -74,9 +45,9 @@ body {
   not supported by any browser */
 }
 
-.el-tabs__item:focus.is-active.is-focus:not(:active) {
+/* .el-tabs__item:focus.is-active.is-focus:not(:active) {
 	-webkit-box-shadow: none !important;
 	box-shadow: none !important;
-}
+} */
 
 </style>

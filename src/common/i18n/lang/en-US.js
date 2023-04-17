@@ -48,6 +48,7 @@ export default {
         close : "close",
         closeOther : "close Other",
         closeAll : "Close All",
+        refresh: "refresh",
     },
     editor : {
         copy : "copy",

@@ -13,7 +13,7 @@ const logger = winston.createLogger({
     new winston.transports.File({
         filename: Constant.APPLICATION_LOG_COMBINED_FILE,
         format: winston.format.combine(
-            winston.format.printf(info => `[${info.timestamp}[ [${info.level}] [${info.message}]`)
+            winston.format.printf(info => `[${info.timestamp}[ [${info.level.toLowerCase()}] [${info.message}]`)
         )
     }),
     // error 日志写入单独的文件
@@ -21,7 +21,7 @@ const logger = winston.createLogger({
         filename: Constant.APPLICATION_LOG_ERROR_File,
         level: 'error',
         format: winston.format.combine(
-            winston.format.printf(info => `[${info.timestamp}[ [${info.level}] [${info.message}]`)
+            winston.format.printf(info => `[${info.timestamp}[ [${info.level.toLowerCase()}] [${info.message}]`)
         )
     })
   ],
@@ -32,7 +32,7 @@ if (Constant.IS_DEVELOPMENT) {
   logger.add(new winston.transports.Console({
     format: winston.format.combine(
         winston.format.colorize(),
-        winston.format.printf(info => `[${info.timestamp}[ [${info.level}] [${info.message}]`)
+        winston.format.printf(info => `[${info.timestamp}[ [${info.level.toLowerCase()}] [${info.message}]`)
     ),
     stderrLevels: ['info']
   }));

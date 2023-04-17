@@ -62,13 +62,8 @@ export default {
 <style>
 .settingsContainer {
   height: 100vh;
-  margin: 5px 0px;
-  margin-left: 5px;
-  margin-right: 5px;
-  padding: 10px;
+  padding-left: 15px;
   background-color: white;
   border-radius: 5px;
-  position: fixed;
-  top:0;
 }
 </style>

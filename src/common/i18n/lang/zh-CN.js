@@ -44,10 +44,11 @@ export default {
             invokerTypeTips : "使用Java执行器时，请先安装Java环境，Java调用相对Telnet执行器较慢，但是Java调用返回的信息更加完整。",
         }
     },
-    tab : {
+    tab: {
         close : "关闭",
         closeOther : "关闭其他",
         closeAll : "关闭全部",
+        refresh: "刷新",
     },
     editor : {
         copy : "复制",

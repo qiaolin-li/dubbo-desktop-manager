@@ -1,78 +1,109 @@
 <template>
-  <div>
-    <el-container>
-      <el-aside class="menu-aside" width="70px">
-          <router-link :to="routing.path" class="route" ondragstart="return false"
-            v-for="routing in routesList" :key="routing.path">
-            <div class="menu-div" :class="[$route.name == routing.name?'active':'']"  >
-              <i class="el-icon-menu"></i>  
-              <span class="menu-txt">{{routing.meta.title}}</span>
-            </div>
-          </router-link>
-      </el-aside>
+  <el-container>
+    <el-aside class="menu-aside dragRegion" width="70px" ondragstart="return false">
+      <div class="menu-div" :class="[currentMenu == menu ? 'active':'']" v-for="menu in menuList" :key="menu.id" @click="switchMenu(menu)">
+        <el-tooltip effect="light" :content="menu.label" placement="right-start">
+          <i :class="menu.icon"></i>
+        </el-tooltip>
+      </div>
+    </el-aside>
 
-      <el-main>
-        <!-- 功能页面 --> 
-        <router-view></router-view>
-      </el-main>
-    </el-container>
-  </div>
+    <el-main>
+      <split-pane @resize="resize" split="vertical" :min-percent="15" :default-percent="20">
+        <template slot="paneL">
+          <div class="left-container">
+            <registryList @clickServiceInfo="clickServiceInfo" />
+          </div>
+        </template>
+        <template slot="paneR">
+          <myTabList ref="myTabs" navScrollClassList="dragRegion"></myTabList>
+        </template>
+      </split-pane>
+    </el-main>
+
+  </el-container>
 </template>
 
 <script>
-
-import layoutAside from './layout-aside.vue'
-import layoutMain from './layout-main.vue'
-import routes from '../../router/routes.js'
+import menuList from '@/renderer/sidebarMenuList.js';
+import myTabList from '@/renderer/components/tabs/index1.vue';
 
 export default {
-  name: 'index',
   components: {
-    layoutAside,
-    layoutMain,
+    myTabList
   },
   data() {
     return {
-      routesList: []
+      currentMenu: {},
+      menuList: []
     }
   },
-  created() {
-    let routesList = [];
-    for (let i = 0; i < routes.length; i++) {
-      const routing = routes[i];
-      if (routing.children) {
-        for (let j = 0; j < routing.children.length; j++) {
-          routesList.push(routing.children[j]);
-        }
+  mounted() {
+    this.menuList = menuList.map(x => {
+      x.id = `menu-${Math.random()}`;
+      if (x.ready) {
+        x.ready(this);
       }
-    }
-    this.routesList = routesList;
-  }
+      return x;
+    });
+    this.currentMenu = this.menuList[0];
+  },
+  methods: {
+    resize() {
+    },
+    switchMenu(menu) {
+      if (menu.componentName) {
+
+
+        return;
+      }
+
+      if (menu.click) {
+        menu.click(this);
+        return;
+      }
+
+      // 后续可以考虑报错
+    },
+    clickServiceInfo(data) {
+      let { serviceName, interfaceName, registryCenterId } = data;
+      this.$refs.myTabs.addTab({
+        title: interfaceName.split(".")[interfaceName.split(".").length - 1],
+        fullTitle: interfaceName,
+        componentName: 'dubboPage',
+        params: {
+          registryCenterId,
+          interfaceName,
+          serviceName
+        }
+      });
+
+    },
+    addTab(tabInfo) {
+      this.$refs.myTabs.addTab(tabInfo);
+    },
+  },
 }
 </script>
 
 <style>
-.route {
-  text-decoration: none;
-}
-
-.menu-aside, .menu-div {
-  display: flex;
-  flex-direction: column;
-}
-
 .menu-aside {
   height: 100vh;
   padding-top: 20px;
   align-items: center;
-  background-color: #ECECEC;
+  background-color: #ececec;
 }
 
 .el-main {
   padding: 0px !important;
 }
 
-.menu-div{
+.menu-aside,
+.menu-div {
+  display: flex;
+  flex-direction: column;
+}
+.menu-div {
   width: 50px;
   height: 50px;
   justify-content: space-evenly;
@@ -80,19 +111,17 @@ export default {
   margin-top: 10px;
   border-radius: 10%;
   color: #666666;
-  -webkit-user-drag:none;
+  -webkit-user-drag: none;
 }
 
 .active {
-  background-color: rgba(225,226,226,.8);
-  color: #3FB24F;
+  background-color: rgba(225, 226, 226, 0.8);
+  color: #3fb24f;
 }
-
-.el-icon-menu {
-  font-size: 22px;
+.menu-div i {
+  font-size: 28px;
 }
-.menu-txt{
+.menu-txt {
   font-size: 11px;
 }
-
 </style>

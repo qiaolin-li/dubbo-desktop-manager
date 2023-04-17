@@ -3,8 +3,7 @@ import {
 } from 'electron'
 import logger  from '@/main/common/logger';
 
-const COMMUNICATION_CHANEL = "ipc-main-unify";
-const COMMUNICATION_CONSUMER_CHANEL = "ipc-rendenerer-unify";
+const COMMUNICATION_CHANNEL = "ipc-main-unify";
 
 const ALREADY_REGISTERED_MODULES = new Map();
 
@@ -24,27 +23,28 @@ class ApiExportor {
     }
 
     startListener() {
-        ipcMain.on(COMMUNICATION_CHANEL, async (event, invocation) => this.invokeMethod(event, invocation))
+        ipcMain.on(COMMUNICATION_CHANNEL, async (event, invocation) => this.invokeMethod(event, invocation))
     }
 
     async invokeMethod(event, invocation){
         const currentWindow = event.sender.getOwnerBrowserWindow();
-        let {moduleName, method,requestId, args} = invocation;
+        let {moduleName, method,requestId, args, replyChannel} = invocation;
     
         try{
             let obj = ALREADY_REGISTERED_MODULES.get(moduleName);
             
             let result = Reflect.apply(obj[method], obj, args)
             
+            debugger
             if(result instanceof Promise){
                 let data = await result;
-                currentWindow.webContents.send(COMMUNICATION_CONSUMER_CHANEL, new Response(requestId, true, data));
+                event.sender.send(replyChannel, new Response(requestId, true, data));
                 return;
             }
-            currentWindow.webContents.send(COMMUNICATION_CONSUMER_CHANEL, new Response(requestId, true, result));
+            event.sender.send(replyChannel, new Response(requestId, true, result));
         }catch(e){
             logger.error(`调用接口异常 moduleName:${moduleName}, method:${method}, args:${JSON.stringify(args)}`, e);
-            currentWindow.webContents.send(COMMUNICATION_CONSUMER_CHANEL, new Response(requestId, false, null, e.message));
+            event.sender.send(replyChannel, new Response(requestId, false, null, e.message));
         }
     }
     

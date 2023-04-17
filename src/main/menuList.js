@@ -29,13 +29,15 @@ const template = [
         click: async () => {
           let window = windowHolder.getWindow();
           window.webContents.send('openAddConnectDialogEvent')
-
+          
         }
       },
       {
         label: i18n.t("menu.settings") ,
         click: async () => {
-          windowHolder.createSettingWindow();
+          let window = windowHolder.getWindow();
+          window.webContents.send('openSettingsTabEvent')
+          // windowHolder.createSettingWindow();
         }
       },
       { type: 'separator' },
