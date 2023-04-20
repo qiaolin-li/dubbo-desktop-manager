@@ -4,13 +4,15 @@ import invokeHisotryRecord from "@/main/repository/invokeHistoryRepository.js";
 import appConfig from "@/main/common/config/appConfig.js";
 import common from "./common.js";
 
-async function invokeMethod(provder, metadata, method, code, currentInvoker) {
+async function invokeMethod(registryCenterId, provder, metadata, method, code, currentInvoker) {
 
     let result = doInvokeMethod(provder, metadata, method, code, currentInvoker);
 
     // 保存调用记录
     let invokeHistory = {
+        registryCenterId,
         serviceName: provder.serviceName,
+        address: provder.address,
         method: method,
         param: code,
         result: JSON.stringify(result.data),

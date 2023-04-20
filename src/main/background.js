@@ -3,8 +3,8 @@ import updateChecker from '@/main/common/autoupdate/updateChecker.js';
 import windowHolder  from '@/main/common/holder/WindowHolder.js';
 import Constant      from '@/main/common/Constant.js'
 import logger        from '@/main/common/logger';
-import template      from "./menuList.js";
-import apiExportor   from '@/main/api/'
+import template      from '@/main/menuList.js';
+import apiExportor   from '@/main/api/index.js'
 
 
 

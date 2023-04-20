@@ -95,15 +95,22 @@ export default {
 
 <style>
 .mainContainer {
-  margin-bottom: 10px;
-  margin-left: 10px;
+
 }
+
 
 .connectContainer {
   display: flex;
   justify-content: space-between;
   line-height: 30px;
   white-space: nowrap;
+  padding-left: 10px;
+  padding-top: 5px;
+  padding-bottom: 5px;
+}
+
+.connectContainer:hover {
+  background:#d5ebe1;
 }
 
 .txt {

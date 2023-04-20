@@ -145,7 +145,8 @@ export default {
         params: {
           registryCenterId: this.registryCenterId,
           serviceName: this.serviceName,
-          provider
+          provider,
+          selectProviderAddress: provider.address
         }
       }
 
@@ -249,12 +250,7 @@ export default {
 }
 
 .provider-list-table-header .el-table__cell {
-  /* border-right : 0px !important; */
   background-color: rgb(249, 249, 249) !important;
-  /* border-left: 1px solid rgb(234, 234, 234) !important; */
 }
 
-.el-table__cell {
-  /* border-right : 0px !important; */
-}
 </style>

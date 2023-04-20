@@ -4,37 +4,37 @@
       <el-descriptions class="margin-top" :column="4" size="mini" border>
         <el-descriptions-item span="3">
           <template slot="label"> {{$t('dubbo.invokePage.serviceName')}} </template>
-          {{ currentProvider.serviceName }}
+          {{ provider.serviceName }}
         </el-descriptions-item>
 
         <el-descriptions-item>
           <template slot="label"> {{$t('dubbo.invokePage.dubboVersion')}} </template>
-          {{ currentProvider.dubboVersion }}
+          {{ provider.dubboVersion }}
         </el-descriptions-item>
 
         <el-descriptions-item span="2">
           <template slot="label"> {{$t('dubbo.invokePage.application')}} </template>
-          {{ currentProvider.application }}
+          {{ provider.application }}
         </el-descriptions-item>
 
         <el-descriptions-item>
           <template slot="label"> {{$t('dubbo.invokePage.jarVersion')}} </template>
-          {{ currentProvider.revision }}
+          {{ provider.revision }}
         </el-descriptions-item>
         
         <el-descriptions-item>
           <template slot="label"> {{$t('dubbo.invokePage.version')}} </template>
-          {{ currentProvider.version }}
+          {{ provider.version }}
         </el-descriptions-item>
 
         <el-descriptions-item span="3">
           <template slot="label"> {{$t('dubbo.invokePage.operate')}} </template>
-          <el-select v-model="currentProvider" value-key="address" class="providerSelect" width="160px">
+          <el-select v-model="provider" class="providerSelect" width="160px">
             <el-option v-for="item in providerList" :key="item.address" :label="item.address" :value="item">
             </el-option>
           </el-select>
           <el-select v-model="method" @change="methodChange" class="methodSelect">
-            <el-option v-for="item in currentProvider.methods" :key="item" :label="item" :value="item">
+            <el-option v-for="item in provider.methods" :key="item" :label="item" :value="item">
             </el-option>
           </el-select>
           <el-select v-model="currentInvoker" class="invokerSelect">
@@ -46,6 +46,7 @@
     </div>
 
     <div :id="contentElementId" class="invoke-dubbo-dialog-content ">
+      <div class="invoke-dubbo-dialog-content-code">
         <div class="contentCode broder">
 
           <jsonCodeEditor :codeConfig="codeConfig" :lint="true">
@@ -75,8 +76,18 @@
               {{$t('dubbo.invokePage.responseInfo')}} {{ invokeReulst.elapsedTime }}
             </template>
           </jsonCodeEditor>
+        </div>
       </div>
 
+      <div class="invoke-dubbo-dialog-content-hisotry broder">
+        {{$t('dubbo.invokePage.historyInvokeParamList')}}{{ invokeHisotryList.length }}）
+
+        <ul class="infinite-list">
+          <li v-for="invokeHistry in invokeHisotryList" :key="invokeHistry._id" class="infinite-list-item" @click="copy(invokeHistry)">
+            {{ getInvokeHisotryTitle(invokeHistry) }}
+          </li>
+        </ul>
+      </div>
     </div>
 
   </div>
@@ -100,8 +111,6 @@ export default {
   },
   data() {
     return {
-      currentProviderAddress: '',
-      currentProvider: {},
       providerList: [],
       contentElementId :"",
       codeConfig: {
@@ -131,33 +140,18 @@ export default {
   props: {
     registryCenterId: String,
     serviceName: String,
-    provider: {
-      type: Object,
-      default: null,
-    },
-    selectProviderAddress: {
-      type: String,
-      default: '',
-    },
+    provider: Object,
   },
-  async created(){
-    this.contentElementId = `invoke-dubbo-content-${Math.random()}`.replace(/./g, '-');
-    this.currentInvoker = this.invokerType = await appConfig.getProperty("invokerType") || "telnet";
+  created(){
+    this.contentElementId = `invoke-dubbo-content-${this.provider.serviceName.replace(/\./g, '-')}-${this.provider.address.replace(/./g, '-')}`;
   },
   async mounted() {
-    if(this.provider){
-      this.currentProvider = this.provider;
-    }
-
     this.providerList = await registry.getProviderList(this.serviceName, this.registryCenterId);
-    if(this.providerList.length === 0){
-      return;
-    }
-    this.currentProvider = this.selectProviderAddress ? this.providerList.find(x => x.address === this.selectProviderAddress) : this.providerList[0];
+    this.currentInvoker = this.invokerType = await appConfig.getProperty("invokerType") || "telnet";
     await this.getMataData();
 
-    if (this.currentProvider && this.currentProvider.methods) {
-      this.method = this.currentProvider.methods[0];
+    if (this.provider && this.provider.methods) {
+      this.method = this.provider.methods[0];
       this.methodChange();
     }
   },
@@ -199,8 +193,7 @@ export default {
         let response = await new Promise((resolve, reject) => {
           rejectFun = reject;
           dubboInvoke.invokeMethod(
-            this.registryCenterId,
-            this.currentProvider,
+            this.provider,
             this.metadata,
             this.method,
             this.codeConfig.code,
@@ -223,7 +216,7 @@ export default {
     },
     async generateInvokeCommand() {
       let param = {
-        serviceName: `${this.currentProvider.serviceName}`,
+        serviceName: `${this.provider.serviceName}`,
         method: this.method,
         params: JSON.parse(this.codeConfig.code),
       };
@@ -233,14 +226,14 @@ export default {
       this.codeConfig.code = invokeHistory.param;
     },
     async flushInvokeHistoryList() {
-      this.invokeHisotryList = await invokeHisotryRecord.findList(this.currentProvider.serviceName, this.method, 1, 50);
+      this.invokeHisotryList = await invokeHisotryRecord.findList(this.provider.serviceName, this.method, 1, 50);
     },
     async generateParam() {
       let code = await paramGenerator.generateParam(this.metadata, this.method);
       this.codeConfig.code = JSON.stringify(code, null, 2) || "[]";
     },
     async getMataData() {
-      this.metadata = await registry.getMetaData(this.currentProvider, this.registryCenterId);
+      this.metadata = await registry.getMetaData(this.provider, this.registryCenterId);
     },
     getInvokeHisotryTitle(invokeHistory) {
       return this.$moment(new Date(invokeHistory.createTime)).format(
@@ -269,15 +262,48 @@ export default {
 .invoke-dubbo-dialog-content {
   margin-top: 10px;
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   align-content: space-between;
   height: 70vh;
   overflow: auto;
 }
 
+.invoke-dubbo-dialog-content-code {
+  width: 75%;
+}
+.invoke-dubbo-dialog-content-hisotry {
+  overflow-y: auto;
+  width: 25%;
+  padding-left: 10px;
+  margin-left: 10px;
+  height: 69vh;
+}
 
 .el-collapse-item {
   white-space: nowrap;
+}
+
+.infinite-list {
+  line-height: 20px;
+  font-size: 12px;
+  font-weight: bold;
+  border: 1px solid rgb(248, 245, 245);
+  border: 0px;
+  list-style: none;
+  border-radius: 2px;
+}
+
+.infinite-list li {
+  display: block;
+  width: 100%;
+  background: beige;
+  margin-top: 5px;
+  margin-bottom: 5px;
+
+  border-radius: 2px;
+}
+.infinite-list li:hover {
+  background: #999;
 }
 
 .providerSelect {

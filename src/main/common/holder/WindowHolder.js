@@ -2,11 +2,10 @@ import { BrowserWindow, ipcMain} from 'electron'
 import { createProtocol } from 'vue-cli-plugin-electron-builder/lib'
 import installExtension, { VUEJS_DEVTOOLS } from 'electron-devtools-installer'
 import Constant from '@/main/common/Constant.js'
-const OPEN_WINDOW_CHANEL = "ipc-main-open-window";
 
 async function instanllDevTools(){
     // Install Vue Devtools
-    if (Constant.IS_DEVELOPMENT && !process.env.IS_TEST) {
+    if (!process.env.IS_TEST) {
         try {
           await installExtension(VUEJS_DEVTOOLS)
         } catch (e) {
@@ -24,14 +23,13 @@ async function createWindow(newWindow, url){
         init = true;
     }
     remote.enable(newWindow.webContents);
-    if(!process.env.WEBPACK_DEV_SERVER_URL){
+    if(process.env.WEBPACK_DEV_SERVER_URL){
+        newWindow.webContents.openDevTools()
+    } else {
         createProtocol('app')
     }
     // Load the index.html when not in development
     newWindow.loadURL(url)
-    if (!process.env.IS_TEST) {
-        newWindow.webContents.openDevTools()
-    }
     return newWindow;
 }
 
@@ -68,10 +66,5 @@ class WindowHolder {
 }
 
 const windowHolder = new WindowHolder();
-
-
-ipcMain.on(OPEN_WINDOW_CHANEL, async (event, invocation) => {
-    windowHolder.createSettingWindow();
-})
 
 export default windowHolder;

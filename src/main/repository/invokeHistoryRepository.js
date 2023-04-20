@@ -2,9 +2,11 @@ import dbUtils from "@/main/common/utils/DBUtils.js";
 let dbOperator = dbUtils("invokeHistory");
 
 
-function InvokeHistory({ _id, serviceName, method, param, result, createTime }) {
+function InvokeHistory({ _id, registryCenterId, serviceName, address, method, param, result, createTime }) {
     this._id = _id,
+    this.registryCenterId = registryCenterId;
     this.serviceName = serviceName;
+    this.address = address;
     this.method = method;
     this.param = param;
     this.result = result;

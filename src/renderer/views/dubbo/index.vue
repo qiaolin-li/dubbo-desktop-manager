@@ -1,6 +1,6 @@
 <template>
   <div class="dubbo-list-main-container">
-    <myTabList ref="myTabs"></myTabList>
+    <myTabList ref="myTabs" tab-position="top"></myTabList>
   </div>
 </template>
 
@@ -60,5 +60,4 @@ export default {
   height: 100vh;
   background-color: white;
 }
-
 </style>
