@@ -139,15 +139,17 @@ export default {
       this.providerList = await registry.getProviderList(this.serviceName, this.registryCenterId);
     },
     openInvokeDrawer(provider) {
+      const startIndex = this.serviceName.lastIndexOf(".") || -1;
       let tabData = {
-        title: this.$t('dubbo.providePage.callTitle', provider),
+        title: this.$t('dubbo.providePage.callTitle', { address: this.serviceName.substring(startIndex + 1) }),
         componentName: 'dubboInvoke',
         params: {
           registryCenterId: this.registryCenterId,
           serviceName: this.serviceName,
           provider,
-          selectProviderAddress: provider.address
-        }
+          selectProviderAddress: provider.address,
+        },
+        multiInstance: true
       }
 
       this.tab.openNewTab(tabData);

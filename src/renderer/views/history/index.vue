@@ -1,7 +1,6 @@
 <template>
   <div class="history-main-container">
-    <div>调用历史</div>
-    <el-divider class="my-divider"></el-divider>
+    <div class="history-container-title">调用历史</div>
 
     <div v-infinite-scroll="loadMore" infinite-scroll-disabled="busy" infinite-scroll-distance="10">
       <el-collapse v-model="activeNames">
@@ -11,7 +10,7 @@
           </template>
           <ul class="invoke-ui">
             <li v-for="invokeHistry in group.invokeHisotryList" :key="invokeHistry._id" class="invoke-li" @click="openInvokeTab(invokeHistry)">
-              {{ `${invokeHistry.serviceName.split(".")[invokeHistry.serviceName.split(".").length - 1] }#${invokeHistry.method}#${$moment(new Date(invokeHistry.createTime)).format('LTS')}` }}
+              {{ `${$moment(new Date(invokeHistry.createTime)).format('LTS')}: ${invokeHistry.serviceName.split(".")[invokeHistry.serviceName.split(".").length - 1] }#${invokeHistry.method}` }}
             </li>
           </ul>
         </el-collapse-item>
@@ -52,7 +51,7 @@ export default {
       const list = await invokeHisotryRecord.findAllPage(this.keyword, page, size);
       list.map(hisotry => {
         const momentDate = this.$moment(new Date(hisotry.createTime));
-        const label = momentDate.isSame(new Date(), 'day') ? momentDate.format('LT') : momentDate.format('ll');
+        const label = momentDate.isSame(new Date(), 'day') ? '今天' : momentDate.format('ll');
         let group = this.groupList.find(x => x.label === label);
         if (!group) {
           group = {
@@ -76,14 +75,18 @@ export default {
       });
     },
     openInvokeTab(invokeHistry) {
+      const startIndex = invokeHistry.serviceName.lastIndexOf(".") || -1;
+      debugger
       let tabData = {
-        title: this.$t('dubbo.providePage.callTitle', { address: invokeHistry.address }),
+        title: this.$t('dubbo.providePage.callTitle', { address: invokeHistry.serviceName.substring(startIndex + 1) }),
         componentName: 'dubboInvoke',
         params: {
           registryCenterId: invokeHistry.registryCenterId,
           serviceName: invokeHistry.serviceName,
-          selectProviderAddress: invokeHistry.address
-        }
+          selectProviderAddress: invokeHistry.address,
+          selectMethod: invokeHistry.method
+        },
+        multiInstance: true
       }
 
       this.tab.addTab(tabData);
@@ -122,4 +125,12 @@ export default {
   flex: 1 0 auto;
   order: -1;
 }
+
+.history-container-title {
+  height: 30px;
+  line-height: 30px;
+  margin: 6px 10px;
+  -webkit-app-region: drag;
+}
+
 </style>

@@ -7,7 +7,7 @@
         </el-tab-pane>
       </el-tabs>
     </div>
-    <div class="mytab-container-view" :min-percent="30" :default-percent="30" v-show="tabList.length > 0">
+    <div class="mytab-container-view" v-show="tabList.length > 0">
       <div v-for="tab in tabList" :key="tab.id">
         <component v-bind="componentProps(tab)" v-show="currentTabId == tab.id" />
       </div>
@@ -23,6 +23,10 @@ import Sortable from "sortablejs";
 export default {
   props: {
     navScrollClassList: {
+      type: String,
+      default : "",
+    },
+    tabListClassList: {
       type: String,
       default : "",
     }
@@ -44,12 +48,18 @@ export default {
     if(this.navScrollClassList){
       tabLisDiv.firstElementChild.firstElementChild.lastElementChild.classList.add(this.navScrollClassList);
     }
-    const options = Object.assign({
-      direction: "horizontal",
+    if(this.tabListClassList){
+      tabListElement.classList.add(this.tabListClassList);
+    }
+    // const options = Object.assign({
+    //   direction: "horizontal",
+    //   animation: 150,
+    //   swapThreshold: 0.20
+    // });
+    new Sortable(tabListElement, {
       animation: 150,
-      swapThreshold: 0.20
+      ghostClass: 'blue-background-class',
     });
-    new Sortable(tabListElement, options);
 
     // 菜单键点击
     tabListElement.addEventListener('contextmenu', ev => {
@@ -239,10 +249,11 @@ export default {
 
 
 .mytab-container-title {
-  height: 5vh;
+  height: 40px;
 }
 
 .mytab-container-view {
+  background-color: white;
   overflow-y: auto;
 }
 
@@ -257,6 +268,14 @@ export default {
 
 .mytab-container .el-tabs__nav-scroll::-webkit-scrollbar {
   display: none !important; /* Chrome Safari */
+}
+
+.blue-background-class {
+  background-color: #C8E8FB;
+}
+
+.el-tabs__content {
+  display: none;
 }
 
 </style>

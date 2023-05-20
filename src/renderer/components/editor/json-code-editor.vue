@@ -6,6 +6,9 @@
       </div>
       <div class="toolbar-right">
           <slot name="content"></slot>
+          <el-tooltip class="item" effect="light" :content="$t('dubbo.invokePage.format')" placement="top-start">
+            <i class="el-icon-lollipop" @click="formatContent"></i>
+          </el-tooltip>
           <el-tooltip class="item" effect="light" :content="$t('editor.copy')" placement="top-start">
             <i class="el-icon-document-copy" @click="copy"></i>
           </el-tooltip>
@@ -185,6 +188,7 @@ export default {
   },
   methods: {
     inputChange(content) {
+    
       // this.$nextTick(() => {
         //  this.$refs.cm.codemirror.setValue((JSON.stringify(JSON.parse(content), null, 2)))
       // });
@@ -200,13 +204,23 @@ export default {
           message: this.$t('editor.copySuccess'),
         });
     },
+    formatContent() {
+      let formatedCode = JSON.stringify(JSON.parse(this.codeConfig.code), null, 2)
+      this.codeConfig.code = formatedCode;
+    }
   },
   mounted() {
     // 代码提示功能 当用户有输入时，显示提示信息
-    this.$refs.cm.codemirror.on("inputRead", (cm) => {
+    this.$refs.cm.codemirror.on("inputRead", (cm, change) => {
       cm.showHint();
+      if(change.origin === "paste") {
+        try {
+          const str = JSON.stringify(JSON.parse(cm.getValue()), null, 2);
+          this.$refs.cm.codemirror.setValue(str)
+        } catch(e) {
+        }
+      }
     });
-    // this.codeConfig = this.codeConfig1;
 
     this.$refs.cm.codemirror.on("gutterClick", function (cm, n) {
       var info = cm.lineInfo(n);
