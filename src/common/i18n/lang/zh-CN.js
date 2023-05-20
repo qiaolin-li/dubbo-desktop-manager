@@ -61,6 +61,8 @@ export default {
         sessionTimeout: "超时时间",
         save: "立即创建",
         namespaceId: "命名空间ID",
+        username: "用户名",
+        password: "密码",
         validateMessage: {
             timeOutNotNull: "超时时间不能为空",
             inputNumber: "请输入数字",
@@ -182,6 +184,7 @@ export default {
             invokeTimeOut: "调用Dubbo接口超时",
             connectProviderError: "连接提供者服务器失败！",
             notFoundJDK:"如果需要使用Java调用器，请先安装JDK",
+            callDubboAdminError: "调用dubbo-admin失败, {info}",
         },
         telnetTerminal: {
             connecting: "正在连接 {ip} {port}",

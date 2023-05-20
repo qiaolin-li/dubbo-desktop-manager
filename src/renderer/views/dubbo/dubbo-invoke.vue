@@ -155,7 +155,6 @@ export default {
     this.currentInvoker = this.invokerType = await appConfig.getProperty("invokerType") || "telnet";
   },
   async mounted() {
-    debugger
     if (this.provider) {
       this.currentProvider = this.provider;
     }

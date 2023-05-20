@@ -61,6 +61,8 @@ export default {
         sessionTimeout: "timeout",
         save: "save",
         namespaceId: "namespaceId",
+        username: "username",
+        password: "password",
         validateMessage: {
             timeOutNotNull: "The timeout period cannot be empty",
             inputNumber: " Please enter the first group now",
@@ -182,6 +184,7 @@ export default {
             invokeTimeOut: "The call to the Dubbo interface timed out.",
             connectProviderError: "Connecting to the provider server failed!",
             notFoundJDK:"If you need to use the Java caller, install the JDK first",
+            callDubboAdminError: "Failed to call dubco-admin, {info}",
         },
         telnetTerminal: {
             connecting: "connecting {ip} {port}",

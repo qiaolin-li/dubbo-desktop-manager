@@ -1,12 +1,14 @@
 import dbUtils from "@/main/common/utils/DBUtils.js";
 let dbOperator = dbUtils("zkConnectInfo");
 
-function ZkConnectInfo({_id, name ,type, address, namespaceId, sessionTimeout, createTime = new Date().getTime()}){
+function ZkConnectInfo({_id, name ,type, address, namespaceId, username, password,sessionTimeout, createTime = new Date().getTime()}){
     this._id = _id, 
     this.name = name;
     this.type = type;
     this.address = address;
     this.namespaceId = namespaceId;
+    this.username = username;
+    this.password = password;
     this.sessionTimeout = sessionTimeout;
     this.createTime = createTime;
 }

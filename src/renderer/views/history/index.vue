@@ -76,7 +76,6 @@ export default {
     },
     openInvokeTab(invokeHistry) {
       const startIndex = invokeHistry.serviceName.lastIndexOf(".") || -1;
-      debugger
       let tabData = {
         title: this.$t('dubbo.providePage.callTitle', { address: invokeHistry.serviceName.substring(startIndex + 1) }),
         componentName: 'dubboInvoke',
