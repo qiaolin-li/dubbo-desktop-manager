@@ -26,6 +26,8 @@ function ProviderInfo(data){
     this.weight = data.weight;
     this.enabled = data.enabled;
     this.group = data.group;
+    // 2.7x就是dubbo端口，3.0之后是指定的端口
+    this.qosPort = data.qosPort || data.port;
 }
 
 // consumer://10.255.189.77/com.indi.qiaolin.test.api.facade.TestFacade?

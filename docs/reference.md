@@ -9,4 +9,4 @@
 
 终端参考自：https://www.codeprj.com/blog/c9bde01.html
 
-分隔栏参考自：https://github.com/NebulaStudio/vue-split-pane
+分隔栏参考自：https://github.com/PanJiaChen/vue-split-pane

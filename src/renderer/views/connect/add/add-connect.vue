@@ -10,7 +10,7 @@
 <script>
 import zookeeperAdd from "./zookeeper-add.vue";
 import nacosAdd from "./nacos-add.vue";
-import connectRepository from "@/main/repository/connectRepository.js";
+import connectRepository from "@/renderer/api/connectManangerClient.js";
 
 export default {
   components: {

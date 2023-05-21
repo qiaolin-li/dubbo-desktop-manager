@@ -1,5 +1,4 @@
-import dbUtils from "../../utils/DBUtils.js";
-import consumer from "@/main/communication/consumer.js";
+import dbUtils from "@/main/common/utils/DBUtils.js";
 let dbOperator = dbUtils("zkConnectInfo");
 
 function ZkConnectInfo({_id, name ,type, address, namespaceId, sessionTimeout, createTime = new Date().getTime()}){
@@ -39,16 +38,11 @@ async function findById(id){
 }
 
 let data = {
-    name:"connectRepository",
     save,
     findList,
     findById,
     deleteConnect,
     ZkConnectInfo,
-    install(communication){
-        communication.registry(data);
-    }
 }
 
-let proxy = consumer.wrapper(data);
-export default proxy
+export default data

@@ -1,5 +1,5 @@
 import zookeeperClient from "node-zookeeper-client";
-import i18n from '@/i18n'
+import i18n from '@/main/common/i18n'
 
 
 

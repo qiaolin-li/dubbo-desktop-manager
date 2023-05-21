@@ -1,9 +1,8 @@
 import { app, Menu, shell } from 'electron'
-import {getWindow} from '@/main/holder/WindowHolder.js';
-import i18n from '../i18n'
+import windowHolder         from '@/main/common/holder/WindowHolder.js';
+import i18n                 from '@/main/common/i18n'
 
 const isMac = process.platform === 'darwin'
-let window = null;
 
 const template = [
   // { role: 'appMenu' }
@@ -28,17 +27,17 @@ const template = [
       {
         label: i18n.t("menu.addConnect") ,
         click: async () => {
-          let window = getWindow();
+          let window = windowHolder.getWindow();
           window.webContents.send('openAddConnectDialogEvent')
-
+          
         }
       },
       {
         label: i18n.t("menu.settings") ,
         click: async () => {
-          let window = getWindow();
+          let window = windowHolder.getWindow();
           window.webContents.send('openSettingsTabEvent')
-
+          // windowHolder.createSettingWindow();
         }
       },
       { type: 'separator' },
@@ -111,15 +110,7 @@ const template = [
       {
         label: 'Learn More',
         click: async () => {
-
           shell.openExternal("https://github.com/qiaolin-li/dubbo-desktop-manager")
-
-          // dialog.showMessageBox({
-          //   title: 'Dubbo-Desktop-Manager',
-          //   message: 'Dubbo-Desktop-Manager',
-          //   type:"info",
-          //   detail: `Author: qiaolin\nGithub: https://github.com/qiaolin-li/dubbo-desktop-manager`
-          // })
         }
       }
     ]
@@ -130,6 +121,3 @@ const template = [
 
 
 export default template;
-export const setWindow = (window) => {
-  this.window = window;
-}

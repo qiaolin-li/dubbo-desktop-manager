@@ -1,35 +1,20 @@
-import dbUtils from "../../utils/DBUtils.js";
-import consumer from "@/main/communication/consumer.js";
+import dbUtils from "@/main/common/utils/DBUtils.js";
 let dbOperator = dbUtils("invokeHistory");
 
 
-function InvokeHistory({ _id, serviceName, method, param, createTime = new Date().getTime() }) {
+function InvokeHistory({ _id, registryCenterId, serviceName, address, method, param, result, createTime }) {
     this._id = _id,
+    this.registryCenterId = registryCenterId;
     this.serviceName = serviceName;
+    this.address = address;
     this.method = method;
     this.param = param;
-    this.createTime = createTime;
+    this.result = result;
+    this.createTime = createTime || new Date().getTime();
 }
 
 function save(invokeHistory) {
-    let queryParam = { 
-        serviceName : invokeHistory.serviceName,
-        method : invokeHistory.method
-    };
-
-    let sortParam = {        
-        createTime: -1
-    }
-    return dbOperator.findFirstRecord(queryParam, sortParam).then(firstData => {
-        if (firstData && firstData.length > 0) {
-            let data = firstData[0];
-            // 如果参数是一样的，就直接忽略，不保存到历史记录
-            if (data.param == invokeHistory.param) {
-                return Promise.resolve("success");
-            }
-        }
-        return dbOperator.save(new InvokeHistory(invokeHistory));
-    })
+    return dbOperator.save(new InvokeHistory(invokeHistory));
 }
 
 function findList(serviceName, method, page, size) {
@@ -48,15 +33,29 @@ function findList(serviceName, method, page, size) {
 
     return dbOperator.find(queryParam, sortParam, pageParam);
 }
-let data = {
-    name:"invokeHistoryRepository",
-    save,
-    findList,
-    InvokeHistory,
-    install(communication){
-        communication.registry(data);
+
+function findAllPage(keyword, page, size) {
+
+    let queryParam = {
+        ...(keyword ? { $or: [{ serviceName: keyword }, { method: 'keyword' }]} : {})
+    };
+
+    let sortParam = {
+        createTime: -1
     }
+
+    let pageParam = {
+        page, size
+    }
+
+    return dbOperator.find(queryParam, sortParam, pageParam);
 }
 
-let proxy = consumer.wrapper(data);
-export default proxy
+let data = {
+    save,
+    findList,
+    findAllPage,
+    InvokeHistory,
+}
+
+export default data

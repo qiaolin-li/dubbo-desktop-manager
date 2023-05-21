@@ -1,19 +1,24 @@
 <template>
-  <div>
+  <div class="container">
     <div class="mainContainer" v-for="connectInfo in connectInfoList" :key="connectInfo.name">
       <!-- zk 连接 -->
       <div class="connectContainer notSelect" @click="openConnect(connectInfo)">
         <!-- zk 连接名称 -->
         <div class="connectContainer-left">
-          <i class="iconfont icon-lianjie-connect" />
-          {{ connectInfo.name }}
+          <i class="iconfont icon-lianjie-connect"></i>
+          <span class="txt">{{ connectInfo.name }}</span>
         </div>
 
         <!-- 操作按钮 -->
         <div class="connectContainer-right">
           <i class="el-icon-refresh" v-if="connectInfo.isShow" @click="refreshServiceList($event,connectInfo)"></i>
-          <i class="el-icon-edit" @click="editConnect($event, connectInfo._id)"></i>
-          <i class="el-icon-delete" @click="deleteConnect($event,connectInfo._id)"></i>
+          
+          <el-tooltip effect="light" content="修改" placement="right-start">
+            <i class="el-icon-edit" @click="editConnect($event, connectInfo._id)"></i>
+          </el-tooltip>
+          <el-tooltip effect="light" content="删除" placement="right-start">
+            <i class="el-icon-delete" @click="deleteConnect($event,connectInfo._id)"></i>
+          </el-tooltip>
         </div>
       </div>
       <connectItem :connectInfo="connectInfo" @clickServiceInfo="clickServiceInfo"> </connectItem>
@@ -22,7 +27,7 @@
 </template>
 
 <script>
-import connectRepository from "@/main/repository/connectRepository.js";
+import connectRepository from "@/renderer/api/connectManangerClient.js";
 import connectItem from "./connect-item.vue";
 
 export default {
@@ -90,16 +95,26 @@ export default {
 
 <style>
 .mainContainer {
-  background-color: white;
-  margin-top: 10px;
+
 }
+
 
 .connectContainer {
   display: flex;
   justify-content: space-between;
   line-height: 30px;
-  padding-left: 10px;
   white-space: nowrap;
+  padding-left: 10px;
+  padding-top: 5px;
+  padding-bottom: 5px;
+}
+
+.connectContainer:hover {
+  background:#d5ebe1;
+}
+
+.txt {
+  margin-left: 5px;
 }
 
 .connectContainer-right i {

@@ -1,7 +1,7 @@
 <template>
   <div class="interfaceContainer" v-show="connectInfo.isShow">
     <div class="searchTool">
-      <el-input v-model="searchKeyword" :placeholder="$t('connect.searchContent')" @input="searchKeywordChange($event)"></el-input>
+      <el-input v-model="searchKeyword" :placeholder="$t('connect.searchContent')" @input="searchKeywordChange($event)" size="mini"></el-input>
       <span class="serviceSizeTool">{{this.connectInfo.serviceSize}}</span>
     </div>
 
@@ -18,8 +18,8 @@
 </template>
 
 <script>
-import registry from "@/main/registry";
-import treeUtils from "@/utils/treeUtils.js";
+import registry from "@/renderer/api/registryClient.js";
+import treeUtils from "@/renderer/common/utils/treeUtils.js";
 
 export default {
   components: {
@@ -193,5 +193,9 @@ export default {
   font-size: 17px;
   border-radius: 50%;
   display: inline-block;
+}
+.el-input.is-active .el-input__inner, .el-input__inner:focus {
+    border-color: rgb(62, 177, 78) !important;
+    outline: 0;
 }
 </style>
