@@ -2,6 +2,7 @@ import { BrowserWindow, ipcMain} from 'electron'
 import { createProtocol } from 'vue-cli-plugin-electron-builder/lib'
 import installExtension, { VUEJS_DEVTOOLS } from 'electron-devtools-installer'
 import Constant from '@/main/common/Constant.js'
+const isMac = process.platform === 'darwin'
 
 async function instanllDevTools(){
     // Install Vue Devtools
@@ -52,13 +53,16 @@ class WindowHolder {
             width: 1200,
             height: 800,
             title: "Dubbo-Desktop-Manager",
-            titleBarStyle: 'hidden',
             webPreferences: {
                 nodeIntegration: true,
                 contextIsolation: false,
                 webSecurity: false,
                 webviewTag: true
             }
+        }
+
+        if(isMac){
+            mainWindowConfig.titleBarStyle = 'hidden';
         }
         this.window  = new BrowserWindow(mainWindowConfig)
         createWindow(this.window, url)
