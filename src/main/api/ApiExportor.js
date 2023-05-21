@@ -35,7 +35,6 @@ class ApiExportor {
             
             let result = Reflect.apply(obj[method], obj, args)
             
-            debugger
             if(result instanceof Promise){
                 let data = await result;
                 event.sender.send(replyChannel, new Response(requestId, true, data));

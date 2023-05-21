@@ -16,7 +16,7 @@
           </div>
         </template>
         <template slot="paneR">
-          <myTabList ref="myTabs" navScrollClassList="dragRegion"></myTabList>
+          <myTabList ref="myTabs" navScrollClassList="dragRegion" tabListClassList="noDragRegion"></myTabList>
         </template>
       </split-pane>
     </el-main>

@@ -61,7 +61,11 @@ export default {
       type: String,
       required: true,
     },
-    serviceName: {
+    interfaceName: {
+      type: String,
+      default: "",
+    },
+    uniqueServiceName: {
       type: String,
       default: "",
     }
@@ -136,18 +140,21 @@ export default {
       }
     },
     async refreshProviderList() {
-      this.providerList = await registry.getProviderList(this.serviceName, this.registryCenterId);
+      this.providerList = await registry.getProviderList(this.uniqueServiceName, this.registryCenterId);
     },
     openInvokeDrawer(provider) {
+      const startIndex = this.interfaceName.lastIndexOf(".") || -1;
       let tabData = {
-        title: this.$t('dubbo.providePage.callTitle', provider),
+        title: this.$t('dubbo.providePage.callTitle', { address: this.interfaceName.substring(startIndex + 1) }),
         componentName: 'dubboInvoke',
         params: {
           registryCenterId: this.registryCenterId,
-          serviceName: this.serviceName,
+          interfaceName: this.interfaceName,
+          uniqueServiceName: this.uniqueServiceName,
           provider,
-          selectProviderAddress: provider.address
-        }
+          selectProviderAddress: provider.address,
+        },
+        multiInstance: true
       }
 
       this.tab.openNewTab(tabData);
@@ -159,7 +166,8 @@ export default {
         componentName: 'dubboTelnet',
         params: {
           registryCenterId: this.registryCenterId,
-          serviceName: this.serviceName,
+          interfaceName: this.interfaceName,
+          uniqueServiceName: this.uniqueServiceName,
           provider
         }
       }
@@ -171,7 +179,8 @@ export default {
         componentName: 'dubboProviderConfiguration',
         params: {
           registryCenterId: this.registryCenterId,
-          serviceName: this.serviceName,
+          interfaceName: this.interfaceName,
+          uniqueServiceName: this.uniqueServiceName,
           provider
         }
       }

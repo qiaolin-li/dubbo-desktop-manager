@@ -2,9 +2,10 @@
   <div class="invoke-dubbo-dialog">
     <div class="invoke-dubbo-dialog-interface-info">
       <el-descriptions class="margin-top" :column="4" size="mini" border>
-        <el-descriptions-item span="3">
+        <el-descriptions-item span="3" >
           <template slot="label"> {{$t('dubbo.invokePage.serviceName')}} </template>
           {{ currentProvider.serviceName }}
+          <copyButton :message="currentProvider.serviceName"></copyButton>
         </el-descriptions-item>
 
         <el-descriptions-item>
@@ -15,13 +16,14 @@
         <el-descriptions-item span="2">
           <template slot="label"> {{$t('dubbo.invokePage.application')}} </template>
           {{ currentProvider.application }}
+          <copyButton :message="currentProvider.application"></copyButton>
         </el-descriptions-item>
 
         <el-descriptions-item>
           <template slot="label"> {{$t('dubbo.invokePage.jarVersion')}} </template>
           {{ currentProvider.revision }}
         </el-descriptions-item>
-        
+
         <el-descriptions-item>
           <template slot="label"> {{$t('dubbo.invokePage.version')}} </template>
           {{ currentProvider.version }}
@@ -40,14 +42,15 @@
           <el-select v-model="currentInvoker" class="invokerSelect">
             <el-option v-for="invokerType in invokerTypes" :key="invokerType.code" :label="invokerType.name" :value="invokerType.code"></el-option>
           </el-select>
-          <el-button plain type="primary" icon="el-icon-thumb" @click="invokeDubbo()" :disabled="invokeing" >{{invokeing ?  $t('dubbo.invokePage.calling') : $t('dubbo.invokePage.call')}}</el-button>
+          <el-button plain type="primary" icon="el-icon-thumb" @click="invokeDubbo()" :disabled="invokeing">{{invokeing ?  $t('dubbo.invokePage.calling') : $t('dubbo.invokePage.call')}}</el-button>
         </el-descriptions-item>
       </el-descriptions>
     </div>
 
     <div :id="contentElementId" class="invoke-dubbo-dialog-content ">
-        <div class="contentCode broder">
 
+      <div class="invoke-dubbo-dialog-content-code">
+        <div class="contentCode broder">
           <jsonCodeEditor :codeConfig="codeConfig" :lint="true">
             <template v-slot:titel>
               {{$t('dubbo.invokePage.requestParam')}}
@@ -62,9 +65,6 @@
               <el-tooltip class="item" effect="light" :content="$t('dubbo.invokePage.generateCommand')" placement="top">
                 <i class="el-icon-magic-stick" @click="generateInvokeCommand"></i>
               </el-tooltip>
-              <el-tooltip class="item" effect="light" :content="$t('dubbo.invokePage.format')" placement="top-start">
-                <i class="el-icon-lollipop" @click="formatContent"></i>
-              </el-tooltip>
             </template>
           </jsonCodeEditor>
         </div>
@@ -75,8 +75,10 @@
               {{$t('dubbo.invokePage.responseInfo')}} {{ invokeReulst.elapsedTime }}
             </template>
           </jsonCodeEditor>
+        </div>
       </div>
 
+      <dubboInvokeHistoryParam ref="dubboInvokeHistoryParam" @selectionChange="selectionChange"></dubboInvokeHistoryParam>
     </div>
 
   </div>
@@ -87,23 +89,26 @@
 
 import registry from "@/renderer/api/registryClient.js";
 import dubboInvoke from "@/renderer/api/dubboInvokerClient.js";
-import invokeHisotryRecord from "@/renderer/api/invokeHistoryClient.js";
 import paramGenerator from "@/renderer/api/dubboParamGeneratorClient.js";
 import appConfig from "@/renderer/api/appConfig.js";
 
 import jsonCodeEditor from "@/renderer/components/editor/json-code-editor.vue";
 import Loading from "@/renderer/common/utils/MyLoading";
+import dubboInvokeHistoryParam from "@/renderer/views/dubbo/dubbo-invoke-history-param.vue";
+import copyButton from "@/renderer/components/copyButton.vue";
 
 export default {
   components: {
+    copyButton,
     jsonCodeEditor,
+    dubboInvokeHistoryParam
   },
   data() {
     return {
       currentProviderAddress: '',
       currentProvider: {},
       providerList: [],
-      contentElementId :"",
+      contentElementId: "",
       codeConfig: {
         code: "[]",
       },
@@ -130,7 +135,8 @@ export default {
   },
   props: {
     registryCenterId: String,
-    serviceName: String,
+    interfaceName: String,
+    uniqueServiceName: String,
     provider: {
       type: Object,
       default: null,
@@ -139,35 +145,41 @@ export default {
       type: String,
       default: '',
     },
+    selectMethod: {
+      type: String,
+      default: '',
+    }
   },
-  async created(){
+  async created() {
     this.contentElementId = `invoke-dubbo-content-${Math.random()}`.replace(/./g, '-');
     this.currentInvoker = this.invokerType = await appConfig.getProperty("invokerType") || "telnet";
   },
   async mounted() {
-    if(this.provider){
+    if (this.provider) {
       this.currentProvider = this.provider;
     }
 
-    this.providerList = await registry.getProviderList(this.serviceName, this.registryCenterId);
-    if(this.providerList.length === 0){
+    this.providerList = await registry.getProviderList(this.uniqueServiceName, this.registryCenterId);
+    if (this.providerList.length === 0) {
       return;
     }
-    this.currentProvider = this.selectProviderAddress ? this.providerList.find(x => x.address === this.selectProviderAddress) : this.providerList[0];
+    this.currentProvider = this.selectProviderAddress ? this.providerList.find(x => x.address === this.selectProviderAddress) || this.providerList[0] : this.providerList[0];
     await this.getMataData();
 
     if (this.currentProvider && this.currentProvider.methods) {
-      this.method = this.currentProvider.methods[0];
+      this.method = this.selectMethod ? this.currentProvider.methods.find(x => x === this.selectMethod) || this.currentProvider.methods[0] : this.currentProvider.methods[0];
       this.methodChange();
     }
   },
   methods: {
+    resize() {
+    },
     async methodChange() {
       // 先刷新列表
-      await this.flushInvokeHistoryList();
+      const invokeHisotryList = await this.flushInvokeHistoryList();
 
-      if (this.invokeHisotryList && this.invokeHisotryList.length > 0) {
-        this.codeConfig.code = this.invokeHisotryList[0].param;
+      if (invokeHisotryList.length > 0) {
+        this.codeConfig.code = invokeHisotryList[0].param;
       } else {
         this.generateParam();
       }
@@ -188,10 +200,10 @@ export default {
 
       let loadingInstance = Loading.service(
         `#${this.contentElementId}`,
-        this.$t("dubbo.invokePage.invokeProgress"), 
+        this.$t("dubbo.invokePage.invokeProgress"),
         this.$t("dubbo.invokePage.cancelInvoke"), () => {
-        rejectFun(this.$t('dubbo.invokePage.cancelInvoke'));
-      });
+          rejectFun(this.$t('dubbo.invokePage.cancelInvoke'));
+        });
 
       try {
         this.invokeing = true;
@@ -200,6 +212,7 @@ export default {
           rejectFun = reject;
           dubboInvoke.invokeMethod(
             this.registryCenterId,
+            this.uniqueServiceName,
             this.currentProvider,
             this.metadata,
             this.method,
@@ -207,7 +220,7 @@ export default {
             this.currentInvoker
           ).then(resolve).catch(reject);
         });
-        
+
         this.invokeReulst.code = response.data;
         this.invokeReulst.elapsedTime = response.elapsedTime;
         this.$message({
@@ -229,11 +242,11 @@ export default {
       };
       this.invokeReulst.code = await dubboInvoke.buildInvokeCommand(param);
     },
-    copy(invokeHistory) {
+    selectionChange(invokeHistory) {
       this.codeConfig.code = invokeHistory.param;
     },
     async flushInvokeHistoryList() {
-      this.invokeHisotryList = await invokeHisotryRecord.findList(this.currentProvider.serviceName, this.method, 1, 50);
+      return await this.$refs.dubboInvokeHistoryParam.changeParam(this.registryCenterId, this.currentProvider, this.method)
     },
     async generateParam() {
       let code = await paramGenerator.generateParam(this.metadata, this.method);
@@ -242,15 +255,7 @@ export default {
     async getMataData() {
       this.metadata = await registry.getMetaData(this.currentProvider, this.registryCenterId);
     },
-    getInvokeHisotryTitle(invokeHistory) {
-      return this.$moment(new Date(invokeHistory.createTime)).format(
-        "YYYY-MM-DD HH:mm:ss"
-      );
-    },
-    formatContent() {
-      let formatedCode = JSON.stringify(JSON.parse(this.codeConfig.code), null, 2)
-      this.codeConfig.code = formatedCode;
-    }
+    
   },
 };
 </script>
@@ -263,18 +268,17 @@ export default {
 .invoke-dubbo-dialog {
   height: 90vh;
   overflow-y: hidden;
-  background-color: white
+  background-color: white;
 }
 
 .invoke-dubbo-dialog-content {
   margin-top: 10px;
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   align-content: space-between;
-  height: 70vh;
+  height: 100%;
   overflow: auto;
 }
-
 
 .el-collapse-item {
   white-space: nowrap;
@@ -325,12 +329,17 @@ export default {
   padding: 4px;
 }
 .item:hover {
- background-color: #ccc;
+  background-color: #ccc;
   border-radius: 50%;
 }
 
 .invokerSelect {
   width: 100px;
   padding-right: 10px;
+}
+
+.invoke-dubbo-dialog-content-code {
+  width: 75%;
+  height: 100%;
 }
 </style>
