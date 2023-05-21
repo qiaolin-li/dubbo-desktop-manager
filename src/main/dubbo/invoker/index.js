@@ -6,7 +6,7 @@ import appConfig from "@/main/common/config/appConfig.js";
 import common from "./common.js";
 import connectRepository from "@/main/repository/connectRepository.js";
 
-async function invokeMethod(registryCenterId, provder, metadata, method, code, currentInvoker) {
+async function invokeMethod(registryCenterId, uniqueServiceName, provder, metadata, method, code, currentInvoker) {
 
     let result = await doInvokeMethod(registryCenterId, provder, metadata, method, code, currentInvoker);
 
@@ -14,6 +14,7 @@ async function invokeMethod(registryCenterId, provder, metadata, method, code, c
     let invokeHistory = {
         registryCenterId,
         serviceName: provder.serviceName,
+        uniqueServiceName,
         address: provder.address,
         method: method,
         param: code,
