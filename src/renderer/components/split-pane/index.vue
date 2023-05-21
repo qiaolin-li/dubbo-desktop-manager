@@ -5,7 +5,7 @@
       <slot name="paneL"></slot>
     </pane>
 
-    <resizer :className="className" :style="{ [resizeType]: percent+'%'}" :split="split" @mousedown.native="onMouseDown" @click.native="onClick"></resizer>
+    <resizer :className="className" :style="{ [resizeType]: percent+'%'}" :split="split" :percent="percent" @onMouseDown="onMouseDown" @switchSplit="switchSplit"></resizer>
 
     <pane class="splitter-pane splitter-paneR" :split="split" :style="{ [type]: 100-percent+'%'}">
       <slot name="paneR"></slot>
@@ -67,6 +67,14 @@
           this.percent = 50
           this.$emit('resize', this.percent)
         }
+      },
+      switchSplit(){
+        if(this.percent === 0){
+          this.percent = this.defaultPercent
+        }else {
+          this.percent = 0;
+        }
+        this.$emit('resize', this.percent)
       },
       onMouseDown() {
         this.className = "aaa";
