@@ -16,7 +16,8 @@ export default {
   },
   props: {
     registryCenterId: String,
-    serviceName: String
+    interfaceName: String,
+    uniqueServiceName: String
   },
   mounted() {
     const providerTab = this.$refs.myTabs.addTab({
@@ -26,7 +27,8 @@ export default {
       closable: false,
       params: {
         registryCenterId: this.registryCenterId,
-        serviceName: this.serviceName,
+        interfaceName: this.interfaceName,
+        uniqueServiceName: this.uniqueServiceName,
         tab: this,
       }
     });
@@ -38,7 +40,8 @@ export default {
       closable: false,
       params: {
         registryCenterId: this.registryCenterId,
-        serviceName: this.serviceName,
+        interfaceName: this.interfaceName,
+        uniqueServiceName: this.uniqueServiceName,
         tab: this,
       }
     });

@@ -2,7 +2,7 @@ import consumer from './Consumer';
 
 class DubboInvoker {
 
-    async  invokeMethod(registryCenterId, provder, metadata, method, code, currentInvoker) {}
+    async  invokeMethod(registryCenterId, uniqueServiceName, provder, metadata, method, code, currentInvoker) {}
 
     /** 
      * 构建invoke命令 

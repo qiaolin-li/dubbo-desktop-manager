@@ -81,7 +81,8 @@ export default {
         componentName: 'dubboInvoke',
         params: {
           registryCenterId: invokeHistry.registryCenterId,
-          serviceName: invokeHistry.serviceName,
+          interfaceName: invokeHistry.serviceName,
+          uniqueServiceName: invokeHistry.uniqueServiceName || invokeHistry.serviceName,
           selectProviderAddress: invokeHistry.address,
           selectMethod: invokeHistry.method
         },

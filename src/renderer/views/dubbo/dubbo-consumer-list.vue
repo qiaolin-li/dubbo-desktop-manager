@@ -48,7 +48,11 @@ export default {
       type: String,
       required: true,
     },
-    serviceName: {
+    interfaceName: {
+      type: String,
+      default: "",
+    },
+    uniqueServiceName: {
       type: String,
       default: "",
     }
@@ -58,7 +62,7 @@ export default {
   },
   methods: {
     async handleNodeClick() {
-      this.consumerList = await registry.getConsumerList(this.serviceName, this.registryCenterId);
+      this.consumerList = await registry.getConsumerList(this.uniqueServiceName, this.registryCenterId);
     },
     consumerListTableHeaderRowClassName() {
       return "consumer-list-table-header";

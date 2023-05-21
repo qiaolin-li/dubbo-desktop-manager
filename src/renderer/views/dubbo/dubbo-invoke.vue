@@ -89,7 +89,6 @@
 
 import registry from "@/renderer/api/registryClient.js";
 import dubboInvoke from "@/renderer/api/dubboInvokerClient.js";
-import invokeHisotryRecord from "@/renderer/api/invokeHistoryClient.js";
 import paramGenerator from "@/renderer/api/dubboParamGeneratorClient.js";
 import appConfig from "@/renderer/api/appConfig.js";
 
@@ -136,7 +135,8 @@ export default {
   },
   props: {
     registryCenterId: String,
-    serviceName: String,
+    interfaceName: String,
+    uniqueServiceName: String,
     provider: {
       type: Object,
       default: null,
@@ -159,7 +159,7 @@ export default {
       this.currentProvider = this.provider;
     }
 
-    this.providerList = await registry.getProviderList(this.serviceName, this.registryCenterId);
+    this.providerList = await registry.getProviderList(this.uniqueServiceName, this.registryCenterId);
     if (this.providerList.length === 0) {
       return;
     }
@@ -212,6 +212,7 @@ export default {
           rejectFun = reject;
           dubboInvoke.invokeMethod(
             this.registryCenterId,
+            this.uniqueServiceName,
             this.currentProvider,
             this.metadata,
             this.method,
