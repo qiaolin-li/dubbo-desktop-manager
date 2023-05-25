@@ -1,5 +1,6 @@
 import zookeeperRegistry from "./zookeeper-registry";
 import nacosRegistry from "./nacos-registry";
+import dubboAdminRegistry from './dubbo-admin/dubbo-admin-registry.js'
 import connectRepository from "@/main/repository/connectRepository.js";
 import configuration from '@/main/common/utils/Configuration';
 
@@ -7,6 +8,7 @@ const map = new Map();
 
 map.set("zookeeper", zookeeperRegistry);
 map.set("nacos", nacosRegistry);
+map.set("dubbo-admin", dubboAdminRegistry);
 
 
 async function getServiceList(registryCenterId) {

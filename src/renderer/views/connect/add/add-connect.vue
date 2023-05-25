@@ -10,12 +10,14 @@
 <script>
 import zookeeperAdd from "./zookeeper-add.vue";
 import nacosAdd from "./nacos-add.vue";
+import dubboAdminAdd from "./dubbo-admin-add.vue";
 import connectRepository from "@/renderer/api/connectManangerClient.js";
 
 export default {
   components: {
     zookeeperAdd,
     nacosAdd,
+    dubboAdminAdd
   },
   data() {
     return {
@@ -30,6 +32,11 @@ export default {
         {
           value: "nacosAdd",
           label: "nacos",
+          disabled: false
+        },
+        {
+          value: "dubboAdminAdd",
+          label: "dubbo-admin",
           disabled: false
         },
       ],

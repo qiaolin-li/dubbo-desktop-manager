@@ -1,17 +1,22 @@
 import telnetInvoker from "./telnetInvoker";
 import javaInvoker from "./javaInvoker";
+import dubboAdminInvoker from "./dubboAdminInvoker";
 import invokeHisotryRecord from "@/main/repository/invokeHistoryRepository.js";
 import appConfig from "@/main/common/config/appConfig.js";
 import common from "./common.js";
+import connectRepository from "@/main/repository/connectRepository.js";
 
 async function invokeMethod(registryCenterId, uniqueServiceName, provder, metadata, method, code, currentInvoker) {
+    let registryConfig = await connectRepository.findById(registryCenterId);
 
-    let result = doInvokeMethod(provder, metadata, method, code, currentInvoker);
+    let result = await doInvokeMethod(registryConfig, provder, metadata, method, code, currentInvoker);
+
+    const interfaceName =  registryConfig.type === 'dubbo-admin' ? provder.serviceName.split(":")[0] : provder.serviceName;
 
     // 保存调用记录
     let invokeHistory = {
         registryCenterId,
-        serviceName: provder.serviceName,
+        serviceName: interfaceName,
         uniqueServiceName,
         address: provder.address,
         method: method,
@@ -23,7 +28,12 @@ async function invokeMethod(registryCenterId, uniqueServiceName, provder, metada
     return result;
 }
 
-function doInvokeMethod(provder, metadata, method, code, currentInvoker) {
+async function doInvokeMethod(registryConfig, provder, metadata, method, code, currentInvoker) {
+  
+    if(registryConfig.type === 'dubbo-admin'){
+        return dubboAdminInvoker.invokeMethod(registryConfig, provder, metadata, method, code);
+    }
+
     // 执行器类型
     let invokerType = currentInvoker || appConfig.getProperty("invokerType") || "telnet";
 
