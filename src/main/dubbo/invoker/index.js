@@ -7,13 +7,16 @@ import common from "./common.js";
 import connectRepository from "@/main/repository/connectRepository.js";
 
 async function invokeMethod(registryCenterId, uniqueServiceName, provder, metadata, method, code, currentInvoker) {
+    let registryConfig = await connectRepository.findById(registryCenterId);
 
-    let result = await doInvokeMethod(registryCenterId, provder, metadata, method, code, currentInvoker);
+    let result = await doInvokeMethod(registryConfig, provder, metadata, method, code, currentInvoker);
+
+    const interfaceName =  registryConfig.type === 'dubbo-admin' ? provder.serviceName.split(":")[0] : provder.serviceName;
 
     // 保存调用记录
     let invokeHistory = {
         registryCenterId,
-        serviceName: provder.serviceName,
+        serviceName: interfaceName,
         uniqueServiceName,
         address: provder.address,
         method: method,
@@ -25,9 +28,8 @@ async function invokeMethod(registryCenterId, uniqueServiceName, provder, metada
     return result;
 }
 
-async function doInvokeMethod(registryCenterId, provder, metadata, method, code, currentInvoker) {
-    let registryConfig = await connectRepository.findById(registryCenterId);
-
+async function doInvokeMethod(registryConfig, provder, metadata, method, code, currentInvoker) {
+  
     if(registryConfig.type === 'dubbo-admin'){
         return dubboAdminInvoker.invokeMethod(registryConfig, provder, metadata, method, code);
     }

@@ -1,9 +1,8 @@
-import common from "./common";
+import common from "../common";
 const axios = require('axios').default;
 import configuration from '@/main/common/utils/Configuration';
 import i18n from '@/main/common/i18n'
-import qs from 'qs'
-import urlUtils from "@/main/common/utils/urlUtils.js";
+import transformer from "@/main/registry/dubbo-admin/transformer.js";
 
 
 async function getToken(registryConfig) {
@@ -33,7 +32,7 @@ async function getServiceList(registryConfig) {
                 'Authorization': await getToken(registryConfig)
             },
         });
-        
+
         const interfaceList = response.data;
         for (let i = 0; i < interfaceList.length; i++) {
 
@@ -62,9 +61,9 @@ async function getServiceData(serviceName, registryConfig) {
     let url = `${registryConfig.address}/service/${serviceName}`
 
     let response = await axios.get(url, {
-        headers: { 
+        headers: {
             'Authorization': await getToken(registryConfig)
-            }
+        }
     });
 
     return response.data;
@@ -77,7 +76,18 @@ async function getProviderList(serviceName, registryConfig) {
 
         let array = new Array();
         for (let i = 0; i < data.providers.length; i++) {
-            array.push(parseProvderInfo(data.providers[i]))
+            if (data.providers[i].registrySource !== 'INTERFACE') {
+                continue;
+            }
+
+            let providerInfo = transformer.parseProvderInfo(data.providers[i]);
+
+            let disableInfo = await getDisableInfo(registryConfig, providerInfo);
+            if (disableInfo && disableInfo.find(item => item === '0.0.0.0' || item === providerInfo.address)) {
+                providerInfo.disabled = true;
+                providerInfo.disabledType = "service";
+            }
+            array.push(providerInfo)
         }
 
         return array;
@@ -90,33 +100,13 @@ async function getProviderList(serviceName, registryConfig) {
 
 
 
-function parseProvderInfo(data) {
-    let urlData = urlUtils.parseURL(`dubbo://${data.address}/?${data.parameters}`);
-    return new common.ProviderInfo({
-        application: data.application,
-        ip: urlData.host,
-        port: urlData.port,
-        serviceName: data.service,
-        methods: urlData.params.methods.split(","),
-        generic: urlData.params.generic,
-        version: urlData.params.version,
-        revision: urlData.params.revision,
-        dubboVersion: urlData.params.release,
-        deprecated: urlData.params.deprecated,
-        weight: data.weight,
-        enabled: data.enabled,
-        group: ""
-    });
-}
-
-
 async function getConsumerList(serviceName, registryConfig) {
     try {
         const data = await getServiceData(serviceName, registryConfig);
 
         let array = new Array();
         for (let i = 0; i < data.consumers.length; i++) {
-            array.push(parseConsumerInfo(data.consumers[i]))
+            array.push(transformer.parseConsumerInfo(data.consumers[i]))
         }
 
         return array;
@@ -127,29 +117,6 @@ async function getConsumerList(serviceName, registryConfig) {
     }
 }
 
-function parseConsumerInfo(data) {
-    let urlData = urlUtils.parseURL(`dubbo://${data.address}:8080/?${data.parameters}`);
-    let methods = urlData.params.methods || "";
-    return new common.ConsumerInfo({
-      ip: data.address,
-      serviceName: urlData.params.interface,
-      application: data.application,
-      check: urlData.params.check,
-      version: urlData.params.version,
-      timeout: urlData.params.timeout,
-      enable: urlData.params["qos.enable"],
-      revision: urlData.params.revision,
-      methods: methods.split(","),
-      dubbo: urlData.params.dubbo,
-      lazy: urlData.params.lazy,
-      pid: urlData.params.pid,
-      release: urlData.params.release,
-      retries: urlData.params.retries || 2,
-      sticky: urlData.params.sticky,
-      category: urlData.params.category,
-      timestamp: urlData.params.timestamp,
-    });
-  }
 
 async function getMetaData(providerInfo, registryConfig) {
     try {
@@ -164,21 +131,103 @@ async function getMetaData(providerInfo, registryConfig) {
 }
 
 
+/**
+ * 
+ * @param {string} serviceName 
+ * @param {string[]} versions 多个版本
+ */
+async function getDisableInfo(registryConfig, providerInfo) {
+    let doc = await getCurrentConfiguration(registryConfig, providerInfo);
+    let addressList = [];
+    if (doc && doc.configs) {
+      let configs = doc.configs;
+      for (let j = 0; j < configs.length; j++) {
+        let config = configs[j];
+        // 规则不是开启的，忽略
+        if (!config.enabled) {
+          continue;
+        }
+
+        if (!config.parameters || !config.parameters.disabled || config.parameters.disabled != true) {
+          continue;
+        }
+
+        addressList = addressList.concat(config.addresses);
+      }
+    }
+
+  return addressList;
+}
+
+
 // eslint-disable-next-line no-unused-vars
 async function getCurrentConfiguration(registryConfig, providerInfo) {
-    throw new Error("暂不支持");
+    let {
+        serviceName,
+    } = providerInfo;
+    let url = `${registryConfig.address}/rules/override/${serviceName}:/`;
+
+    try {
+        let response = await axios.get(url, {
+            headers: {
+                'Authorization': await getToken(registryConfig)
+            }
+        });
+        return response.data || null;
+    } catch (error) {
+        if (error.response.status == 404) {
+            return null;
+        }
+        throw new Error(i18n.t("connect.exportService.nacos.getMetaData.error", {
+            e: error
+        }));
+    }
 }
 
 
 
 // eslint-disable-next-line no-unused-vars
 async function getConfiguration(registryConfig, providerInfo) {
-    throw new Error("暂不支持");
+    let config = await getCurrentConfiguration(registryConfig, providerInfo);
+
+    if(!config){
+        config = configuration.createDefaultConfiguration(providerInfo.serviceName);
+    }
+    
+    return  configuration.JSONToYaml(config);
+
 }
 
 // eslint-disable-next-line no-unused-vars
 async function saveConfiguration(registryConfig, providerInfo, doc) {
-    throw new Error("暂不支持");
+
+    let {
+        serviceName,
+    } = providerInfo;
+    let url = `${registryConfig.address}/rules/override/${serviceName}:`;
+
+    try {
+        // 有配置项，保存，反之删除
+        if (doc && doc.configs && doc.configs.length > 0) {
+            await axios.put(url, doc, {
+                headers: {
+                    'Authorization': await getToken(registryConfig)
+                }
+            });
+        } else {
+            await axios.delete(url, {
+                'Authorization': await getToken(registryConfig)
+            });
+        }
+
+    } catch (error) {
+        if (error.response.status == 404) {
+            return null;
+        }
+        throw new Error(i18n.t("connect.exportService.nacos.getMetaData.error", {
+            e: error
+        }));
+    }
 }
 
 
