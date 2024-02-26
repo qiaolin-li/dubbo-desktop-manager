@@ -36,7 +36,7 @@
             </el-option>
           </el-select>
           <el-select v-model="method" @change="methodChange" class="methodSelect">
-            <el-option v-for="item in currentProvider.methods" :key="item" :label="item" :value="item">
+            <el-option v-for="item in methodList" :key="item" :label="item" :value="item">
             </el-option>
           </el-select>
           <el-select v-model="currentInvoker" class="invokerSelect">
@@ -48,7 +48,6 @@
     </div>
 
     <div :id="contentElementId" class="invoke-dubbo-dialog-content ">
-
       <div class="invoke-dubbo-dialog-content-code">
         <div class="contentCode broder">
           <jsonCodeEditor :codeConfig="codeConfig" :lint="true">
@@ -78,7 +77,7 @@
         </div>
       </div>
 
-      <dubboInvokeHistoryParam ref="dubboInvokeHistoryParam" @selectionChange="selectionChange"></dubboInvokeHistoryParam>
+      <dubboInvokeHistoryParam ref="dubboInvokeHistoryParam" @selectionChange="(invokeHistory) => codeConfig.code = invokeHistory.param"></dubboInvokeHistoryParam>
     </div>
 
   </div>
@@ -112,6 +111,7 @@ export default {
       codeConfig: {
         code: "[]",
       },
+      methodList: [],
       metadata: {},
       invokeReulst: {
         code: "",
@@ -166,14 +166,13 @@ export default {
     this.currentProvider = this.selectProviderAddress ? this.providerList.find(x => x.address === this.selectProviderAddress) || this.providerList[0] : this.providerList[0];
     await this.getMataData();
 
-    if (this.currentProvider && this.currentProvider.methods) {
-      this.method = this.selectMethod ? this.currentProvider.methods.find(x => x === this.selectMethod) || this.currentProvider.methods[0] : this.currentProvider.methods[0];
+    if (this.methodList) {
+      this.method = this.selectMethod ? this.methodList.find(x => x === this.selectMethod) || this.methodList[0] : this.methodList[0];
       this.methodChange();
     }
   },
   methods: {
-    resize() {
-    },
+    resize() {},
     async methodChange() {
       // 先刷新列表
       const invokeHisotryList = await this.flushInvokeHistoryList();
@@ -242,18 +241,16 @@ export default {
       };
       this.invokeReulst.code = await dubboInvoke.buildInvokeCommand(param);
     },
-    selectionChange(invokeHistory) {
-      this.codeConfig.code = invokeHistory.param;
-    },
     async flushInvokeHistoryList() {
       return await this.$refs.dubboInvokeHistoryParam.changeParam(this.registryCenterId, this.currentProvider, this.method)
     },
     async generateParam() {
-      let code = await paramGenerator.generateParam(this.metadata, this.method);
-      this.codeConfig.code = JSON.stringify(code, null, 2) || "[]";
+      let data = await paramGenerator.generateParam(this.metadata, this.method);
+      this.codeConfig.code = JSON.stringify(data, null, 2) || "[]";
     },
     async getMataData() {
       this.metadata = await registry.getMetaData(this.currentProvider, this.registryCenterId);
+      this.methodList = this.metadata.methods && this.metadata.methods.length > 0 ? this.metadata.methods.map(x => x.name) : this.currentProvider.methods;
     },
     
   },

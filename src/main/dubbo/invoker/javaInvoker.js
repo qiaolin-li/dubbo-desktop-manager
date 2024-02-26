@@ -7,6 +7,7 @@ import constant from "@/main/common/Constant.js";
 import JSONFormater from "@/main/common/utils/JSONFormater";
 import i18n from '@/main/common/i18n'
 import common from "./common.js";
+import appConfig from "@/main/common/config/appConfig.js";
 
 let jarPath;
 if (process.env.NODE_ENV === 'development') {
@@ -62,7 +63,14 @@ async function invokeMethod(provder, metadata, method, code) {
 // org.apache.dubbo.demo.provider.TestFacade 172.21.144.191:20880 test "[\"java.lang.String\",\"java.lang.Integer\",\"java.lang.Integer\"]" "[\"王老八\",\"18\",\"0\"]" /Users/qiaolin/.dubbo-desktop-manager/temp/aa.json
 
 function executeJar(outFile) {
-    const javaCommandPath = constant.JAVA_COMMAND_PATH;
+    const javaHome = appConfig.getProperty("javaHome");
+    if(!javaHome){
+        return Promise.resolve({
+            success : false,
+            data :  i18n.t("dubbo.invokePage.notFoundJDK", {javaHome: javaHome}),
+            elapsedTime : 0
+        });
+    }
     const commandArgs = [
         '-Dfile.encoding=utf-8',
         '-jar', jarPath,
@@ -74,13 +82,12 @@ function executeJar(outFile) {
 
     // eslint-disable-next-line no-unused-vars
     return new Promise((resolve, reject) => {
-
-        execFile(javaCommandPath, commandArgs, config, (error, stdout, stderr) => {
+        execFile(`${javaHome}/bin/java`, commandArgs, config, (error, stdout, stderr) => {
             if (error) {
                 let tempError = error.message || stderr || stdout;
                 // JDK不存在
                 if(/spawn .* ENOENT/.test(tempError)){
-                    tempError = i18n.t("dubbo.invokePage.notFoundJDK");
+                    tempError = i18n.t("dubbo.invokePage.notFoundJDK", {javaHome: javaHome});
                 }
                 resolve({
                     success : false,

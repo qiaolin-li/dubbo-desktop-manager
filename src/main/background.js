@@ -5,7 +5,7 @@ import Constant      from '@/main/common/Constant.js'
 import logger        from '@/main/common/logger';
 import template      from '@/main/menuList.js';
 import apiExportor   from '@/main/api/index.js'
-
+import appConfig from "@/main/common/config/appConfig.js";
 
 
 // Scheme must be registered before the app is ready
@@ -51,6 +51,10 @@ app.on('ready', async () => {
  
   updateChecker();
   
+  if(!appConfig.hasProperty("javaHome")){
+    appConfig.setProperty("javaHome", process.env.JAVA_HOME)
+  }
+
   windowHolder.createMainWindow()
 
   // 统计时需要

@@ -21,6 +21,8 @@
 
 <script>
 import invokeHisotryRecord from "@/renderer/api/invokeHistoryClient.js";
+import { ipcRenderer } from 'electron'
+
 export default {
   props: {
     tab: Object,
@@ -39,9 +41,9 @@ export default {
   },
   mounted() {
     this.loadMore();
-    setInterval(() => {
+    ipcRenderer.on('newInvokeHisotryRecordEvent', () => {
       this.queryData(1, this.size, true);
-    }, 1000);
+    });
   },
   methods: {
     async loadMore() {

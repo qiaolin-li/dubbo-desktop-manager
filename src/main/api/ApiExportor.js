@@ -27,7 +27,6 @@ class ApiExportor {
     }
 
     async invokeMethod(event, invocation){
-        const currentWindow = event.sender.getOwnerBrowserWindow();
         let {moduleName, method,requestId, args, replyChannel} = invocation;
     
         try{

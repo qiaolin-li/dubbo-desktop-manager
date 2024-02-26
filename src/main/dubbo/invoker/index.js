@@ -5,6 +5,7 @@ import invokeHisotryRecord from "@/main/repository/invokeHistoryRepository.js";
 import appConfig from "@/main/common/config/appConfig.js";
 import common from "./common.js";
 import connectRepository from "@/main/repository/connectRepository.js";
+import windowHolder         from '@/main/common/holder/WindowHolder.js';
 
 async function invokeMethod(registryCenterId, uniqueServiceName, provder, metadata, method, code, currentInvoker) {
     let registryConfig = await connectRepository.findById(registryCenterId);
@@ -24,6 +25,7 @@ async function invokeMethod(registryCenterId, uniqueServiceName, provder, metada
         result: JSON.stringify(result.data),
     };
     await invokeHisotryRecord.save(invokeHistory);
+    windowHolder.getWindow().webContents.send('newInvokeHisotryRecordEvent')
 
     return result;
 }
