@@ -2,7 +2,14 @@ import { BrowserWindow, ipcMain} from 'electron'
 import { createProtocol } from 'vue-cli-plugin-electron-builder/lib'
 import installExtension, { VUEJS_DEVTOOLS } from 'electron-devtools-installer'
 import Constant from '@/main/common/Constant.js'
+import { setupTitlebar, attachTitlebarToWindow } from 'custom-electron-titlebar/main'
+
+const path = require('path')
+
 const isMac = process.platform === 'darwin'
+
+// Setup the titlebar
+setupTitlebar()
 
 async function instanllDevTools(){
     // Install Vue Devtools
@@ -53,11 +60,17 @@ class WindowHolder {
             width: 1200,
             height: 800,
             title: "Dubbo-Desktop-Manager",
+            frame: false, // Use to linux
+            titleBarStyle: 'hidden',
+            titleBarOverlay: true,
             webPreferences: {
                 nodeIntegration: true,
                 contextIsolation: false,
                 webSecurity: false,
-                webviewTag: true
+                webviewTag: true,
+                sandbox: false,
+                // preload: path.join(__dirname, 'src/main/preload.js')
+                preload: path.join(__dirname, 'preload.js')
             }
         }
 
@@ -66,6 +79,9 @@ class WindowHolder {
         }
         this.window  = new BrowserWindow(mainWindowConfig)
         createWindow(this.window, url)
+
+        // Attach listeners
+        attachTitlebarToWindow(this.window)
     }
 }
 

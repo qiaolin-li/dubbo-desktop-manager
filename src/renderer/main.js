@@ -40,6 +40,8 @@ import i18n from '@/renderer/common/i18n'
 
 if(process.platform === 'win32'){
   import("./assets/style/windows.css")
+} else {
+  import("./assets/style/mac.css")
 }
 
 import moment from 'moment'

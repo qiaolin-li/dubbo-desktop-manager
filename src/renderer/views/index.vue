@@ -1,5 +1,5 @@
 <template>
-  <el-container>
+  <el-container style=" height: 100%;">
     <el-aside class="menu-aside dragRegion" width="70px" ondragstart="return false">
       <div class="menu-div" :class="[currentMenu == menu.id ? 'active':'']" v-for="menu in menuList" :key="menu.id" @click="switchMenu(menu)">
         <el-tooltip effect="light" :content="menu.label" placement="right-start">
@@ -84,7 +84,7 @@ export default {
 
 <style>
 .menu-aside {
-  height: 100vh;
+  height: 100%;
   padding-top: 20px;
   align-items: center;
   background-color: #ececec;
@@ -96,7 +96,7 @@ export default {
 }
 
 .left-container {
-  height: 100vh;
+  height: 100%;
   overflow: auto;
 }
 

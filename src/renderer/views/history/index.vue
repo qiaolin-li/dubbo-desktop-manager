@@ -1,6 +1,6 @@
 <template>
   <div class="history-main-container">
-    <div class="history-container-title">调用历史</div>
+    <div class="history-container-title dragRegion">调用历史</div>
 
     <div v-infinite-scroll="loadMore" infinite-scroll-disabled="busy" infinite-scroll-distance="10">
       <el-collapse v-model="activeNames">
@@ -132,7 +132,6 @@ export default {
   height: 30px;
   line-height: 30px;
   margin: 6px 10px;
-  -webkit-app-region: drag;
 }
 
 </style>

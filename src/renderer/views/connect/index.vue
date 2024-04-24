@@ -1,6 +1,6 @@
 <template>
   <div id="connectDiv">
-    <div class="addConnectDialog">
+    <div class="addConnectDialog dragRegion">
       <span class="btn-plus" @click="openAddConnectDialog()">
         <i class="el-icon-plus"></i>新建链接</span>
     </div>
@@ -108,7 +108,6 @@ export default {
 
 .addConnectDialog {
   margin: 6px 10px;
-  -webkit-app-region: drag;
 }
 
 .btn-plus {

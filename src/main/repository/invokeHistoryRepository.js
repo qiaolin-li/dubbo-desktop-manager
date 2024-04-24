@@ -18,9 +18,23 @@ function save(invokeHistory) {
     return dbOperator.save(new InvokeHistory(invokeHistory));
 }
 
+
+function findLastRecord(serviceName, method) {
+    let queryParam = {
+        uniqueServiceName: serviceName,
+        method
+    };
+
+    let sortParam = {
+        createTime: -1
+    }
+
+    return dbOperator.findOne(queryParam, sortParam);
+}
+
 function findList(serviceName, method, page, size) {
     let queryParam = {
-        serviceName,
+        uniqueServiceName: serviceName,
         method
     };
 
@@ -38,7 +52,7 @@ function findList(serviceName, method, page, size) {
 function findAllPage(keyword, page, size) {
 
     let queryParam = {
-        ...(keyword ? { $or: [{ serviceName: keyword }, { method: 'keyword' }]} : {})
+        ...(keyword ? { $or: [{ uniqueServiceName: keyword }, { method: 'keyword' }]} : {})
     };
 
     let sortParam = {
@@ -54,6 +68,7 @@ function findAllPage(keyword, page, size) {
 
 let data = {
     save,
+    findLastRecord,
     findList,
     findAllPage,
     InvokeHistory,

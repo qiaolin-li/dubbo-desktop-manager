@@ -76,7 +76,7 @@ export default {
         searchContent: "搜一搜",
         refreshSuccess: "刷新服务列表完成",
         refreshError: "刷新服务列表失败！原因：{e}",
-        confirmDeleteConnect: "此操作将永久删除改链接, 是否继续?",
+        confirmDeleteConnect: "此操作将永久删除链接, 是否继续?",
         exportService : {
             zookeeper : {
                 getServiceList : {
@@ -167,6 +167,7 @@ export default {
             operate: "操作",
             call: "调用",
             calling: "调用中",
+            historyParam: "历史参数",
             generateParam: "生成参数",
             generateCommand: "生成命令",
             requestParam: "请求参数",
@@ -185,6 +186,7 @@ export default {
             connectProviderError: "连接提供者服务器失败！",
             notFoundJDK:"如果需要使用Java调用器，请先安装JDK",
             callDubboAdminError: "调用dubbo-admin失败, {info}",
+            unselectedHistory:"未选择历史参数",
         },
         telnetTerminal: {
             connecting: "正在连接 {ip} {port}",

@@ -19,6 +19,7 @@ export default {
   -moz-osx-font-smoothing: grayscale;
 
   color: #2c3e50;
+  height: 100%;
 }
 
 #nav {
@@ -44,10 +45,5 @@ body {
   user-select: none; /* Non-prefixed version, currently
   not supported by any browser */
 }
-
-/* .el-tabs__item:focus.is-active.is-focus:not(:active) {
-	-webkit-box-shadow: none !important;
-	box-shadow: none !important;
-} */
 
 </style>

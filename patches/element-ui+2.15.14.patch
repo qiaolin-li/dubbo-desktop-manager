@@ -1,0 +1,14 @@
+diff --git a/node_modules/element-ui/lib/utils/popup/popup-manager.js b/node_modules/element-ui/lib/utils/popup/popup-manager.js
+index ef07637..c8f61cf 100644
+--- a/node_modules/element-ui/lib/utils/popup/popup-manager.js
++++ b/node_modules/element-ui/lib/utils/popup/popup-manager.js
+@@ -108,7 +108,8 @@ var PopupManager = {
+     if (dom && dom.parentNode && dom.parentNode.nodeType !== 11) {
+       dom.parentNode.appendChild(modalDom);
+     } else {
+-      document.body.appendChild(modalDom);
++      document.getElementById('app').appendChild(modalDom);
++      // document.body.appendChild(modalDom);
+     }
+ 
+     if (zIndex) {

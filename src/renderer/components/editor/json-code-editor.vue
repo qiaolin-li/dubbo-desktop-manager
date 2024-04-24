@@ -215,10 +215,13 @@ export default {
       cm.showHint();
       if(change.origin === "paste") {
         try {
-          const str = JSON.stringify(JSON.parse(cm.getValue()), null, 2);
-          this.$refs.cm.codemirror.setValue(str)
-        } catch(e) {
-        }
+          // 全部内容被替换了，格式化一下
+          if(cm.getValue() === change.text.join("\n")){
+            const str = JSON.stringify(JSON.parse(cm.getValue()), null, 2);
+            this.$refs.cm.codemirror.setValue(str)
+          }
+        // eslint-disable-next-line no-empty
+        } catch(e) {}
       }
     });
 

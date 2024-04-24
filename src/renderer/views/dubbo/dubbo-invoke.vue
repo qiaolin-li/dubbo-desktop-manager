@@ -31,11 +31,11 @@
 
         <el-descriptions-item span="3">
           <template slot="label"> {{$t('dubbo.invokePage.operate')}} </template>
-          <el-select v-model="currentProvider" value-key="address" class="providerSelect" width="160px">
+          <el-select v-model="currentProvider" value-key="address" class="providerSelect" width="160px" filterable >
             <el-option v-for="item in providerList" :key="item.address" :label="item.address" :value="item">
             </el-option>
           </el-select>
-          <el-select v-model="method" @change="methodChange" class="methodSelect">
+          <el-select v-model="method" @change="methodChange" class="methodSelect" filterable >
             <el-option v-for="item in methodList" :key="item" :label="item" :value="item">
             </el-option>
           </el-select>
@@ -47,39 +47,45 @@
       </el-descriptions>
     </div>
 
-    <div :id="contentElementId" class="invoke-dubbo-dialog-content ">
-      <div class="invoke-dubbo-dialog-content-code">
-        <div class="contentCode broder">
-          <jsonCodeEditor :codeConfig="codeConfig" :lint="true">
-            <template v-slot:titel>
-              {{$t('dubbo.invokePage.requestParam')}}
-              <el-popover placement="top-start" :title="$t('dubbo.invokePage.requestParamStrategyTitle')" width="200" trigger="hover" :content="$t('dubbo.invokePage.paramGenerateStrategyDesc')">
-                <i slot="reference" class="el-icon-info"></i>
-              </el-popover>
-            </template>
-            <template v-slot:content>
-              <el-tooltip class="item" effect="light" :content="$t('dubbo.invokePage.generateParam')" placement="top">
-                <i class="el-icon-news" @click="generateParam"></i>
-              </el-tooltip>
-              <el-tooltip class="item" effect="light" :content="$t('dubbo.invokePage.generateCommand')" placement="top">
-                <i class="el-icon-magic-stick" @click="generateInvokeCommand"></i>
-              </el-tooltip>
-            </template>
-          </jsonCodeEditor>
-        </div>
-
-        <div class="contentCode broder">
-          <jsonCodeEditor :codeConfig="invokeReulst">
-            <template v-slot:titel>
-              {{$t('dubbo.invokePage.responseInfo')}} {{ invokeReulst.elapsedTime }}
-            </template>
-          </jsonCodeEditor>
-        </div>
+    <div :id="contentElementId" class="invoke-dubbo-dialog-content">
+      <div class="contentCode broder">
+        <jsonCodeEditor :codeConfig="codeConfig" :lint="true">
+          <template v-slot:titel>
+            {{$t('dubbo.invokePage.requestParam')}}
+            <el-popover placement="top-start" :title="$t('dubbo.invokePage.requestParamStrategyTitle')" width="200" trigger="hover" :content="$t('dubbo.invokePage.paramGenerateStrategyDesc')">
+              <i slot="reference" class="el-icon-info"></i>
+            </el-popover>
+          </template>
+          <template v-slot:content>
+            <el-tooltip class="item" effect="light" :content="$t('dubbo.invokePage.historyParam')" placement="top">
+              <i class="el-icon-notebook-1" @click="openHistoryDialog"></i>
+            </el-tooltip>
+            <el-tooltip class="item" effect="light" :content="$t('dubbo.invokePage.generateParam')" placement="top">
+              <i class="el-icon-news" @click="generateParam"></i>
+            </el-tooltip>
+            <el-tooltip class="item" effect="light" :content="$t('dubbo.invokePage.generateCommand')" placement="top">
+              <i class="el-icon-magic-stick" @click="generateInvokeCommand"></i>
+            </el-tooltip>
+          </template>
+        </jsonCodeEditor>
       </div>
 
-      <dubboInvokeHistoryParam ref="dubboInvokeHistoryParam" @selectionChange="(invokeHistory) => codeConfig.code = invokeHistory.param"></dubboInvokeHistoryParam>
+      <div class="contentCode broder">
+        <jsonCodeEditor :codeConfig="invokeReulst">
+          <template v-slot:titel>
+            {{$t('dubbo.invokePage.responseInfo')}} {{ invokeReulst.elapsedTime }}
+          </template>
+        </jsonCodeEditor>
+      </div>
     </div>
 
+    <el-dialog :title="$t('dubbo.invokePage.historyInvokeParamList')" width="60%" top="10vh" :visible.sync="dialogVisible" :close-on-click-modal="false">
+      <dubboInvokeHistoryParam ref="dubboInvokeHistoryParam" @selectionChange="(invokeHistory) => codeConfig.code = invokeHistory.param"></dubboInvokeHistoryParam>
+      <span slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="selectHistoryParam">{{$t('base.confirm')}}</el-button>
+        <el-button @click="dialogVisible = false">{{$t('base.cancel')}}</el-button>
+      </span>
+    </el-dialog>
   </div>
 
 </template>
@@ -90,6 +96,7 @@ import registry from "@/renderer/api/registryClient.js";
 import dubboInvoke from "@/renderer/api/dubboInvokerClient.js";
 import paramGenerator from "@/renderer/api/dubboParamGeneratorClient.js";
 import appConfig from "@/renderer/api/appConfig.js";
+import invokeHisotryRecord from "@/renderer/api/invokeHistoryClient.js";
 
 import jsonCodeEditor from "@/renderer/components/editor/json-code-editor.vue";
 import Loading from "@/renderer/common/utils/MyLoading";
@@ -118,7 +125,7 @@ export default {
         elapsedTime: "",
       },
       method: "",
-      invokeHisotryList: [],
+      dialogVisible: false,
       currentInvoker: "",
       invokeing: false,
       invokerTypes: [
@@ -174,17 +181,15 @@ export default {
   methods: {
     resize() {},
     async methodChange() {
-      // 先刷新列表
-      const invokeHisotryList = await this.flushInvokeHistoryList();
-
-      if (invokeHisotryList.length > 0) {
-        this.codeConfig.code = invokeHisotryList[0].param;
+      // 先刷新列表  
+      const invokeHisotry = await invokeHisotryRecord.findLastRecord(this.currentProvider.serviceName, this.method);
+      if(invokeHisotry){
+        this.codeConfig.code = invokeHisotry.param
       } else {
-        this.generateParam();
+        await this.generateParam();
       }
     },
     async invokeDubbo() {
-
       try {
         JSON.parse(this.codeConfig.code);
       } catch (e) {
@@ -226,7 +231,6 @@ export default {
           type: "success",
           message: this.$t('dubbo.invokePage.callDubboServiceSuccess'),
         });
-        this.flushInvokeHistoryList();
       } finally {
         loadingInstance.close();
         this.invokeing = false;
@@ -241,9 +245,6 @@ export default {
       };
       this.invokeReulst.code = await dubboInvoke.buildInvokeCommand(param);
     },
-    async flushInvokeHistoryList() {
-      return await this.$refs.dubboInvokeHistoryParam.changeParam(this.registryCenterId, this.currentProvider, this.method)
-    },
     async generateParam() {
       let data = await paramGenerator.generateParam(this.metadata, this.method);
       this.codeConfig.code = JSON.stringify(data, null, 2) || "[]";
@@ -253,6 +254,25 @@ export default {
       this.methodList = this.metadata.methods && this.metadata.methods.length > 0 ? this.metadata.methods.map(x => x.name) : this.currentProvider.methods;
     },
     
+     openHistoryDialog() {
+      this.dialogVisible = true;
+      this.$nextTick(() => {
+        this.$refs.dubboInvokeHistoryParam.changeParam(this.registryCenterId, this.currentProvider, this.method);
+      })
+    },
+    selectHistoryParam() {
+      const invokeHistory = this.$refs.dubboInvokeHistoryParam.getHistory();
+      if(!invokeHistory){
+          this.$message({
+          type: "error",
+          message: this.$t('dubbo.invokePage.unselectedHistory'),
+        });
+        return;
+      }
+
+      this.dialogVisible = false;
+      this.codeConfig.code = invokeHistory.param;
+    }
   },
 };
 </script>
@@ -263,16 +283,16 @@ export default {
 }
 
 .invoke-dubbo-dialog {
-  height: 90vh;
+  height: 90%;
   overflow-y: hidden;
   background-color: white;
 }
 
 .invoke-dubbo-dialog-content {
   margin-top: 10px;
-  display: flex;
-  flex-direction: row;
-  align-content: space-between;
+  /* display: flex;
+  flex-direction: row; */
+  /* align-content: space-between; */
   height: 100%;
   overflow: auto;
 }
@@ -293,6 +313,21 @@ export default {
 
 .contentCode {
   margin-bottom: 10px;
+}
+
+
+.item {
+  margin-left: 2px;
+  padding: 4px;
+}
+.item:hover {
+  background-color: #ccc;
+  border-radius: 50%;
+}
+
+.invokerSelect {
+  width: 100px;
+  padding-right: 10px;
 }
 
 .cancel-button {
@@ -319,24 +354,5 @@ export default {
 .cancel-button:active {
   position: relative;
   top: 1px;
-}
-
-.item {
-  margin-left: 2px;
-  padding: 4px;
-}
-.item:hover {
-  background-color: #ccc;
-  border-radius: 50%;
-}
-
-.invokerSelect {
-  width: 100px;
-  padding-right: 10px;
-}
-
-.invoke-dubbo-dialog-content-code {
-  width: 75%;
-  height: 100%;
 }
 </style>

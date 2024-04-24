@@ -240,8 +240,8 @@ export default {
 <style >
 .mytab-container {
   margin: 0px;
-  background-color: rgb(236, 236, 237);
-  height: 100vh;
+  background-color: white;
+  height: 100%;
   overflow-y: hidden;
   display: flex;
   flex-direction: column;

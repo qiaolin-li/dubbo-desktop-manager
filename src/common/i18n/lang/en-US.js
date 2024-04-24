@@ -76,7 +76,7 @@ export default {
         searchContent: "search content",
         refreshSuccess: "Refreshing the service list is complete",
         refreshError: "Failed to refresh the service list! The reason: {e}",
-        confirmDeleteConnect: "This operation will permanently delete the changed link. Do you want to continue?",
+        confirmDeleteConnect: "This action will permanently delete the link. Do you want to continue?",
         exportService : {
             zookeeper : {
                 getServiceList : {
@@ -167,6 +167,7 @@ export default {
             operate: "operate",
             call: "call",
             calling: "calling",
+            historyParam: "History Parameter",
             generateParam: "Generation Parameter",
             generateCommand: "Generation Command",
             requestParam: "Request Parameter",
@@ -185,6 +186,7 @@ export default {
             connectProviderError: "Connecting to the provider server failed!",
             notFoundJDK:"If you need to use the Java caller, install the JDK first",
             callDubboAdminError: "Failed to call dubco-admin, {info}",
+            unselectedHistory:"No history parameter is selected",
         },
         telnetTerminal: {
             connecting: "connecting {ip} {port}",

@@ -88,7 +88,7 @@ export default {
 
 <style>
 .menu-aside {
-  height: 100vh;
+  height: 100%;
   padding-top: 20px;
   align-items: center;
   background-color: #ececec;
