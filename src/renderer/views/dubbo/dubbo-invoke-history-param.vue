@@ -26,7 +26,7 @@ export default {
   },
   methods: {
     async changeParam(registryCenterId, provider, method) {
-      this.invokeHisotryList =  await invokeHisotryRecord.findList(provider.serviceName, method, 1, 50) || [];
+      this.invokeHisotryList =  await invokeHisotryRecord.findList(registryCenterId, provider.serviceName, method, 1, 50) || [];
     },
     selectionChange(invokeHistory) {
       this.currentInvokeHistry = invokeHistory;

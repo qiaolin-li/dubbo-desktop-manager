@@ -19,8 +19,9 @@ function save(invokeHistory) {
 }
 
 
-function findLastRecord(serviceName, method) {
+function findLastRecord(registryCenterId, serviceName, method) {
     let queryParam = {
+        registryCenterId,
         uniqueServiceName: serviceName,
         method
     };
@@ -32,8 +33,10 @@ function findLastRecord(serviceName, method) {
     return dbOperator.findOne(queryParam, sortParam);
 }
 
-function findList(serviceName, method, page, size) {
+function findList(registryCenterId, serviceName, method, page, size) {
+    
     let queryParam = {
+        registryCenterId,
         uniqueServiceName: serviceName,
         method
     };
@@ -49,9 +52,10 @@ function findList(serviceName, method, page, size) {
     return dbOperator.find(queryParam, sortParam, pageParam);
 }
 
-function findAllPage(keyword, page, size) {
+function findAllPage(registryCenterId, keyword, page, size) {
 
     let queryParam = {
+        registryCenterId,
         ...(keyword ? { $or: [{ uniqueServiceName: keyword }, { method: 'keyword' }]} : {})
     };
 

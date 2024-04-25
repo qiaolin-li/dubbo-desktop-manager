@@ -1,8 +1,8 @@
 
  /* 美化滚动条 */
  ::-webkit-scrollbar {
-    width: 10px;
-    height: 10px;
+    width: 5px;
+    height: 5px;
   }
   
   ::-webkit-scrollbar-track {
@@ -27,3 +27,8 @@
   ::-webkit-scrollbar-thumb:hover {
     background-color: rgba(144,147,153,.3);
   }
+
+
+.cet-titlebar {
+  font-family: inherit !important;
+}

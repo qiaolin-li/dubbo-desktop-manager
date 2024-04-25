@@ -6,3 +6,7 @@
 .noDragRegion {
     -webkit-app-region: no-drag;
 }
+
+.menu-aside {
+    padding-top: 20px;
+}

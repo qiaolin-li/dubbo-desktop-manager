@@ -1,18 +1,16 @@
 <template>
   <div class="container">
-    <div class="mainContainer" v-for="connectInfo in connectInfoList" :key="connectInfo.name">
+    <div :class="[connectInfo === currentConnectInfo ? 'selectedBackground' : '']"  v-for="connectInfo in connectInfoList" :key="connectInfo.name">
       <!-- zk 连接 -->
-      <div class="connectContainer notSelect" @click="openConnect(connectInfo)">
+      <div class="connectContainer element-hover notSelect" @click="() => currentConnectInfo = connectInfo" @dblclick="openConnect(connectInfo)" @contextmenu.stop="openMenuList($event, connectInfo)">
         <!-- zk 连接名称 -->
         <div class="connectContainer-left">
-          <i class="iconfont icon-lianjie-connect"></i>
+          <i class="iconfont el-icon-coin"></i>
           <span class="txt">{{ connectInfo.name }}</span>
         </div>
 
         <!-- 操作按钮 -->
         <div class="connectContainer-right">
-          <i class="el-icon-refresh" v-if="connectInfo.isShow" @click="refreshServiceList($event,connectInfo)"></i>
-          
           <el-tooltip effect="light" content="修改" placement="right-start">
             <i class="el-icon-edit" @click="editConnect($event, connectInfo._id)"></i>
           </el-tooltip>
@@ -21,26 +19,35 @@
           </el-tooltip>
         </div>
       </div>
-      <connectItem :connectInfo="connectInfo" @clickServiceInfo="clickServiceInfo"> </connectItem>
     </div>
   </div>
 </template>
 
 <script>
+const remote = require("@electron/remote");
 import connectRepository from "@/renderer/api/connectManangerClient.js";
-import connectItem from "./connect-item.vue";
+import lodash from 'lodash';
+
+
+let iconIndex = 0;
+const iconList = lodash.shuffle(['el-icon-light-rain', 'el-icon-lightning', 'el-icon-heavy-rain', 'el-icon-sunrise',
+                    'el-icon-sunrise-1', 'el-icon-sunset', 'el-icon-sunny', 'el-icon-cloudy', 'el-icon-partly-cloudy',
+                    'el-icon-cloudy-and-sunny', 'el-icon-moon', 'el-icon-moon-night']);
+
 
 export default {
-  components: {
-    connectItem,
-  },
+  props: {
+    mainPanel: Object,
+  },  
   data() {
     return {
+      currentConnectInfo : null,
       connectInfoList: [],
       interfaceInfo: {}
     };
   },
   mounted() {
+    
     this.findConnectList();
   },
   methods: {
@@ -48,22 +55,21 @@ export default {
       let connectInfoList = await connectRepository.findList();
       for (let i = 0; i < connectInfoList.length; i++) {
         connectInfoList[i].interfaceList = [];
-        connectInfoList[i].isShow = false;
-        connectInfoList[i].refreshNum = 0;
       }
       this.connectInfoList = connectInfoList;
     },
     openConnect(connectInfo) {
-      connectInfo.isShow = !connectInfo.isShow;
+      this.mainPanel.addMenu({
+        id: connectInfo._id, 
+        label: connectInfo.name,
+        icon: iconList[iconIndex % iconList.length],
+        componentName: 'managePage', 
+        params: {
+          connectInfo
+        }
+      });
 
-    },
-    clickServiceInfo(data) {
-      this.$emit("clickServiceInfo", data);
-    },
-    refreshServiceList(e, connectInfo) {
-      // TODO 暂时通过这种方式，后续再研究
-      connectInfo.refreshNum++;
-      e.stopPropagation();
+      iconIndex++;
     },
     // eslint-disable-next-line no-unused-vars
     editConnect(e, id) {
@@ -89,15 +95,29 @@ export default {
       //W3C阻止冒泡方法
       e.stopPropagation();
     },
+    openMenuList(event, connectInfo){
+      const menuTemplate = [
+        {
+          label: '打开数据源',
+          click: async () => this.openConnect(connectInfo)
+        }
+      ];
+      // 阻止默认行为
+      event.preventDefault();
+      // // 构建菜单项
+      const menu = remote.Menu.buildFromTemplate(menuTemplate);
+
+      // 弹出上下文菜单
+      menu.popup({
+        // 获取网页所属的窗口
+        window: remote.getCurrentWindow()
+      });
+    }
   }
 }
 </script>
 
 <style>
-.mainContainer {
-
-}
-
 
 .connectContainer {
   display: flex;
@@ -107,10 +127,6 @@ export default {
   padding-left: 10px;
   padding-top: 5px;
   padding-bottom: 5px;
-}
-
-.connectContainer:hover {
-  background:#d5ebe1;
 }
 
 .txt {

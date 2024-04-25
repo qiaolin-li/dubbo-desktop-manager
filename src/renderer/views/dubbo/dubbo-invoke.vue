@@ -182,7 +182,7 @@ export default {
     resize() {},
     async methodChange() {
       // 先刷新列表  
-      const invokeHisotry = await invokeHisotryRecord.findLastRecord(this.currentProvider.serviceName, this.method);
+      const invokeHisotry = await invokeHisotryRecord.findLastRecord(this.registryCenterId, this.currentProvider.serviceName, this.method);
       if(invokeHisotry){
         this.codeConfig.code = invokeHisotry.param
       } else {

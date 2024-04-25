@@ -1,53 +1,61 @@
 <template>
   <el-container style=" height: 100%;">
     <el-aside class="menu-aside dragRegion" width="70px" ondragstart="return false">
-      <div class="menu-div" :class="[currentMenu == menu.id ? 'active':'']" v-for="menu in menuList" :key="menu.id" @click="switchMenu(menu)">
-        <el-tooltip effect="light" :content="menu.label" placement="right-start">
-          <i :class="menu.icon"></i>
-        </el-tooltip>
+      <div class="ddm-menu-list">
+        <div>
+          <div class="menu-div" :class="[currentMenu.id  == menu.id ? 'active':'']" v-for="menu in topMenuList" :key="menu.id" @click="switchMenu(menu)">
+            <el-tooltip effect="light" :content="menu.label" placement="right-start">
+              <i :class="menu.icon"></i>
+              <span>{{menu.label}}</span>
+            </el-tooltip>
+          </div>
+        </div>
+        <div>
+          <div class="ddm-bottom-menu-list menu-div" :class="[currentMenu.id  == menu.id ? 'active':'']" v-for="menu in bottomMenuList" :key="menu.id" @click="switchMenu(menu)">
+            <el-tooltip effect="light" :content="menu.label" placement="right-start">
+              <i :class="menu.icon"></i>
+              <span>{{menu.label}}</span>
+            </el-tooltip>
+          </div>
+        </div>
       </div>
     </el-aside>
 
     <el-main>
-      <split-pane @resize="resize" split="vertical" :min-percent="15" :default-percent="20">
-        <template slot="paneL">
-          <div class="left-container">
-            <component v-for="menuPage in menuPageList" :key="menuPage.id" v-bind="componentProps(menuPage)" v-show="currentMenu == menuPage.id" />
-          </div>
-        </template>
-        <template slot="paneR">
-          <myTabList ref="myTabs" navScrollClassList="dragRegion" tabListClassList="noDragRegion"></myTabList>
-        </template>
-      </split-pane>
+      <component v-for="menuPage in menuPageList" :key="menuPage.id" v-bind="componentProps(menuPage)" v-show="currentMenu.id == menuPage.id" />
     </el-main>
 
   </el-container>
 </template>
 
 <script>
-import menuList from '@/renderer/config/sidebarMenuList.js';
-import myTabList from '@/renderer/components/tabs/index.vue';
+import menuConfig from '@/renderer/config/sidebarMenuList.js';
 
 export default {
-  components: {
-    myTabList
-  },
   data() {
     return {
       currentMenu: {},
-      menuList: [],
+      topMenuList: [],
+      bottomMenuList: [],
       menuPageList: [],
     }
   },
   mounted() {
-    this.menuList = menuList.map(x => {
+    this.topMenuList = menuConfig.topMenu.map(x => {
       x.id = `menu-${Math.random()}`;
       if (x.ready) {
         x.ready(this);
       }
       return x;
     });
-    this.switchMenu(this.menuList[0]);
+    this.bottomMenuList = menuConfig.bottomMenu.map(x => {
+      x.id = `menu-${Math.random()}`;
+      if (x.ready) {
+        x.ready(this);
+      }
+      return x;
+    });
+    this.switchMenu(this.topMenuList[0]);
   },
   methods: {
     resize() {
@@ -56,15 +64,21 @@ export default {
       return {
         is: menu.componentName,
         ...menu.params,
-        tab: this,
+        mainPanel: this,
       };
     },
+    addMenu(menu, location){
+      location = location || 'top';
+
+      const menuList = location === 'top' ? this.topMenuList : this.bottomMenuList;
+      if(!menuList.find(x => x.id === menu.id)){
+        menuList.push(menu);
+      }
+      
+      this.switchMenu(menu);
+    },
     switchMenu(menu) {
-      if (menu.componentName) {
-        if(!this.menuPageList.find(x => x.id === menu.id)){
-          this.menuPageList.push(menu);
-        }
-        this.currentMenu = menu.id;
+      if(this.currentMenu && this.currentMenu.id === menu.id){
         return;
       }
 
@@ -73,10 +87,17 @@ export default {
         return;
       }
 
-      // 后续可以考虑报错
-    },
-    addTab(tabInfo) {
-      this.$refs.myTabs.addTab(tabInfo);
+      if (menu.componentName) {
+        if(!this.menuPageList.find(x => x.id === menu.id)){
+          this.menuPageList.push(menu);
+        }
+      }
+
+      if(this.currentMenu.cache === false){
+        this.menuPageList = this.menuPageList.filter(info => this.currentMenu.id !== info.id);
+      }
+
+      this.currentMenu = menu;
     },
   },
 }
@@ -85,11 +106,20 @@ export default {
 <style>
 .menu-aside {
   height: 100%;
-  padding-top: 20px;
   align-items: center;
   background-color: #ececec;
 }
 
+.ddm-menu-list {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 100%;
+}
+
+.ddm-bottom-menu-list {
+  margin-bottom: 10px;
+}
 
 .el-main {
   padding: 0px !important;

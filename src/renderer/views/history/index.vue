@@ -25,7 +25,7 @@ import { ipcRenderer } from 'electron'
 
 export default {
   props: {
-    tab: Object,
+    connectInfo: Object,
   },
   data() {
     return {
@@ -34,14 +34,12 @@ export default {
       size: 50,
       keyword: '',
       activeNames: [],
-      groupList: [
-
-      ],
+      groupList: [],
     };
   },
   mounted() {
     this.loadMore();
-    ipcRenderer.on('newInvokeHisotryRecordEvent', () => {
+    ipcRenderer.on(`newInvokeHisotryRecordEvent-${this.connectInfo._id}`, () => {
       this.queryData(1, this.size, true);
     });
   },
@@ -50,7 +48,7 @@ export default {
       this.queryData(this.page++, this.size);
     },
     async queryData(page, size, insertFront = false) {
-      const list = await invokeHisotryRecord.findAllPage(this.keyword, page, size);
+      const list = await invokeHisotryRecord.findAllPage(this.connectInfo._id, this.keyword, page, size);
       list.map(hisotry => {
         const momentDate = this.$moment(new Date(hisotry.createTime));
         const label = momentDate.isSame(new Date(), 'day') ? '今天' : momentDate.format('ll');
@@ -91,7 +89,7 @@ export default {
         multiInstance: true
       }
 
-      this.tab.addTab(tabData);
+      this.$emit('openTab', tabData);
     }
   }
 }

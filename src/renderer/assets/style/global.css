@@ -8,4 +8,24 @@
     padding-left: 10px;
     padding-right: 10px;
     padding-bottom: 10px;
+}
+
+.element-hover:hover {
+    background:#d5ebe1;
+}
+
+.selectedBackground {
+    background:#d5ebe1;
+}
+
+
+
+.iconButton {
+    margin-right: 5px;
+    padding: 5px 5px;
   }
+  
+.iconButton:hover {
+background-color: #ccc;
+border-radius: 50%;
+}

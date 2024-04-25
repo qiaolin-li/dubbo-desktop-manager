@@ -17,10 +17,14 @@
 </template>
 
 <script>
+import welcome from '@/renderer/components/welcome.vue';
 const remote = require("@electron/remote");
 import Sortable from "sortablejs";
 
 export default {
+  components: {
+    welcome
+  },
   props: {
     navScrollClassList: {
       type: String,

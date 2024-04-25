@@ -25,7 +25,7 @@ async function invokeMethod(registryCenterId, uniqueServiceName, provder, metada
         result: JSON.stringify(result.data),
     };
     await invokeHisotryRecord.save(invokeHistory);
-    windowHolder.getWindow().webContents.send('newInvokeHisotryRecordEvent')
+    windowHolder.getWindow().webContents.send(`newInvokeHisotryRecordEvent-${registryCenterId}`);
 
     return result;
 }

@@ -82,7 +82,6 @@ export default {
 
 <style>
 .settingsContainer {
-  height: 100%;
   padding-left: 15px;
   background-color: white;
   border-radius: 5px;

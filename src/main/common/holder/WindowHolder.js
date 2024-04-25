@@ -9,7 +9,9 @@ const path = require('path')
 const isMac = process.platform === 'darwin'
 
 // Setup the titlebar
-setupTitlebar()
+if(!isMac){
+    setupTitlebar()
+}
 
 async function instanllDevTools(){
     // Install Vue Devtools
@@ -68,20 +70,22 @@ class WindowHolder {
                 contextIsolation: false,
                 webSecurity: false,
                 webviewTag: true,
-                sandbox: false,
-                // preload: path.join(__dirname, 'src/main/preload.js')
-                preload: path.join(__dirname, 'preload.js')
             }
         }
 
         if(isMac){
             mainWindowConfig.titleBarStyle = 'hidden';
+        } else {
+            mainWindowConfig.webPreferences.sandbox = false;
+            mainWindowConfig.webPreferences.preload = path.join(__dirname, 'preload.js');
         }
         this.window  = new BrowserWindow(mainWindowConfig)
         createWindow(this.window, url)
 
         // Attach listeners
-        attachTitlebarToWindow(this.window)
+        if(!isMac){
+            attachTitlebarToWindow(this.window)
+        }
     }
 }
 
