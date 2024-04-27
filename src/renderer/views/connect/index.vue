@@ -1,27 +1,25 @@
 <template>
-    <split-pane @resize="resize" split="vertical" :min-percent="15" :default-percent="20">
-        <template slot="paneL">
-            <div class="left-container">
-              <div id="connectDiv">
-                <div class="addConnectDialog dragRegion">
-                  <span class="btn-plus" @click="openAddConnectDialog()">
-                    <i class="el-icon-plus"></i>新建链接</span>
-                </div>
-                <el-divider class="my-divider"></el-divider>
-                <connectList ref="connectList" :mainPanel="mainPanel" @clickServiceInfo="clickServiceInfo" @editConnect="openAddConnectDialog"></connectList>
-
-                <el-dialog :title="$t('connect.addConnect')" width="40%" :visible.sync="dialogVisible" :close-on-click-modal="false">
-                  <addConnect @saveSuccess="saveConnectSuccess" :id="currentConnectId" :key="addConnectKey" />
-                </el-dialog>
+  <split-pane @resize="resize" split="vertical" :min-percent="15" :default-percent="20">
+      <template slot="paneL">
+          <div class="left-container">
+            <div id="connectDiv">
+              <div class="addConnectDialog dragRegion">
+                <span class="btn-plus" @click="openAddConnectDialog()">
+                  <i class="el-icon-plus"></i>新建链接</span>
               </div>
+              <el-divider class="my-divider"></el-divider>
+              <connectList ref="connectList" :mainPanel="mainPanel" @clickServiceInfo="clickServiceInfo" @editConnect="openAddConnectDialog"></connectList>
+
+              <el-dialog :title="$t('connect.addConnect')" width="40%" :visible.sync="dialogVisible" :close-on-click-modal="false">
+                <addConnect @saveSuccess="saveConnectSuccess" :id="currentConnectId" :key="addConnectKey" />
+              </el-dialog>
             </div>
-        </template>
-        <template slot="paneR">
-            <myTabList ref="myTabs" navScrollClassList="dragRegion" tabListClassList="noDragRegion"></myTabList>
-        </template>
-    </split-pane>
-
-
+          </div>
+      </template>
+      <template slot="paneR">
+          <myTabList ref="myTabs" navScrollClassList="dragRegion" tabListClassList="noDragRegion"></myTabList>
+      </template>
+  </split-pane>
 </template>
 
 <script>

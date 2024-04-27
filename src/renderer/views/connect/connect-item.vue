@@ -1,16 +1,5 @@
 <template>
   <div class="interfaceContainer">
-    <div class="connectionInfoContainer dragRegion">
-      <div>
-        <span>{{connectInfo.name}}</span>
-      </div>
-      <div>
-        <span class="serviceSizeTool">总数: {{this.connectInfo.serviceSize}} </span>
-        <el-tooltip effect="light" content="刷新" placement="right-start">
-          <i class="el-icon-refresh iconButton" @click="findInterfaceList"></i>
-        </el-tooltip>
-      </div>
-    </div>
     <div class="searchTool">
       <el-input v-model="searchKeyword" :placeholder="$t('connect.searchContent')" @input="searchKeywordChange($event)" size="mini"></el-input>
     </div>
@@ -161,23 +150,8 @@ export default {
 </script>
 
 <style  >
-.connectionInfoContainer {
-  display: flex;
-  flex-direction: row;
-  justify-content:space-between;
-  line-height: 30px;
-  align-items:center;
-  padding-left: 10px;
-}
-
 .searchTool {
   display: flex;
-}
-
-.serviceSizeTool {
-  line-height: 40px;
-  width: 50px;
-  padding-left: 2px;
 }
 
 .custom-tree-icon {

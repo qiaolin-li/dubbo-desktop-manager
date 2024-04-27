@@ -2,7 +2,26 @@
   <split-pane @resize="resize" split="vertical" :min-percent="15" :default-percent="20">
     <template slot="paneL">
       <div class="left-container">
-        <split-pane @resize="resize" split="horizontal" :min-percent="30" :default-percent="70" :fold="false">
+
+        <dragPane>
+          <template slot="fisrtTitle">{{connectInfo.name}}</template>
+          <template slot="fisrtToolBar">
+            <el-tooltip effect="light" content="刷新" placement="right-start">
+              <i class="el-icon-refresh iconButton" @click="() => $refs.connectItem.findInterfaceList()"></i>
+            </el-tooltip>
+            <span class="serviceSizeTool">总数: 123 </span>
+          </template>
+          <template slot="fisrtContent">
+            <connectItem ref="connectItem" :connectInfo="connectInfo"  @clickServiceInfo="clickServiceInfo"></connectItem>
+          </template>
+
+          <template slot="secondTitle">调用历史</template>
+          <template slot="secondContent">
+            <historyList :connectInfo="connectInfo"  @openTab="addTab"></historyList>
+          </template>
+        </dragPane>
+
+        <!-- <split-pane @resize="resize" split="horizontal" :min-percent="30" :default-percent="70" :fold="false">
           <template slot="paneL">
             <div class="panel-item-container">
               <connectItem :connectInfo="connectInfo"  @clickServiceInfo="clickServiceInfo"></connectItem>
@@ -13,7 +32,7 @@
               <historyList :connectInfo="connectInfo"  @openTab="addTab"></historyList>
             </div>
           </template>
-        </split-pane>
+        </split-pane> -->
       </div>
     </template>
     <template slot="paneR">
@@ -24,12 +43,14 @@
 
 <script>
 import myTabList from '@/renderer/components/tabs/index.vue';
+import dragPane from '@/renderer/components/drag-pane/index.vue';
 import connectItem from "@/renderer/views/connect/connect-item.vue";
 import historyList from '@/renderer/views/history/index.vue';
 
 export default {
   components: {
     myTabList,
+    dragPane,
     connectItem,
     historyList
   },
@@ -73,13 +94,11 @@ export default {
 
 .left-container {
   height: 100%;
-  overflow: auto;
 }
 
 .panel-item-container {
   height: 100%;
-  overflow: auto;
+  overflow-y: auto;
+  overflow-x: hidden;
 }
-
-
 </style>

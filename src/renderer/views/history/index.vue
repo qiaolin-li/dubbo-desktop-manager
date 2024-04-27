@@ -1,8 +1,6 @@
 <template>
   <div class="history-main-container">
-    <div class="history-container-title dragRegion">调用历史</div>
-
-    <div v-infinite-scroll="loadMore" infinite-scroll-disabled="busy" infinite-scroll-distance="10">
+    <div class="history-item-container" v-infinite-scroll="loadMore" infinite-scroll-disabled="busy" infinite-scroll-distance="10">
       <el-collapse v-model="activeNames">
         <el-collapse-item v-for="group in groupList" :key="group.label" :title="group.label" :name="group.label">
           <template slot="title">
@@ -124,12 +122,6 @@ export default {
 .el-collapse-item__header {
   flex: 1 0 auto;
   order: -1;
-}
-
-.history-container-title {
-  height: 30px;
-  line-height: 30px;
-  margin: 6px 10px;
 }
 
 </style>

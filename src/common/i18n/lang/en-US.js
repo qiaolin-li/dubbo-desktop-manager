@@ -10,6 +10,8 @@ export default {
         no : "no"
     },
     base: {
+        modify: "修改",
+        delete: "删除",
         confirm: "confirm",
         cancel: "cancel",
         close: "close",

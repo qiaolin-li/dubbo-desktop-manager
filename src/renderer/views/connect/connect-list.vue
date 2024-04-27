@@ -1,8 +1,8 @@
 <template>
   <div class="container">
-    <div :class="[connectInfo === currentConnectInfo ? 'selectedBackground' : '']"  v-for="connectInfo in connectInfoList" :key="connectInfo.name">
+    <div  v-for="connectInfo in connectInfoList" :key="connectInfo.name">
       <!-- zk 连接 -->
-      <div class="connectContainer element-hover notSelect" @click="() => currentConnectInfo = connectInfo" @dblclick="openConnect(connectInfo)" @contextmenu.stop="openMenuList($event, connectInfo)">
+      <div class="connectContainer element-hover notSelect"  @dblclick="openConnect(connectInfo)" @contextmenu.stop="openMenuList($event, connectInfo)">
         <!-- zk 连接名称 -->
         <div class="connectContainer-left">
           <i class="iconfont el-icon-coin"></i>
@@ -41,7 +41,6 @@ export default {
   },  
   data() {
     return {
-      currentConnectInfo : null,
       connectInfoList: [],
       interfaceInfo: {}
     };
@@ -100,6 +99,15 @@ export default {
         {
           label: '打开数据源',
           click: async () => this.openConnect(connectInfo)
+        },
+        { type: 'separator' },
+        {
+          label: this.$t('base.modify'),
+          click: async () => this.editConnect(connectInfo._id)
+        },
+        {
+          label: this.$t('base.delete'),
+          click: async () => this.deleteConnect(event, connectInfo._id)
         }
       ];
       // 阻止默认行为
