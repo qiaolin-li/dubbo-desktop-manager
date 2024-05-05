@@ -20,7 +20,7 @@ function ProviderInfo(data){
     /**
        "methods": [{
             "name": "queryLimit",
-            "parameterTypes": ["com.xsyx.trade.stock.query.service.api.domain.request.ProductLimitRequest"],
+            "parameterTypes": ["indi.qiaolin.Request"],
             "defaultParameter": "[]",
             "returnType": "java.lang.String"
         }],
