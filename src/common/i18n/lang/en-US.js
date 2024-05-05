@@ -28,6 +28,7 @@ export default {
     },
     menu: {
         addConnect: "New Connection",
+        datasource: "datasource",
         settings: "Settings"
     },
     welcome: {
@@ -172,11 +173,12 @@ export default {
             historyParam: "History Parameter",
             generateParam: "Generation Parameter",
             generateCommand: "Generation Command",
+            requestParamType: "Request Parameter Type",
             requestParam: "Request Parameter",
             requestParamStrategyTitle: "Parameter generation strategy",
             paramGenerateStrategyDesc: "The history argument of the last successful call is used first, and if not, an attempt is made to generate the argument",
             format: "format",
-            responseInfo: "Response Info",
+            responseInfo: "Response",
             historyInvokeParamList: "History call",
             callParamError: "The request parameter format is incorrect",
             callDubboServiceSuccess: "Calling the Dubbo interface succeeded.",
@@ -189,6 +191,7 @@ export default {
             notFoundJDK:"If you need to use the Java caller, install the JDK first",
             callDubboAdminError: "Failed to call dubco-admin, {info}",
             unselectedHistory:"No history parameter is selected",
+            notFoundMatedata:"Metadata not found, method parameter type cannot be obtained, please add",
         },
         telnetTerminal: {
             connecting: "connecting {ip} {port}",

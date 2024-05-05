@@ -17,7 +17,7 @@ if (process.env.NODE_ENV === 'development') {
 }
 
 
-async function invokeMethod(provder, metadata, method, code) {
+async function invokeMethod(provder, methodInfo, code) {
     let {
         ip,
         port,
@@ -40,8 +40,8 @@ async function invokeMethod(provder, metadata, method, code) {
         interfaceName: serviceName,
         address: `${ip}:${port}`,
         version: provder.version,
-        method: method,
-        argsList: getMethodParameterTypes(metadata, method),
+        method: methodInfo.name,
+        argsList: getMethodParameterTypes(methodInfo),
         dataList: dataList
     }
 
@@ -51,7 +51,6 @@ async function invokeMethod(provder, metadata, method, code) {
  
     let data = await executeJar(outFile);
 
-    data["elapsedTime"] = `${data["elapsedTime"]} ms`;
     if(data.success){
         return new common.InvokeResult(JSONFormater(JSON.stringify(data.data)), data.elapsedTime);
     }
@@ -110,8 +109,7 @@ function executeJar(outFile) {
 }
 
 
-function getMethodParameterTypes(metadata, method) {
-    let methodInfo = metadata.methods.find(m => m.name == method);
+function getMethodParameterTypes(methodInfo) {
     return methodInfo.parameterTypes.map(paramterType => {
         if(paramterType.indexOf("<") >= 0) {
             return paramterType.substring(0, paramterType.indexOf("<"));

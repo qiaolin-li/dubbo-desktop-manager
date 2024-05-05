@@ -134,7 +134,6 @@ export default {
             type: "error",
             message: this.$t('dubbo.providePage.exportError'),
           });
-          console.log(e)
         }
       }
 

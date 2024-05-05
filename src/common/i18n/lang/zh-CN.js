@@ -28,6 +28,7 @@ export default {
     },
     menu: {
         addConnect: "新增连接",
+        datasource: "数据源",
         settings: "设置"
     },
     welcome: {
@@ -172,11 +173,12 @@ export default {
             historyParam: "历史参数",
             generateParam: "生成参数",
             generateCommand: "生成命令",
+            requestParamType: "请求参数类型",
             requestParam: "请求参数",
             requestParamStrategyTitle: "参数生成策略",
             paramGenerateStrategyDesc: "首先会使用上次调用成功的历史参数，如果没有，会尝试生成参数",
             format: "格式化",
-            responseInfo: "响应参数",
+            responseInfo: "响应",
             historyInvokeParamList: "历史调用参数",
             callParamError: "请求参数格式有误",
             callDubboServiceSuccess: "调用dubbo接口成功",
@@ -189,6 +191,7 @@ export default {
             notFoundJDK:"如果需要使用Java调用器，请先安装JDK",
             callDubboAdminError: "调用dubbo-admin失败, {info}",
             unselectedHistory:"未选择历史参数",
+            notFoundMatedata:"未找到元数据，无法获取到方法参数类型，请补充",
         },
         telnetTerminal: {
             connecting: "正在连接 {ip} {port}",

@@ -12,10 +12,10 @@
         <!-- 操作按钮 -->
         <div class="connectContainer-right">
           <el-tooltip effect="light" content="修改" placement="right-start">
-            <i class="el-icon-edit" @click="editConnect($event, connectInfo._id)"></i>
+            <i class="el-icon-edit iconButton" @click="editConnect($event, connectInfo._id)"></i>
           </el-tooltip>
           <el-tooltip effect="light" content="删除" placement="right-start">
-            <i class="el-icon-delete" @click="deleteConnect($event,connectInfo._id)"></i>
+            <i class="el-icon-delete iconButton" @click="deleteConnect($event,connectInfo._id)"></i>
           </el-tooltip>
         </div>
       </div>
@@ -46,7 +46,6 @@ export default {
     };
   },
   mounted() {
-    
     this.findConnectList();
   },
   methods: {
@@ -63,6 +62,7 @@ export default {
         label: connectInfo.name,
         icon: iconList[iconIndex % iconList.length],
         componentName: 'managePage', 
+        closable: true,
         params: {
           connectInfo
         }
@@ -141,13 +141,4 @@ export default {
   margin-left: 5px;
 }
 
-.connectContainer-right i {
-  margin-right: 5px;
-  padding: 5px 5px;
-}
-
-.connectContainer-right i:hover {
-  background-color: #ccc;
-  border-radius: 50%;
-}
 </style>

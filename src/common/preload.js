@@ -2,7 +2,6 @@
 const { contextBridge, ipcRenderer } = require('electron')
 const remote = require('@electron/remote');
 
-console.log("来了来了", remote);
 
 contextBridge.exposeInMainWorld('myAPI', {
   clipboard: remote.clipboard,
@@ -11,5 +10,3 @@ contextBridge.exposeInMainWorld('myAPI', {
 })
 
 contextBridge.exposeInMainWorld("require", require);
-
-console.log("走了走了", ipcRenderer.on);

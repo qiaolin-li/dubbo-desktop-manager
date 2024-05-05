@@ -1,44 +1,88 @@
+ /* 美化滚动条 */
+ ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+ }
 
+ ::-webkit-scrollbar-track {
+     width: 6px;
+     background: rgba(#101F1C, 0.1);
+     -webkit-border-radius: 2em;
+     -moz-border-radius: 2em;
+     border-radius: 2em;
+ }
 
-/* 
+ ::-webkit-scrollbar-thumb {
+     /* background-color: rgba(144,147,153,.5); */
+     background-color: transparent;
+     background-clip: padding-box;
+     min-height: 28px;
+     -webkit-border-radius: 2em;
+     -moz-border-radius: 2em;
+     border-radius: 2em;
+     transition: background-color .3s;
+     cursor: pointer;
+ }
+
+ :hover::-webkit-scrollbar-thumb {
+     background-color: rgba(144, 147, 153, .5);
+ }
+
+ /* 
     element-ui dialog的内容内边距
 */
-.el-dialog .el-dialog__body {
-    padding-top: 0px;
-    padding-left: 10px;
-    padding-right: 10px;
-    padding-bottom: 10px;
-}
+ .el-dialog .el-dialog__body {
+     padding-top: 0px;
+     padding-left: 10px;
+     padding-right: 10px;
+     padding-bottom: 10px;
+ }
 
-.element-hover:hover {
-    background:#d5ebe1;
-}
+ .element-hover:hover {
+     background: #d5ebe1;
+ }
 
-.selectedBackground {
-    background:#d5ebe1;
-}
+ .selectedBackground {
+     background: #d5ebe1;
 
-
-
-.iconButton {
-    margin-right: 5px;
-    padding: 5px 5px;
-  }
-  
-.iconButton:hover {
-    background-color: #ccc;
-    border-radius: 50%;
-}
+ }
 
 
-.notSelect {
-    /* 不让用户选中 */
-    -webkit-touch-callout: none; /* iOS Safari */
-    -webkit-user-select: none; /* Chrome/Safari/Opera */
-    -khtml-user-select: none; /* Konqueror */
-    -moz-user-select: none; /* Firefox */
-    -ms-user-select: none; /* Internet Explorer/Edge */
-    user-select: none; /* Non-prefixed version, currently
+
+ .iconButton {
+     margin-right: 3px;
+     padding: 3px 3px;
+ }
+
+ .iconButton:hover {
+     background-color: #3fb24f;
+     border-radius: 50%;
+ }
+
+
+ .notSelect {
+     /* 不让用户选中 */
+     -webkit-touch-callout: none;
+     /* iOS Safari */
+     -webkit-user-select: none;
+     /* Chrome/Safari/Opera */
+     -khtml-user-select: none;
+     /* Konqueror */
+     -moz-user-select: none;
+     /* Firefox */
+     -ms-user-select: none;
+     /* Internet Explorer/Edge */
+     user-select: none;
+     /* Non-prefixed version, currently
     not supported by any browser */
-  }
-  
+ }
+
+
+ .el-collapse-item__header {
+    height: 30px !important;
+    line-height: 30px !important;
+ }
+
+.el-collapse-item__content {
+    padding-bottom: 10px !important;
+}

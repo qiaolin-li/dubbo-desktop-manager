@@ -30,13 +30,6 @@ async function getConsumerList(serviceName, registryCenterId) {
 }
 
 
-async function getMetaData(providerInfo, registryCenterId) {
-    let registryConfig = await connectRepository.findById(registryCenterId);
-    let registry = getRealRegistry(registryConfig);
-    return registry.getMetaData(providerInfo, registryConfig);
-}
-
-
 async function getConfiguration(providerInfo, registryCenterId) {
     let registryConfig = await connectRepository.findById(registryCenterId);
     
@@ -196,7 +189,6 @@ let data = {
     getServiceList,
     getProviderList,
     getConsumerList,
-    getMetaData,
     getConfiguration,
     saveConfiguration,
     disableProvider,

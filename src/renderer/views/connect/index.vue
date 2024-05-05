@@ -8,7 +8,7 @@
                   <i class="el-icon-plus"></i>新建链接</span>
               </div>
               <el-divider class="my-divider"></el-divider>
-              <connectList ref="connectList" :mainPanel="mainPanel" @clickServiceInfo="clickServiceInfo" @editConnect="openAddConnectDialog"></connectList>
+              <connectList ref="connectList" :mainPanel="mainPanel" @editConnect="openAddConnectDialog"></connectList>
 
               <el-dialog :title="$t('connect.addConnect')" width="40%" :visible.sync="dialogVisible" :close-on-click-modal="false">
                 <addConnect @saveSuccess="saveConnectSuccess" :id="currentConnectId" :key="addConnectKey" />
@@ -81,19 +81,6 @@ export default {
     saveConnectSuccess(data) {
       this.$refs.connectList.findConnectList();
       this.dialogVisible = false;
-    },
-    clickServiceInfo(data) {
-      let { serviceName, interfaceName, registryCenterId } = data;
-      this.tab.addTab({
-        title: interfaceName.split(".")[interfaceName.split(".").length - 1],
-        fullTitle: interfaceName,
-        componentName: 'dubboPage',
-        params: {
-          registryCenterId,
-          interfaceName,
-          uniqueServiceName: serviceName
-        }
-      });
     },
     openAddConnectDialog(id) {
       this.addConnectKey++;

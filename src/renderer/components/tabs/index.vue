@@ -8,9 +8,7 @@
       </el-tabs>
     </div>
     <div class="mytab-container-view" v-show="tabList.length > 0">
-      <div v-for="tab in tabList" :key="tab.id">
-        <component v-bind="componentProps(tab)" v-show="currentTabId == tab.id" />
-      </div>
+      <component v-bind="componentProps(tab)" v-for="tab in tabList" :key="tab.id" v-show="currentTabId == tab.id" />
     </div>
     <welcome v-if="tabList.length == 0" />
   </div>
@@ -103,7 +101,6 @@ export default {
           click: async () => {
             this.removeOtherTab(currentTab)
           }
-
         },
         {
           label: this.$t('tab.closeAll'),
@@ -259,6 +256,7 @@ export default {
 .mytab-container-view {
   background-color: white;
   overflow-y: auto;
+  height: 100%;
 }
 
 .mytab-container .el-tabs__item {

@@ -3,7 +3,7 @@
     <el-aside class="menu-aside dragRegion" width="70px" ondragstart="return false">
       <div class="ddm-menu-list">
         <div>
-          <div class="menu-div" :class="[currentMenu.id  == menu.id ? 'active':'']" v-for="menu in topMenuList" :key="menu.id" @click="switchMenu(menu)">
+          <div class="menu-div" :class="[currentMenu.id  == menu.id ? 'active':'']" v-for="menu in topMenuList" :key="menu.id" @click="switchMenu(menu)" @contextmenu.stop="openMenuList($event, menu)">
             <el-tooltip effect="light" :content="menu.label" placement="right-start">
               <i :class="menu.icon"></i>
               <span>{{menu.label}}</span>
@@ -11,12 +11,11 @@
           </div>
         </div>
         <div>
-          <div class="ddm-bottom-menu-list menu-div" :class="[currentMenu.id  == menu.id ? 'active':'']" v-for="menu in bottomMenuList" :key="menu.id" @click="switchMenu(menu)">
+          <div class="ddm-bottom-menu-list menu-div" :class="[currentMenu.id  == menu.id ? 'active':'']" v-for="menu in bottomMenuList" :key="menu.id" @click="switchMenu(menu)" @contextmenu.stop="openMenuList($event, menu)">
             <el-tooltip effect="light" :content="menu.label" placement="right-start">
               <i :class="menu.icon"></i>
               <span>{{menu.label}}</span>
             </el-tooltip>
-       
           </div>
            <div class="ddm-bottom-menu-list menu-div" @click="openGithub">
             <el-tooltip effect="light" content="GitHub" placement="right-start">
@@ -62,22 +61,21 @@ export default {
     this.topMenuList = menuConfig.topMenu.map(x => {
       x.id = `menu-${Math.random()}`;
       if (x.ready) {
-        x.ready(this);
+        x.ready(this, x);
       }
       return x;
     });
     this.bottomMenuList = menuConfig.bottomMenu.map(x => {
       x.id = `menu-${Math.random()}`;
       if (x.ready) {
-        x.ready(this);
+        x.ready(this, x);
       }
       return x;
     });
     this.switchMenu(this.topMenuList[0]);
   },
   methods: {
-    resize() {
-    },
+    resize() {},
     componentProps(menu) {
       return {
         is: menu.componentName,
@@ -118,7 +116,83 @@ export default {
       this.currentMenu = menu;
     },
     openGithub(){
-        remote.shell.openExternal("https://github.com/qiaolin-li/dubbo-desktop-manager")
+      remote.shell.openExternal("https://github.com/qiaolin-li/dubbo-desktop-manager")
+    },
+
+    removeMenu(menu) {
+      // 删除tab，并且记录当前删除的下标位置
+      for (let i = 0; i < this.menuPageList.length; i++) {
+        if (this.menuPageList[i] === menu) {
+          if(this.currentMenu === menu){
+            this.currentMenu = this.menuPageList[i + 1] || this.menuPageList[i - 1];
+          }
+
+          this.menuPageList.splice(i, 1);
+          this.topMenuList = this.topMenuList.filter(menuInfo => menuInfo !== menu);
+          this.bottomMenuList = this.bottomMenuList.filter(menuInfo => menuInfo !== menu);
+          break;
+        }
+      }
+    },
+    removeOtherMenu(menu) {
+      this.menuPageList = this.menuPageList.filter(menuInfo => !menuInfo.closable || menuInfo === menu);
+      this.topMenuList = this.topMenuList.filter(menuInfo => !menuInfo.closable || menuInfo === menu);
+      this.bottomMenuList = this.bottomMenuList.filter(menuInfo => !menuInfo.closable || menuInfo === menu);
+
+      // 当前选中的menu没被删除
+      if(this.menuPageList.find(x => x === this.currentMenu)){
+        return;
+      }
+      
+      this.currentMenu = menu;
+    },
+    removeAllMenu(menu) {
+      this.menuPageList = this.menuPageList.filter(menuInfo => !menuInfo.closable);
+      this.topMenuList = this.topMenuList.filter(menuInfo => !menuInfo.closable);
+      this.bottomMenuList = this.bottomMenuList.filter(menuInfo => !menuInfo.closable);
+
+      // 当前选中的menu没被删除
+      if(this.menuPageList.find(x => x === this.currentMenu)){
+        return;
+      }
+      
+      this.currentMenu = menu;
+    },
+    forceUpdateComponent(menu) { 
+      // 相信不会有人点开100000个tab, 所以这里不会有id重复的情况
+      menu.id += 100000;
+      this.currentMenu = menu;
+    },
+    openMenuList(event, menuInfo){
+      const menuTemplate = [
+        {
+          label: this.$t('tab.refresh'),
+          click: async () => this.forceUpdateComponent(menuInfo)
+        },
+        { type: 'separator' },
+        ...(menuInfo.closable ? [{
+          label: this.$t('tab.close'),
+          click: async () => this.removeMenu(menuInfo)
+        }] : []),
+        {
+          label: this.$t('tab.closeOther'),
+          click: async () => this.removeOtherMenu(menuInfo)
+        },
+        {
+          label: this.$t('tab.closeAll'),
+          click: async () => this.removeAllMenu(menuInfo)
+        }
+      ];
+      // 阻止默认行为
+      event.preventDefault();
+      // // 构建菜单项
+      const menu = remote.Menu.buildFromTemplate(menuTemplate);
+
+      // 弹出上下文菜单
+      menu.popup({
+        // 获取网页所属的窗口
+        window: remote.getCurrentWindow()
+      });
     }
   },
 }

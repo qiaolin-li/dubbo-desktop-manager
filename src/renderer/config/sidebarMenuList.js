@@ -6,21 +6,19 @@ import {
 export default {
     topMenu: [
         {
-            label: "数据源",
+            label: i18n.t("menu.datasource"),
             icon: "el-icon-house",
             componentName: "registryList",
         },
     ],
     bottomMenu: [
         {
-            label: "设置",
+            label: i18n.t("menu.settings"),
             icon: "el-icon-setting",
-            ready(self) {
-                ipcRenderer.on('openSettingsTabEvent', () =>  this.click(self));
-            },
-            click(self) {
-                self.switchMenu({id: 'settings', componentName: 'settings'});
-            },
+            componentName: "settings",
+            ready(mananger, self) {
+                ipcRenderer.on('openSettingsTabEvent', () => mananger.switchMenu(self));
+            }
         },
     ]
 }

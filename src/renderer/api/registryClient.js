@@ -9,8 +9,6 @@ class Registry {
     
     async getConsumerList(serviceName, registryCenterId) {}
     
-    async getMetaData(providerInfo, registryCenterId) {}
-    
     async getConfiguration(providerInfo, registryCenterId) {}
     
     async saveConfiguration(registryCenterId, providerInfo, doc) {}

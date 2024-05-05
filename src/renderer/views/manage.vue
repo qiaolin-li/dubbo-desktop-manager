@@ -1,39 +1,23 @@
 <template>
-  <split-pane @resize="resize" split="vertical" :min-percent="15" :default-percent="20">
+  <split-pane @resize="resize" split="vertical" :min-percent="10" :default-percent="20">
     <template slot="paneL">
-      <div class="left-container">
+      <dragPane>
+        <template slot="fisrtTitle">{{connectInfo.name}}</template>
+        <template slot="fisrtToolBar">
+          <el-tooltip effect="light" content="刷新" placement="right-start">
+            <i class="el-icon-refresh iconButton" @click.stop="() => $refs.connectItem.findInterfaceList()"></i>
+          </el-tooltip>
+          <span class="serviceSizeTool">总数: {{interfaceCount}} </span>
+        </template>
+        <template slot="fisrtContent">
+          <connectItem ref="connectItem" :connectInfo="connectInfo"  @clickServiceInfo="clickServiceInfo" @interfaceCountChange="count => interfaceCount = count" />
+        </template>
 
-        <dragPane>
-          <template slot="fisrtTitle">{{connectInfo.name}}</template>
-          <template slot="fisrtToolBar">
-            <el-tooltip effect="light" content="刷新" placement="right-start">
-              <i class="el-icon-refresh iconButton" @click="() => $refs.connectItem.findInterfaceList()"></i>
-            </el-tooltip>
-            <span class="serviceSizeTool">总数: 123 </span>
-          </template>
-          <template slot="fisrtContent">
-            <connectItem ref="connectItem" :connectInfo="connectInfo"  @clickServiceInfo="clickServiceInfo"></connectItem>
-          </template>
-
-          <template slot="secondTitle">调用历史</template>
-          <template slot="secondContent">
-            <historyList :connectInfo="connectInfo"  @openTab="addTab"></historyList>
-          </template>
-        </dragPane>
-
-        <!-- <split-pane @resize="resize" split="horizontal" :min-percent="30" :default-percent="70" :fold="false">
-          <template slot="paneL">
-            <div class="panel-item-container">
-              <connectItem :connectInfo="connectInfo"  @clickServiceInfo="clickServiceInfo"></connectItem>
-            </div>
-          </template>
-          <template slot="paneR">
-            <div class="panel-item-container">
-              <historyList :connectInfo="connectInfo"  @openTab="addTab"></historyList>
-            </div>
-          </template>
-        </split-pane> -->
-      </div>
+        <template slot="secondTitle">调用历史</template>
+        <template slot="secondContent">
+          <historyList :connectInfo="connectInfo"  @openTab="addTab"></historyList>
+        </template>
+      </dragPane>
     </template>
     <template slot="paneR">
       <myTabList ref="myTabs" navScrollClassList="dragRegion" tabListClassList="noDragRegion"></myTabList>
@@ -62,6 +46,7 @@ export default {
       currentMenu: {},
       menuList: [],
       menuPageList: [],
+      interfaceCount: 0,
     }
   },
   methods: {

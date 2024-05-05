@@ -1,10 +1,10 @@
 <template>
-  <div class="panel-container">
+  <div ref="dragTab" class="panel-container">
     <div class="sub-panel" :style="{ flex: collapsed0 ? `0 0 22px` : '' }" >
-      <div class="panel-header notSelect" @click="togglePanel(0)">
+      <div class="panel-header notSelect" @click="collapsible && togglePanel(0)">
         <div>
-          <i class="el-icon-arrow-right" v-if="collapsed0"></i>
-          <i class="el-icon-arrow-down" v-else></i>
+          <i class="el-icon-arrow-right expandButton" v-if="collapsible && collapsed0"></i>
+          <i class="el-icon-arrow-down expandButton" v-if="collapsible && !collapsed0" ></i>
           <slot name="fisrtTitle"></slot>
         </div>
         <div>
@@ -17,11 +17,11 @@
     </div>
     
     <div class="sub-panel"  :style="{ flex: `0 0 ${collapsed1 ? 22 : mainPanelHeight1}px` }" >
-      <div v-show="!collapsed1" class="resizer" @mousedown="startResize($event, 1)"></div>
-      <div class="panel-header notSelect" @click="togglePanel(1)">
+      <div v-show="!collapsed1" class="resizer" @mousedown.stop="startResize($event, 1)"></div>
+      <div class="panel-header notSelect" @click="collapsible && togglePanel(1)">
         <div>
-          <i class="el-icon-arrow-right" v-if="collapsed1"></i>
-          <i class="el-icon-arrow-down" v-else></i>
+          <i class="el-icon-arrow-right expandButton" v-if="collapsible && collapsed1" ></i>
+          <i class="el-icon-arrow-down expandButton" v-if="collapsible && !collapsed1"></i>
           <slot name="secondTitle"></slot>
         </div>
         <div>
@@ -55,13 +55,17 @@ export default {
     };
   },
   props: {
-    title: {
-      type: String,
-      default: 'Panel Title',
+    collapsible: {
+      type: Boolean,
+      default: true,
     },
+  },
+  mounted() {
+    this.collapsed1 = this.collapsible;
   },
   methods: {
     startResize(e, index) {
+      e.preventDefault();
       this.index = index;
       this.isResizing = true;
       this.startY = e.clientY;
@@ -70,10 +74,14 @@ export default {
     },
     resize(e) {
       if (this.isResizing) {
+        // (windows)地址栏高度 + 上一个标题栏高度 + 拖动条高度
+        if(e.clientY < (this.$refs.dragTab.offsetTop + (process.platform === 'win32' ? 30 : 0) + 22)){
+          return;
+        }
+
         const deltaY = e.clientY - this.startY;
-         
         if(this.index === 1){
-            this.mainPanelHeight1 -= deltaY;
+          this.mainPanelHeight1 -= deltaY;
         }
         this.startY = e.clientY;
       }
@@ -84,12 +92,12 @@ export default {
       document.removeEventListener('mouseup', this.stopResize);
     },
     togglePanel(index) {
-       if(index === 0){
-             this.collapsed0 = !this.collapsed0;
-        }
-        if(index === 1){
-             this.collapsed1 = !this.collapsed1;
-        }
+      if(index === 0){
+        this.collapsed0 = !this.collapsed0;
+      }
+      if(index === 1){
+        this.collapsed1 = !this.collapsed1;
+      }
     },
   },
 };
@@ -109,11 +117,12 @@ export default {
   flex-direction: row;
   align-items: center;
   background-color: #e0e0e0;
-  padding-left: 10px;
+  padding-left: 3px;
   cursor: pointer; 
   font-weight: bold;
-  font-size: 12px;
+  font-size: 14px;
   height: 22px;
+  padding-right: 5px;
 }
 
 .sub-panel {
@@ -125,13 +134,12 @@ export default {
 }
 
 .content-panel {
-  background-color: #d5ebe1;
   overflow: auto;
   height: 100%;
 }
 
 .resizer {
-  border: 1px solid #dcdee2;
+  /* border-top: 1px solid #dcdee2; */
   background-color: #f8f8f9;
   width: 100%;
   height: 2px;
@@ -141,9 +149,12 @@ export default {
   align-items: center;
 }
 
-.resizer :hover {
-  background-color: red;
-  border-color: red;
+.resizer:hover {
+  background-color: #3fb24f;
+  border-color: #3fb24f;
 }  
 
+.expandButton {
+  padding-right: 3px;
+}
 </style>

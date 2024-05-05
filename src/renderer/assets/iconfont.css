@@ -3,31 +3,4 @@
   src: url('iconfont.ttf?t=1642824674202') format('truetype');
 }
 
-.iconfont {
-  font-family: "iconfont" !important;
-  font-size: 16px;
-  font-style: normal;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-.icon-ziyuanxhdpi:before {
-  content: "\e62e";
-}
-
-.icon-duankailianjie:before {
-  content: "\e65e";
-}
-
-.icon-interface-o:before {
-  content: "\ec05";
-}
-
-.icon-interface1:before {
-  content: "\ea11";
-}
-
-.icon-lianjie-connect:before {
-  content: "\e63f";
-}
 

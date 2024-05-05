@@ -1,11 +1,13 @@
 <template>
   <div class="interfaceContainer">
     <div class="searchTool">
-      <el-input v-model="searchKeyword" :placeholder="$t('connect.searchContent')" @input="searchKeywordChange($event)" size="mini"></el-input>
+      <el-input v-model="searchKeyword" :placeholder="$t('connect.searchContent')" @input="() => serviceList = optimizationTree()" size="mini"></el-input>
     </div>
 
     <!-- dubbo接口列表  -->
-    <el-tree class="notSelect" ref="tree" :data="serviceList" :props="defaultProps" node-key="label" :default-expanded-keys="defaultExpandIds" :highlight-current="true" :accordion="true" :expand-on-click-node="false" @node-click="handleNodeClick" @node-expand="handleNodeExpand" @node-collapse="handleNodeCollapse">
+    <el-tree class="notSelect interfaceTree" ref="tree" :data="serviceList" :props="defaultProps" node-key="id" :default-expanded-keys="defaultExpandIds"
+        :highlight-current="true" :accordion="true" :expand-on-click-node="false" @node-click="handleNodeClick" @node-expand="handleNodeExpand"
+        @node-collapse="handleNodeCollapse" @node-contextmenu="openContextMenu">
 
       <div class="custom-tree-icon" slot-scope="{ node, data }">
         <i :class="['', data.children && data.children.length > 0  ? 'el-icon-folder' : 'test']"></i>
@@ -19,6 +21,8 @@
 <script>
 import registry from "@/renderer/api/registryClient.js";
 import treeUtils from "@/renderer/common/utils/treeUtils.js";
+const remote = require("@electron/remote");
+import lodash from 'lodash';
 
 export default {
   components: {
@@ -45,15 +49,6 @@ export default {
     this.findInterfaceList();
   },
   methods: {
-    show() {
-      // 已经初始化了
-      if (this.init) {
-        return;
-      }
-      this.init = true;
-      // 初始化
-      this.findInterfaceList();
-    },
     async findInterfaceList() {
       let list = await registry.getServiceList(this.connectInfo._id);
       for (let i = 0; i < list.length; i++) {
@@ -65,9 +60,6 @@ export default {
         type: "success",
         message: this.$t('connect.refreshSuccess'),
       });
-    },
-    searchKeywordChange() {
-      this.serviceList = this.optimizationTree();
     },
     handleNodeClick(serviceInfo) {
       // 不是接口
@@ -81,13 +73,47 @@ export default {
       };
       this.$emit("clickServiceInfo", data);
     },
+    openContextMenu(event, serviceInfo) {
+      const menuTemplate = [
+        ...(!serviceInfo.children || serviceInfo.children.length === 0 ? [{
+          label: '打开',
+          click: async () => this.handleNodeClick(serviceInfo)
+        }] : []),
+        ...(serviceInfo.children && serviceInfo.children.length > 0 && !this.defaultExpandIds.find(item => item === serviceInfo.id) ? [{
+          label: '展开',
+          click: async () => this.handleNodeExpand(serviceInfo)
+        }] : []),
+        ...(serviceInfo.children && serviceInfo.children.length > 0 && this.defaultExpandIds.find(item => item === serviceInfo.id) ? [{
+          label: '收起',
+          click: async () => this.handleNodeCollapse(serviceInfo)
+        }] : []),
+        { type: 'separator' },
+        ...(!serviceInfo.children || serviceInfo.children.length === 0 ? [{
+           label: '复制接口名',
+          click: async () => {
+            navigator.clipboard.writeText(serviceInfo.serviceName)
+            this.$message({
+              type: "success",
+              message: this.$t('editor.copySuccess'),
+            });
+          }
+        }] : []),
+      ];
+      // 阻止默认行为
+      event.preventDefault();
+      // // 构建菜单项
+      const menu = remote.Menu.buildFromTemplate(menuTemplate);
+
+      // 弹出上下文菜单
+      menu.popup({
+        // 获取网页所属的窗口
+        window: remote.getCurrentWindow()
+      });
+    },
     optimizationTree() {
-      let keyword = "";
-      if (this.searchKeyword) {
-        keyword = this.searchKeyword.toLowerCase();
-      }
+      let keyword =  this.searchKeyword ?this.searchKeyword.toLowerCase() : "";
       let filtedInterface = this.allServiceList.filter((i) => this.match(i, keyword));
-      this.connectInfo.serviceSize = filtedInterface.length;
+      this.$emit("interfaceCountChange", filtedInterface.length);
       return treeUtils.createTree(filtedInterface, ".");
     },
     match(service, keyword) {
@@ -95,63 +121,65 @@ export default {
         return false;
       }
 
-      if (keyword) {
-        if (service.name.toLowerCase().indexOf(keyword) !== -1) {
-          return true;
-        }
-      } else {
+      if (!keyword) {
         return true;
       }
 
       // 未来还可能支持其他的过滤方式
-      return false;
+      return service.name.toLowerCase().indexOf(keyword) !== -1;
     },
     // 树节点展开
     handleNodeExpand(data) {
       // 保存当前展开的节点
-      let flag = false
-      this.defaultExpandIds.some(item => {
-        if (item === data.label) { // 判断当前节点是否存在， 存在不做处理
-          flag = true
-          return true
-        }
-      })
-      if (!flag) { // 不存在则存到数组里
-        this.defaultExpandIds.push(data.label)
+      // 不存在则存到数组里
+      if (!this.defaultExpandIds.find(item => item === data.id)) { 
+        this.defaultExpandIds.push(data.id)
       }
     },
     // 树节点关闭
     handleNodeCollapse(data) {
       // 删除当前关闭的节点
-      this.defaultExpandIds.some((item, i) => {
-        if (item === data.label) {
-          this.defaultExpandIds.splice(i, 1)
+      this.$refs.tree.store._getAllNodes().forEach(item => {
+        if(item.data.id === data.id){
+          item.expanded = false
         }
-      })
+      });
+      lodash.remove(this.defaultExpandIds, item =>  item === data.id);
       this.removeChildrenIds(data) // 这里主要针对多级树状结构，当关闭父节点时，递归删除父节点下的所有子节点
     },
 
     // 删除树子节点
     removeChildrenIds(data) {
-      const ts = this
-      if (data.children) {
-        data.children.forEach(function (item) {
-          const index = ts.defaultExpandIds.indexOf(item.label)
-          if (index > 0) {
-            ts.defaultExpandIds.splice(index, 1)
-          }
-          ts.removeChildrenIds(item)
-        })
+      if (!data.children) {
+        return;
       }
-
+      data.children.forEach((item) =>{
+        const index = this.defaultExpandIds.indexOf(item.id)
+        if (index > 0) {
+          this.defaultExpandIds.splice(index, 1)
+        }
+        this.removeChildrenIds(item)
+      })
     }
   },
 };
 </script>
 
 <style  >
+
+.interfaceContainer {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
 .searchTool {
   display: flex;
+}
+
+.interfaceTree {
+  height: 100%;
+  overflow: auto;
 }
 
 .custom-tree-icon {
