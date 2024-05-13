@@ -1,6 +1,7 @@
 <template>
   <div class="dubboProviderListContainer">
-    <el-table :data="providerList" class="content" @row-contextmenu="openMenu" ref="report-table" :highlight-current-row="true" :stripe="true" :header-row-class-name="providerListTableHeaderRowClassName" size="medium" :border="true">
+    <el-table :data="providerList" class="content" @row-contextmenu="openMenu" ref="report-table" :highlight-current-row="true" 
+              :stripe="true" :header-row-class-name="providerListTableHeaderRowClassName" size="mini" :border="true">
       <el-table-column type="expand">
         <template slot="header">
           <el-tooltip class="item" effect="light" :content="$t('dubbo.providePage.exportExcel')" placement="top-start">
@@ -11,6 +12,7 @@
           <div v-for="method in props.row.methods" :key="method">{{method}}</div><br />
         </template>
       </el-table-column>
+      <el-table-column prop="protocol"  width="70px" :label="$t('dubbo.providePage.protocol')" column-key="protocol" :show-overflow-tooltip="true" />
       <el-table-column prop="address" :label="$t('dubbo.providePage.address')" column-key="address" :show-overflow-tooltip="true">
       </el-table-column>
       <el-table-column prop="application" :label="$t('dubbo.providePage.application')" :show-overflow-tooltip="true">

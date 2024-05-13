@@ -31,18 +31,18 @@
 
         <el-descriptions-item span="3">
           <template slot="label"> {{$t('dubbo.invokePage.operate')}} </template>
-          <el-select v-model="currentProvider" value-key="address" class="providerSelect" width="160px" filterable >
+          <el-select v-model="currentProvider" value-key="address" class="providerSelect" width="160px" filterable size="small" >
             <el-option v-for="item in providerList" :key="item.address" :label="item.address" :value="item">
             </el-option>
           </el-select>
-          <el-select v-model="method" @change="methodChange" class="methodSelect" filterable value-key="name">
+          <el-select v-model="method" @change="methodChange" class="methodSelect" filterable value-key="name" size="small">
             <el-option v-for="item in currentProvider.methods" :key="item.name" :label="item.name" :value="item">
             </el-option>
           </el-select>
-          <el-select v-model="currentInvoker" class="invokerSelect">
+          <el-select v-model="currentInvoker" class="invokerSelect" size="small">
             <el-option v-for="invokerType in invokerTypes" :key="invokerType.code" :label="invokerType.name" :value="invokerType.code"></el-option>
           </el-select>
-          <el-button plain type="primary" icon="el-icon-thumb" @click="invokeDubbo()" :disabled="invokeing">{{invokeing ?  $t('dubbo.invokePage.calling') : $t('dubbo.invokePage.call')}}</el-button>
+          <el-button plain type="primary" icon="el-icon-thumb" size="small" @click="invokeDubbo()" :disabled="invokeing">{{invokeing ?  $t('dubbo.invokePage.calling') : $t('dubbo.invokePage.call')}}</el-button>
         </el-descriptions-item>
       </el-descriptions>
     </div>

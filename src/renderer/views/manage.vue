@@ -10,11 +10,21 @@
           <span class="serviceSizeTool">总数: {{interfaceCount}} </span>
         </template>
         <template slot="fisrtContent">
-          <connectItem ref="connectItem" :connectInfo="connectInfo"  @clickServiceInfo="clickServiceInfo" @interfaceCountChange="count => interfaceCount = count" />
+          <connectItem ref="connectItem" :connectInfo="connectInfo"  @clickServiceInfo="clickServiceInfo" @interfaceCountChange="count => interfaceCount = count"  @collectServiceToGroup="() => $refs.collectItem.findInterfaceList()" />
         </template>
 
-        <template slot="secondTitle">调用历史</template>
+        <template slot="secondTitle">我的收藏</template>
+        <template slot="secondToolBar">
+          <el-tooltip effect="light" content="刷新" placement="right-start">
+            <i class="el-icon-refresh iconButton" @click.stop="() => $refs.collectItem.findInterfaceList()"></i>
+          </el-tooltip>
+        </template>
         <template slot="secondContent">
+          <collectItem ref="collectItem" :connectInfo="connectInfo"  @openTab="addTab"  @clickServiceInfo="clickServiceInfo" ></collectItem>
+        </template>
+
+        <template slot="threeTitle">调用历史</template>
+        <template slot="threeContent">
           <historyList :connectInfo="connectInfo"  @openTab="addTab"></historyList>
         </template>
       </dragPane>
@@ -29,6 +39,7 @@
 import myTabList from '@/renderer/components/tabs/index.vue';
 import dragPane from '@/renderer/components/drag-pane/index.vue';
 import connectItem from "@/renderer/views/connect/connect-item.vue";
+import collectItem from "@/renderer/views/collect/collect-item.vue";
 import historyList from '@/renderer/views/history/index.vue';
 
 export default {
@@ -36,6 +47,7 @@ export default {
     myTabList,
     dragPane,
     connectItem,
+    collectItem,
     historyList
   },
   props: {

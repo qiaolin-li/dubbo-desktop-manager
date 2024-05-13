@@ -122,6 +122,7 @@ function parseProvderInfo(data) {
 
     return new common.ProviderInfo({
         application: metadata.application,
+        protocol: metadata.protocol,
         ip: data.ip,
         port: data.port,
         serviceName: metadata.interface,

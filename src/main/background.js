@@ -56,6 +56,7 @@ app.on('ready', async () => {
   }
 
   windowHolder.createMainWindow()
+  windowHolder.instanllDevTools()
 
   // 统计时需要
   const xxx_filter = {

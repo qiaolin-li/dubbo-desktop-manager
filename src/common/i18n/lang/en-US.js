@@ -29,7 +29,8 @@ export default {
     menu: {
         addConnect: "New Connection",
         datasource: "datasource",
-        settings: "Settings"
+        settings: "Settings",
+        reportBug: "report bug"
     },
     welcome: {
         productName: "DUBBO DESKTOP MANAGER",
@@ -55,7 +56,8 @@ export default {
     },
     editor : {
         copy : "copy",
-        copySuccess : "Copy success"
+        copySuccess : "Copy success",
+        collectSuccess : "Successful collection"
     },
     connect: {
         addConnect: "New Connection",
@@ -123,6 +125,7 @@ export default {
             consumerList: "Consumer List",
         },
         providePage: {
+            protocol: "protocol",
             address: "address",
             application: "application",
             version: "version",

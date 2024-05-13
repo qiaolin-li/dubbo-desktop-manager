@@ -1,5 +1,6 @@
 import connectRepository from "./connectRepository"
 import invokeHistoryRepository from './invokeHistoryRepository'
+import interfaceCollectRepository from './interfaceCollectRepository'
 
 export default [
     {
@@ -10,5 +11,10 @@ export default [
     {
         name: "invokeHistoryRecord",
         target: invokeHistoryRepository
+    },
+
+    {
+        name: "interfaceCollectRepository",
+        target: interfaceCollectRepository
     }
 ]

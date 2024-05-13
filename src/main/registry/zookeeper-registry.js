@@ -242,6 +242,7 @@ function parseProvderInfo(data) {
   let urlData = urlUtils.parseURL(content);
   return new common.ProviderInfo({
     application: urlData.params.application,
+    protocol: urlData.protocol,
     ip: urlData.host,
     port: urlData.port,
     serviceName: urlData.params.interface,

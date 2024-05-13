@@ -249,20 +249,24 @@ export default {
 }
 
 
-.mytab-container-title {
-  height: 40px;
-}
-
 .mytab-container-view {
   background-color: white;
   overflow-y: auto;
   height: 100%;
 }
 
+.mytab-container .el-tabs__header {
+  border-bottom: 0px !important;
+}
+
 .mytab-container .el-tabs__item {
   color: #303133 !important;
-  border: 1px solid rgb(236, 236, 237) !important ;
- }
+  border-left: 1px solid rgb(236, 236, 237) !important ;
+  border-right: 1px solid rgb(236, 236, 237) !important ;
+  border-top: 1px solid rgb(236, 236, 237) !important ;
+  line-height: 36px !important;
+  height: 36px !important;
+}
 
 .mytab-container .el-tabs__nav-scroll {
   overflow: auto !important;
@@ -279,5 +283,7 @@ export default {
 .el-tabs__content {
   display: none;
 }
+
+
 
 </style>

@@ -10,7 +10,7 @@
         @node-collapse="handleNodeCollapse" @node-contextmenu="openContextMenu">
 
       <div class="custom-tree-icon" slot-scope="{ node, data }">
-        <i :class="['', data.children && data.children.length > 0  ? 'el-icon-folder' : 'test']"></i>
+        <i :class="['', data.children && data.children.length > 0  ? 'el-icon-folder' : 'interfaceIcon']"></i>
         <span>{{ data.label }}</span>
       </div>
 
@@ -20,6 +20,7 @@
 
 <script>
 import registry from "@/renderer/api/registryClient.js";
+import interfaceCollectClient from "@/renderer/api/interfaceCollectClient.js";
 import treeUtils from "@/renderer/common/utils/treeUtils.js";
 const remote = require("@electron/remote");
 import lodash from 'lodash';
@@ -73,7 +74,7 @@ export default {
       };
       this.$emit("clickServiceInfo", data);
     },
-    openContextMenu(event, serviceInfo) {
+    async openContextMenu(event, serviceInfo) {
       const menuTemplate = [
         ...(!serviceInfo.children || serviceInfo.children.length === 0 ? [{
           label: '打开',
@@ -99,6 +100,40 @@ export default {
           }
         }] : []),
       ];
+
+      if(!serviceInfo.children || serviceInfo.children.length === 0 ) {
+        const collectMenuList = [];
+        const groupList = await interfaceCollectClient.findGroupList(this.connectInfo._id);
+        groupList.forEach(name => {
+          collectMenuList.push({
+            label: name,
+            click: async () => this.collectServiceToGroup(serviceInfo, name)
+          })
+        })
+    
+        collectMenuList.push({
+          label: '新分组',
+          click: async () => {
+            this.$prompt('请输入新分组', '提示', {
+              confirmButtonText: '确定',
+              cancelButtonText: '取消'
+            }).then(({ value }) => {
+              this.collectServiceToGroup(serviceInfo, value);
+            });
+          }
+        })
+
+        collectMenuList.push({
+          label: '默认分组',
+          click: async () => this.collectServiceToGroup(serviceInfo)
+        })
+
+        menuTemplate.push({
+          label: '收藏接口',
+          submenu: collectMenuList
+        });
+      }
+
       // 阻止默认行为
       event.preventDefault();
       // // 构建菜单项
@@ -109,6 +144,21 @@ export default {
         // 获取网页所属的窗口
         window: remote.getCurrentWindow()
       });
+    },
+    async collectServiceToGroup(serviceInfo, group = null) {
+      await interfaceCollectClient.save({
+        registryCenterId: this.connectInfo._id,
+        serviceName: serviceInfo.serviceName,
+        name: serviceInfo.label,
+        group: group
+      })
+
+      this.$message({
+        type: "success",
+        message: this.$t('editor.collectSuccess'),
+      });
+
+      this.$emit("collectServiceToGroup", serviceInfo, group);
     },
     optimizationTree() {
       let keyword =  this.searchKeyword ?this.searchKeyword.toLowerCase() : "";
@@ -190,19 +240,6 @@ export default {
   margin-right: 5px;
   color: rgb(136, 241, 124);
   border-radius: 50%;
-}
-
-.test::before {
-  content: "I";
-  margin-right: 5px;
-  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-  background-color: rgb(136, 241, 124);
-  width: 17px;
-  height: 17px;
-  text-align: center;
-  font-size: 17px;
-  border-radius: 50%;
-  display: inline-block;
 }
 .el-input.is-active .el-input__inner, .el-input__inner:focus {
     border-color: rgb(62, 177, 78) !important;

@@ -38,6 +38,7 @@ async function invokeMethod(provder, methodInfo, code) {
 
     let invokeParam = {
         interfaceName: serviceName,
+        protocol: provder.protocol,
         address: `${ip}:${port}`,
         version: provder.version,
         method: methodInfo.name,

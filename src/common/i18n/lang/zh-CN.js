@@ -29,7 +29,8 @@ export default {
     menu: {
         addConnect: "新增连接",
         datasource: "数据源",
-        settings: "设置"
+        settings: "设置",
+        reportBug: "上报问题"
     },
     welcome: {
         productName: "Dubbo 桌面管理工具",
@@ -55,7 +56,8 @@ export default {
     },
     editor : {
         copy : "复制",
-        copySuccess : "复制成功"
+        copySuccess : "复制成功",
+        collectSuccess : "收藏成功"
     },
     connect: {
         addConnect: "新增连接",
@@ -123,6 +125,7 @@ export default {
             consumerList: "消费者列表",
         },
         providePage: {
+            protocol: "协议",
             address: "地址",
             application: "所属应用",
             version: "版本号",

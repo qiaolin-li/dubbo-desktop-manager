@@ -13,6 +13,7 @@ function ServiceInfo(name, serviceName, group){
 
 function ProviderInfo(data){
     this.application = data.application;
+    this.protocol = data.protocol;
     this.ip = data.ip;
     this.port = data.port;
     this.address = `${data.ip}:${data.port}`;

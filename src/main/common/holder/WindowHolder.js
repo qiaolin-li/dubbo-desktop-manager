@@ -13,16 +13,6 @@ if(!isMac){
     setupTitlebar()
 }
 
-async function instanllDevTools(){
-    // Install Vue Devtools
-    if (!process.env.IS_TEST) {
-        try {
-          await installExtension(VUEJS_DEVTOOLS)
-        } catch (e) {
-          console.error('Vue Devtools failed to install:', e.toString())
-        }
-    }
-}
 
 let init = false;
 
@@ -47,7 +37,6 @@ async function createWindow(newWindow, url){
 class WindowHolder {
 
     constructor(){
-        instanllDevTools();
     }
 
     getWindow() {
@@ -87,6 +76,18 @@ class WindowHolder {
             attachTitlebarToWindow(this.window)
         }
     }
+
+    
+    async instanllDevTools(){
+    // Install Vue Devtools
+    if (!process.env.IS_TEST) {
+        try {
+          await installExtension(VUEJS_DEVTOOLS)
+        } catch (e) {
+          console.error('Vue Devtools failed to install:', e.toString())
+        }
+    }
+}
 }
 
 const windowHolder = new WindowHolder();
