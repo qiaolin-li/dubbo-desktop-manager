@@ -13,53 +13,28 @@
 </p>
 
 ## 一、功能简介
-- 支持多注册中心（ zookeeper、nacos）
-- 支持服务名（接口名）搜索
-- 可查看服务下所有的提供者和消费者
-- 可调用服务提供者的方法（Telnet + Java方式）
-- 生成提供者方法的默认参数（参考dubbo-admin）
-- 支持方法历史参数填充
-- 支持生成invoke 命令
+- 支持多注册中心（ zookeeper、nacos、dubbo-admin或dubbo-admin相同协议的服务）
+- 支持多数据源同时管理
+- 支持服务搜索、服务收藏、调用历史、服务提供者和消费者展示、 服务启用、禁用、配置编辑
+- 支持服务调用（目前已支持dubbo、http等协议，如有需要可提）、快捷生成`invoke`命令、支持方法填充（历史参数、默认参数）
 - 支持telnet直接连接到提供者
-- 服务启用、禁用、配置编辑
-
 
 
 ## 二、功能截图
-
-### 2.1、工具主界面
-
-![新增连接](./docs/images/mainPage.png)
-
-### 2.2、支持多注册中心
-
-![新增连接](./docs/images/newConnectPage.png)
-
-### 2.3、服务搜索&查看服务下提供者和消费者
-![](./docs/images/servicePage.png)
+![](./docs/images/20243333.gif)
+![](./docs/images/202411111.gif)
+![](./docs/images/20242222.gif)
 
 
-### 2.4、生成提供者方法的默认参数&调用提供者方法
-![](./docs/images/dubboInvokePage.png)
+## 三、如何自己构建DDM
+[>>> 点我获得构建DDM的教程](./docs/build.md)
 
+## 四、参考资料
+因为下面这些框架、博客才有这个工具的诞生
 
-### 2.5、直接telnet提供者
-![](./docs/images/dubboTelnetPage.png)
+首先感谢 MARKSZのBlog 大佬Electron系列博客，大而全，给了我很多参考的地方，也从里面CV了部分代码
+博客地址：https://molunerfinn.com/electron-vue-1/#Electron%E7%AE%80%E8%A6%81%E4%BB%8B%E7%BB%8D
 
-###  2.6、服务启用/禁用
+终端参考自：https://www.codeprj.com/blog/c9bde01.html
 
-![](./docs/images/serviceEnable.png)
-
-![](./docs/images/serviceDisable.png)
-
-### 2.7、编辑服务配置
-
-![](./docs/images/editConfigurationPage.png)
-
-
-
-## #、其他
-
-1. [如何自己构建DDM](./docs/build.md)
-2. [参考资料](./docs/reference.md)
-
+分隔栏参考自：https://github.com/PanJiaChen/vue-split-pane

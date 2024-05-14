@@ -201,9 +201,6 @@ export default {
 
 .collectContainer {
   height: 100%;
-}
-
-.collectGroupContainer {
   display: flex;
   flex-direction: column;
   white-space: nowrap;
