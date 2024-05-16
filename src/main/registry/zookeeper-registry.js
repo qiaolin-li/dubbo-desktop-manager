@@ -4,6 +4,7 @@ import urlUtils from "@/main/common/utils/urlUtils.js";
 import i18n from '@/main/common/i18n'
 import configuration from '@/main/common/utils/Configuration';
 import zkClientUtils from "./zookeeper/zkClientUtils";
+import paramGenerator from "@/main/dubbo/generator/param/index.js";
 
 const PRIVDER_PREFIX = "/dubbo";
 
@@ -44,6 +45,29 @@ async function getProviderList(serviceName, registryConfig) {
           providerInfo.disabled = true;
           providerInfo.disabledType = "service";
         }
+
+        const metadata = await getMetaData(providerInfo, registryConfig);
+        const methodList = [];
+        if(metadata){
+          providerInfo.metadata = metadata;
+          metadata.methods.forEach(method => {
+            methodList.push({
+              ...method,
+              defaultParameter: JSON.stringify(paramGenerator.generateParam(metadata, method.name), null, 2) || "[]",
+            });
+          })
+        } else {
+          providerInfo.methods.forEach(method => {
+            methodList.push({
+              name: method,
+              parameterTypes: null,
+              defaultParameter: "[]",
+              returnType: null
+            });
+          });
+        }
+        providerInfo.methods = methodList;
+
         array.push(providerInfo);
       }
 
@@ -85,7 +109,10 @@ async function getMetaData(providerInfo, registryConfig) {
   return new Promise((resolve, reject) => {
     zk.getData(path, async function (error, data) {
       if (error) {
-        reject(new Error(i18n.t("connect.exportService.zookeeper.getMetaData.error", { e: error})));
+        if(error.code !== -101){
+          reject(new Error(i18n.t("connect.exportService.zookeeper.getMetaData.error", { e: error})));
+        }
+        resolve(null);
         return;
       }
 
@@ -215,6 +242,7 @@ function parseProvderInfo(data) {
   let urlData = urlUtils.parseURL(content);
   return new common.ProviderInfo({
     application: urlData.params.application,
+    protocol: urlData.protocol,
     ip: urlData.host,
     port: urlData.port,
     serviceName: urlData.params.interface,
@@ -257,7 +285,6 @@ function parseConsumerInfo(data) {
 export default {
   getServiceList,
   getProviderList,
-  getMetaData,
   getConsumerList,
   getConfiguration,
   getCurrentConfiguration,

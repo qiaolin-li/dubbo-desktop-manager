@@ -6,6 +6,7 @@ function parseProvderInfo(data) {
     let urlData = urlUtils.parseURL(`dubbo://${data.address}/?${data.parameters}`);
     return new common.ProviderInfo({
         application: data.application,
+        protocol: urlData.protocol,
         ip: urlData.host,
         port: urlData.port,
         serviceName: data.service,
@@ -23,7 +24,7 @@ function parseProvderInfo(data) {
 
 
 function parseConsumerInfo(data) {
-    let urlData = urlUtils.parseURL(`dubbo://${data.address}:8080/?${data.parameters}`);
+    let urlData = urlUtils.parseURL(`${data.url}?${data.parameters}`);
     let methods = urlData.params.methods || "";
     return new common.ConsumerInfo({
       ip: data.address,

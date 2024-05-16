@@ -1,29 +1,24 @@
 import i18n from '@/renderer/common/i18n'
-import { ipcRenderer } from 'electron'
+import {
+    ipcRenderer
+} from 'electron'
 
-export default [{
-        label: "调用",
-        icon: "el-icon-aim",
-        componentName: "registryList",
-    },
-    {
-        label: "历史",
-        icon: "el-icon-tickets",
-        componentName: "historyList",
-    },
-    {
-        label: "设置",
-        icon: "el-icon-setting",
-        ready(self){
-            ipcRenderer.on('openSettingsTabEvent', (event) => {
-                this.click(self);
-            });
+export default {
+    topMenu: [
+        {
+            label: i18n.t("menu.datasource"),
+            icon: "el-icon-house",
+            componentName: "registryList",
         },
-        click(self) {
-            self.addTab({
-                title: i18n.t('menu.settings'),
-                componentName: 'settings',
-            });
+    ],
+    bottomMenu: [
+        {
+            label: i18n.t("menu.settings"),
+            icon: "el-icon-setting",
+            componentName: "settings",
+            ready(mananger, self) {
+                ipcRenderer.on('openSettingsTabEvent', () => mananger.switchMenu(self));
+            }
         },
-    },
-]
+    ]
+}

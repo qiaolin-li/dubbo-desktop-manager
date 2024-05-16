@@ -52,7 +52,7 @@ export default {
 <style>
 .welcomeContainer {
   background-color: #fff;
-  height: 100vh;
+  height: 100%;
   overflow-y: auto;
   overflow-y: auto;
   border-radius: 5px;

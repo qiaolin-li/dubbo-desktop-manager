@@ -36,6 +36,11 @@
         },
         required: true
       },
+      // 当小于minPercent时，是否折叠
+      fold: {
+        type: Boolean,
+        default: true
+      }
     },
     computed: {
       userSelect() {
@@ -113,7 +118,7 @@
           if (percent > this.minPercent && percent < 100 - this.minPercent) {
             this.percent = percent
           } else if(percent < this.minPercent){
-            this.percent = 0;
+            this.percent = this.fold ? 0 : this.minPercent;
           }
 
           this.$emit('resize', this.percent)

@@ -5,7 +5,8 @@ import Constant      from '@/main/common/Constant.js'
 import logger        from '@/main/common/logger';
 import template      from '@/main/menuList.js';
 import apiExportor   from '@/main/api/index.js'
-
+import appConfig from "@/main/common/config/appConfig.js";
+import pkg from '../../package.json'
 
 
 // Scheme must be registered before the app is ready
@@ -20,7 +21,7 @@ app.allowRendererProcessReuse = true;
 Menu.setApplicationMenu(Menu.buildFromTemplate(template));
 app.setAboutPanelOptions({
   applicationName: "DDM",
-  applicationVersion: "1.0.0",
+  applicationVersion: pkg.version,
   version:"2022.02.22",
   website :"https://github.com/qiaolin-li/dubbo-desktop-manager",
   copyright:"Copyright © 2021-2099 QIAOLIN. All rights reserved."
@@ -51,7 +52,12 @@ app.on('ready', async () => {
  
   updateChecker();
   
+  if(!appConfig.hasProperty("javaHome")){
+    appConfig.setProperty("javaHome", process.env.JAVA_HOME)
+  }
+
   windowHolder.createMainWindow()
+  windowHolder.instanllDevTools()
 
   // 统计时需要
   const xxx_filter = {

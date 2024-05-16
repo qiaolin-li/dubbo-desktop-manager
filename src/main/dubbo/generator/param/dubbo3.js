@@ -76,7 +76,7 @@ function generateMapType(typeMap, typeInfo) {
 
     // 解析key与value
     let keyType = type.substring(keyStartOffset + 1, keyEndOffset);
-    let valueType = type.substring(valueStartOffset, valueEndOffset);
+    let valueType = type.substring(valueStartOffset + 1, valueEndOffset);
 
     // 可能会有Map的key里面放对象，但这也没有办法了...
     let data = {};

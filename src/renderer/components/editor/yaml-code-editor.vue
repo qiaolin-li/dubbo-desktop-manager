@@ -218,7 +218,7 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
 .autocomplete-div {
   display: inline-block;
   width: 100%;

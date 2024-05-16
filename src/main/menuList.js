@@ -108,9 +108,21 @@ const template = [
     role: 'help',
     submenu: [
       {
-        label: 'Learn More',
+        label: 'GitHub',
         click: async () => {
           shell.openExternal("https://github.com/qiaolin-li/dubbo-desktop-manager")
+        }
+      }, 
+      {
+        label: i18n.t("menu.reportBug"),
+        click: async () => {
+          shell.openExternal("https://github.com/qiaolin-li/dubbo-desktop-manager/issues/new")
+        }
+      }, 
+      {
+        label: 'Gitee',
+        click: async () => {
+          shell.openExternal("https://gitee.com/qiaolin/dubbo-desktop-manager")
         }
       }
     ]

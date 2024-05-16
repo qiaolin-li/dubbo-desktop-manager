@@ -1,6 +1,13 @@
 export default {
     code: "en-US",
     name: "English",
+    hint: "Hint",
+    confirm: "Confirm",
+    cancel: "Cancel",
+    expand: "expand",
+    collapse: "collapse",
+    count: "Count",  
+    refresh : "refresh",
     version : {
         message: "Discover a new version {latest}\n{releaseBody}",
         simpleMessage : "Find a new version {latest} with many new features. Do you want to download the latest version?",
@@ -10,6 +17,8 @@ export default {
         no : "no"
     },
     base: {
+        modify: "Modify",
+        delete: "Delete",
         confirm: "confirm",
         cancel: "cancel",
         close: "close",
@@ -26,7 +35,11 @@ export default {
     },
     menu: {
         addConnect: "New Connection",
-        settings: "Settings"
+        datasource: "datasource",
+        settings: "Settings",
+        reportBug: "report bug",
+        myCollection: "My Collection",
+        invokeHistory: "Invoke History",
     },
     welcome: {
         productName: "DUBBO DESKTOP MANAGER",
@@ -52,10 +65,12 @@ export default {
     },
     editor : {
         copy : "copy",
-        copySuccess : "Copy success"
+        copySuccess : "Copy success",
+        collectSuccess : "Successful collection"
     },
     connect: {
         addConnect: "New Connection",
+        modifyConnect: "Modify Connection",
         name: "name",
         address: "address",
         sessionTimeout: "timeout",
@@ -72,11 +87,12 @@ export default {
             inputConnectionAddress: "Please enter the link address",
         },
         createSuccess:"Adding a connection succeeded!",
+        open: "Open Datasource",
         updateSuccess:"Succeeded in modifying the connection!",
         searchContent: "search content",
         refreshSuccess: "Refreshing the service list is complete",
         refreshError: "Failed to refresh the service list! The reason: {e}",
-        confirmDeleteConnect: "This operation will permanently delete the changed link. Do you want to continue?",
+        confirmDeleteConnect: "This action will permanently delete the link. Do you want to continue?",
         exportService : {
             zookeeper : {
                 getServiceList : {
@@ -114,12 +130,22 @@ export default {
             }
         }
     },
+    collect: {
+        collect: "collect",
+        open: "open",
+        copyInterfaceName: "Copy interface name",
+        cancel: "cancel collection",
+        newGroup: "New Group",
+        inputGroupName: "Please enter a new group",
+        defaultGroup: "Default Group",
+    },
     dubbo: {
         serviceTab: {
             providerList: "Provider List",
             consumerList: "Consumer List",
         },
         providePage: {
+            protocol: "protocol",
             address: "address",
             application: "application",
             version: "version",
@@ -167,13 +193,15 @@ export default {
             operate: "operate",
             call: "call",
             calling: "calling",
+            historyParam: "History Parameter",
             generateParam: "Generation Parameter",
             generateCommand: "Generation Command",
+            requestParamType: "Request Parameter Type",
             requestParam: "Request Parameter",
             requestParamStrategyTitle: "Parameter generation strategy",
             paramGenerateStrategyDesc: "The history argument of the last successful call is used first, and if not, an attempt is made to generate the argument",
             format: "format",
-            responseInfo: "Response Info",
+            responseInfo: "Response",
             historyInvokeParamList: "History call",
             callParamError: "The request parameter format is incorrect",
             callDubboServiceSuccess: "Calling the Dubbo interface succeeded.",
@@ -185,6 +213,10 @@ export default {
             connectProviderError: "Connecting to the provider server failed!",
             notFoundJDK:"If you need to use the Java caller, install the JDK first",
             callDubboAdminError: "Failed to call dubco-admin, {info}",
+            unselectedHistory:"No history parameter is selected",
+            notFoundMatedata:"Metadata not found, method parameter type cannot be obtained, please add",
+        },
+        invokeHistory: {
         },
         telnetTerminal: {
             connecting: "connecting {ip} {port}",

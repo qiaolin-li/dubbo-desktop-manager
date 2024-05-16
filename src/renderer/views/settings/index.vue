@@ -13,8 +13,14 @@
     </el-select>
     <br />
     <br />
+    <br />
     {{$t('settings.invokerSettings.invokerTypeTips')}}
-
+    <div style="margin-top: 15px;">
+      <el-input placeholder="请选择JAVA_HOME位置" v-model="javaHome" class="input-with-select">
+        <template slot="prepend">JAVA_HOME：</template>
+        <el-button slot="append" icon="el-icon-search" @click="selectJavaHomePath"></el-button>
+      </el-input>
+    </div>
     <el-divider content-position="left"></el-divider>
 
     <el-button @click="saveConfig">{{$t('settings.apply')}}</el-button>
@@ -23,14 +29,17 @@
 
 <script>
 
-import i18n      from '@/renderer/common/i18n'
+import i18n from '@/renderer/common/i18n'
 import appConfig from "@/renderer/api/appConfig.js";
+const remote = require("@electron/remote");
+
 export default {
   data() {
     return {
       selectMessage: "",
       messages: [],
       invokerType: "telnet",
+      javaHome: "",
       invokerTypes: [
         {
           code: "telnet",
@@ -46,13 +55,25 @@ export default {
   async created() {
     this.selectMessage = await appConfig.getProperty("systemLocale");
     this.messages = i18n.messages;
-    this.invokerType =  await appConfig.getProperty("invokerType") || "telnet";
+    this.invokerType = await appConfig.getProperty("invokerType") || "telnet";
+    this.javaHome = await appConfig.getProperty("javaHome");
   },
   methods: {
+    async selectJavaHomePath() {
+      // 打开文件夹选择框
+      const result = await remote.dialog.showOpenDialog({
+        defaultPath: this.javaHome,
+        properties: ['openDirectory']
+      });
+      if (!result.canceled) {
+        this.javaHome = result.filePaths[0];
+      }
+    },
     async saveConfig() {
       i18n.locale = this.selectMessage;
-       appConfig.setProperty("systemLocale", this.selectMessage);
-       appConfig.setProperty("invokerType", this.invokerType);
+      appConfig.setProperty("systemLocale", this.selectMessage);
+      appConfig.setProperty("invokerType", this.invokerType);
+      appConfig.setProperty("javaHome", this.javaHome);
     }
   }
 
@@ -61,7 +82,6 @@ export default {
 
 <style>
 .settingsContainer {
-  height: 100vh;
   padding-left: 15px;
   background-color: white;
   border-radius: 5px;

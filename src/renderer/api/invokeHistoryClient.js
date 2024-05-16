@@ -1,10 +1,13 @@
+/* eslint-disable no-unused-vars */
 import consumer from './Consumer';
 
 class InvokeHistoryManager {
 
-     findList(serviceName, method, page, size) { }
+     findLastRecord(registryCenterId, serviceName, method) {}
 
-     findAllPage(keyword, page, size){}
+     findList(registryCenterId, serviceName, method, page, size) { }
+
+     findAllPage(registryCenterId, keyword, page, size){}
 }
 
 export default consumer.wrapper(new InvokeHistoryManager(), "invokeHistoryRecord");

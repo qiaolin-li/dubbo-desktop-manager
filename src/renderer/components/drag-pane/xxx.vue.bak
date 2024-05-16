@@ -1,0 +1,160 @@
+<template>
+  <div class="panel-container">
+    <div class="sub-panel" :style="{ flex: collapsed0 ? `0 0 0px` : '' }" >
+      <div class="panel-header" @click="togglePanel(0)">
+        <i class="el-icon-arrow-right" v-if="collapsed0"></i>
+        <i class="el-icon-arrow-down" v-else></i>
+        {{ title }}0000
+      </div>
+      <div v-show="!collapsed0"  class="main-panel"  > <!-- 主面板内容 --> </div>
+  	</div>
+    
+    <div class="sub-panel"  :style="{ flex: `0 0 ${collapsed1 ? 0 : mainPanelHeight1}px` }" >
+      <div v-show="!collapsed1" class="resizer" @mousedown="startResize($event, 1)"></div>
+      <div class="panel-header" @click="togglePanel(1)">
+        <i class="el-icon-arrow-right" v-if="collapsed1"></i>
+        <i class="el-icon-arrow-down" v-else></i>
+        {{ title }}1111
+      </div>
+
+      <div v-show="!collapsed1"  class="main-panel" > <!-- 主面板内容 --> </div>
+     </div>
+    
+    <div class="sub-panel"  :style="{ flex: `0 0 ${collapsed2 ? 0 : mainPanelHeight2}px` }" >
+      <div  v-show="!collapsed2" class="resizer" @mousedown="startResize($event, 2)"></div>
+      <div class="panel-header" @click="togglePanel(2)">
+        <i class="el-icon-arrow-right" v-if="collapsed2"></i>
+        <i class="el-icon-arrow-down" v-else></i>
+        {{ title }}2222
+      </div>
+
+      <div v-show="!collapsed2"  class="main-panel">  <!-- 主面板内容 --> </div>
+    </div>
+  </div>
+</template>
+
+<script>
+// collapse 展开折叠
+import CollapseTransition from 'element-ui/lib/transitions/collapse-transition';
+
+
+/**
+ * 未来扩展成可随意放置很多面板的组件
+ */
+
+
+export default {
+  name: 'DragPane',
+  components: {
+    CollapseTransition
+  },
+  data() {
+    return {
+      mainPanelHeight1: 200,
+      mainPanelHeight2: 200,
+       
+      index: 0,
+      isResizing: false,
+      startY: 0,
+      collapsed0: false,
+      collapsed1: true,
+      collapsed2: true,
+    };
+  },
+  props: {
+    title: {
+      type: String,
+      default: 'Panel Title',
+    },
+  },
+  methods: {
+    startResize(e, index) {
+      this.index = index;
+      this.isResizing = true;
+      this.startY = e.clientY;
+      document.addEventListener('mousemove', this.resize);
+      document.addEventListener('mouseup', this.stopResize);
+    },
+    resize(e) {
+      if (this.isResizing) {
+        const deltaY = e.clientY - this.startY;
+         
+        if(this.index === 1){
+            this.mainPanelHeight1 -= deltaY;
+        }
+        if(this.index === 2){
+          this.mainPanelHeight1 += deltaY;
+          this.mainPanelHeight2 -= deltaY;
+        }
+        // this.subPanelHeight -= deltaY;
+        this.startY = e.clientY;
+      }
+    },
+    stopResize() {
+      this.isResizing = false;
+      document.removeEventListener('mousemove', this.resize);
+      document.removeEventListener('mouseup', this.stopResize);
+    },
+    togglePanel(index) {
+       if(index === 0){
+             this.collapsed0 = !this.collapsed0;
+        }
+        if(index === 1){
+             this.collapsed1 = !this.collapsed1;
+        }
+      if(index === 2){
+        this.collapsed2 = !this.collapsed2;
+        }
+    },
+  },
+};
+</script>
+
+<style>
+.panel-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  justify-content:flex-start;
+}
+
+.panel-header {
+  cursor: ns-resize;
+  background-color: #e0e0e0;
+  padding-left: 10px;
+  cursor: pointer; 
+  font-weight: bold;
+  font-size: 12px;
+}
+
+.panel-content {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.main-panel {
+  background-color: #d5ebe1;
+  overflow: auto;
+}
+
+.sub-panel {
+  background-color: #f5f5f5;
+  height:100%
+}
+
+.resizer {
+  border: 1px solid #dcdee2;
+  background-color: #f8f8f9;
+  width: 100%;
+  height: 2px;
+  cursor: ns-resize;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.resizer :hover {
+  background-color: red;
+  border-color: red;
+}  

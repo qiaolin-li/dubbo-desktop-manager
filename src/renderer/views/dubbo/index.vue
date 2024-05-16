@@ -60,7 +60,7 @@ export default {
 
 <style >
 .dubbo-list-main-container {
-  height: 100vh;
+  height: 100%;
   background-color: white;
 }
 </style>

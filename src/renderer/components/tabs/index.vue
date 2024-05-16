@@ -8,19 +8,21 @@
       </el-tabs>
     </div>
     <div class="mytab-container-view" v-show="tabList.length > 0">
-      <div v-for="tab in tabList" :key="tab.id">
-        <component v-bind="componentProps(tab)" v-show="currentTabId == tab.id" />
-      </div>
+      <component v-bind="componentProps(tab)" v-for="tab in tabList" :key="tab.id" v-show="currentTabId == tab.id" />
     </div>
     <welcome v-if="tabList.length == 0" />
   </div>
 </template>
 
 <script>
+import welcome from '@/renderer/components/welcome.vue';
 const remote = require("@electron/remote");
 import Sortable from "sortablejs";
 
 export default {
+  components: {
+    welcome
+  },
   props: {
     navScrollClassList: {
       type: String,
@@ -99,7 +101,6 @@ export default {
           click: async () => {
             this.removeOtherTab(currentTab)
           }
-
         },
         {
           label: this.$t('tab.closeAll'),
@@ -240,27 +241,32 @@ export default {
 <style >
 .mytab-container {
   margin: 0px;
-  background-color: rgb(236, 236, 237);
-  height: 100vh;
+  background-color: white;
+  height: 100%;
   overflow-y: hidden;
   display: flex;
   flex-direction: column;
 }
 
 
-.mytab-container-title {
-  height: 40px;
-}
-
 .mytab-container-view {
   background-color: white;
   overflow-y: auto;
+  height: 100%;
+}
+
+.mytab-container .el-tabs__header {
+  border-bottom: 0px !important;
 }
 
 .mytab-container .el-tabs__item {
   color: #303133 !important;
-  border: 1px solid rgb(236, 236, 237) !important ;
- }
+  border-left: 1px solid rgb(236, 236, 237) !important ;
+  border-right: 1px solid rgb(236, 236, 237) !important ;
+  border-top: 1px solid rgb(236, 236, 237) !important ;
+  line-height: 36px !important;
+  height: 36px !important;
+}
 
 .mytab-container .el-tabs__nav-scroll {
   overflow: auto !important;
@@ -277,5 +283,7 @@ export default {
 .el-tabs__content {
   display: none;
 }
+
+
 
 </style>

@@ -19,13 +19,13 @@ async function getToken(registryConfig) {
 }
 
 
-async function invokeMethod(registryConfig, provder, metadata, method, code) {
+async function invokeMethod(registryConfig, provder, methodInfo, code) {
     const startTime = new Date().getTime();
 
     const data = {
         service: provder.serviceName,
-        method: method,
-        parameterTypes: getMethodParameterTypes(metadata, method),
+        method: methodInfo.name,
+        parameterTypes: getMethodParameterTypes(methodInfo),
         params: JSON.parse(code)
     }
 
@@ -47,16 +47,13 @@ async function invokeMethod(registryConfig, provder, metadata, method, code) {
         const message = i18n.t("dubbo.invokePage.callDubboAdminError", {  info: error.response.data.message });
         return new common.InvokeResult(message, new Date().getTime() - startTime);
     }
-   
 }
 
 
-function getMethodParameterTypes(metadata, method) {
-    let methodInfo = metadata.methods.find(m => m.name == method);
+function getMethodParameterTypes(methodInfo) {
     return methodInfo.parameterTypes.map(paramterType => {
         if (paramterType.indexOf("<") >= 0) {
             return paramterType.substring(0, paramterType.indexOf("<"));
-
         }
         return paramterType;
     });

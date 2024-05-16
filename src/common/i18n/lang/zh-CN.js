@@ -1,6 +1,13 @@
 export default {
     code: "zh-CN",
     name: "中文",
+    hint: "提示",
+    confirm: "确认",
+    cancel: "取消",
+    expand: "展开",
+    collapse: "收起",
+    count: "总数",  
+    refresh : "刷新",
     version : {
         message: "发现新版本{latest}\n{releaseBody}",
         simpleMessage : "发现新版本{latest}，更新了很多功能，是否去下载最新的版本？",
@@ -10,6 +17,8 @@ export default {
         no : "否"
     },
     base: {
+        modify: "修改",
+        delete: "删除",
         confirm: "确认",
         cancel: "取消",
         close: "关闭",
@@ -26,7 +35,11 @@ export default {
     },
     menu: {
         addConnect: "新增连接",
-        settings: "设置"
+        datasource: "数据源",
+        settings: "设置",
+        reportBug: "上报问题",
+        myCollection: "我的收藏",
+        invokeHistory: "调用历史",
     },
     welcome: {
         productName: "Dubbo 桌面管理工具",
@@ -52,10 +65,12 @@ export default {
     },
     editor : {
         copy : "复制",
-        copySuccess : "复制成功"
+        copySuccess : "复制成功",
+        collectSuccess : "收藏成功"
     },
     connect: {
-        addConnect: "新增连接",
+        addConnect: "新建链接",
+        modifyConnect: "修改链接",
         name: "链接名称",
         address: "链接地址",
         sessionTimeout: "超时时间",
@@ -73,10 +88,11 @@ export default {
         },
         createSuccess:"新增连接成功!",
         updateSuccess:"修改连接成功!",
+        open: "打开数据源",
         searchContent: "搜一搜",
         refreshSuccess: "刷新服务列表完成",
         refreshError: "刷新服务列表失败！原因：{e}",
-        confirmDeleteConnect: "此操作将永久删除改链接, 是否继续?",
+        confirmDeleteConnect: "此操作将永久删除链接, 是否继续?",
         exportService : {
             zookeeper : {
                 getServiceList : {
@@ -114,12 +130,22 @@ export default {
             }
         }
     },
+    collect: {
+        collect: "收藏接口",
+        open: "打开",
+        copyInterfaceName: "复制接口名",
+        cancel: "取消收藏",
+        newGroup: "新分组",
+        inputGroupName: "请输入新分组",
+        defaultGroup: "默认分组",
+    },
     dubbo: {
         serviceTab: {
             providerList: "提供者列表",
             consumerList: "消费者列表",
         },
         providePage: {
+            protocol: "协议",
             address: "地址",
             application: "所属应用",
             version: "版本号",
@@ -167,13 +193,15 @@ export default {
             operate: "操作",
             call: "调用",
             calling: "调用中",
+            historyParam: "历史参数",
             generateParam: "生成参数",
             generateCommand: "生成命令",
+            requestParamType: "请求参数类型",
             requestParam: "请求参数",
             requestParamStrategyTitle: "参数生成策略",
             paramGenerateStrategyDesc: "首先会使用上次调用成功的历史参数，如果没有，会尝试生成参数",
             format: "格式化",
-            responseInfo: "响应参数",
+            responseInfo: "响应",
             historyInvokeParamList: "历史调用参数",
             callParamError: "请求参数格式有误",
             callDubboServiceSuccess: "调用dubbo接口成功",
@@ -185,6 +213,10 @@ export default {
             connectProviderError: "连接提供者服务器失败！",
             notFoundJDK:"如果需要使用Java调用器，请先安装JDK",
             callDubboAdminError: "调用dubbo-admin失败, {info}",
+            unselectedHistory:"未选择历史参数",
+            notFoundMatedata:"未找到元数据，无法获取到方法参数类型，请补充",
+        },
+        invokeHistory: {
         },
         telnetTerminal: {
             connecting: "正在连接 {ip} {port}",

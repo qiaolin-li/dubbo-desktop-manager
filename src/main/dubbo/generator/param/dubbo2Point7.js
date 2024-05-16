@@ -138,16 +138,20 @@ function generateComplexType(types, type) {
         return {};
     }
 
+    // 枚举类型
+    if(td.typeBuilderName === 'org.apache.dubbo.metadata.definition.builder.EnumTypeBuilder'){
+        return null;
+    }
+
     if (td.properties == null || td.properties.length == 0) {
         return generateData(td.type)
-    } else {
-        let data = {};
-        for (let property in td.properties) {
-            data[property] = generateObject(types, td.properties[property].type);
-        }
-
-        return data;
+    } 
+ 
+    let data = {};
+    for (let property in td.properties) {
+        data[property] = generateObject(types, td.properties[property].type);
     }
+    return data;
 }
 
 function findTypeDefinition(types, type) {

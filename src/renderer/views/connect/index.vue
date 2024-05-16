@@ -1,20 +1,29 @@
 <template>
-  <div id="connectDiv">
-    <div class="addConnectDialog">
-      <span class="btn-plus" @click="openAddConnectDialog()">
-        <i class="el-icon-plus"></i>新建链接</span>
-    </div>
-    <el-divider class="my-divider"></el-divider>
-    <connectList ref="connectList" @clickServiceInfo="clickServiceInfo" @editConnect="openAddConnectDialog"></connectList>
+  <split-pane @resize="resize" split="vertical" :min-percent="15" :default-percent="20">
+      <template slot="paneL">
+          <div class="left-container">
+            <div id="connectDiv">
+              <div class="addConnectDialog dragRegion">
+                <span class="btn-plus" @click="openAddConnectDialog()">
+                  <i class="el-icon-plus"></i>{{` ${$t('connect.addConnect')}`}}</span>
+              </div>
+              <el-divider class="my-divider"></el-divider>
+              <connectList ref="connectList" :mainPanel="mainPanel" @editConnect="openAddConnectDialog"></connectList>
 
-    <el-dialog :title="$t('connect.addConnect')" width="40%" :visible.sync="dialogVisible" :close-on-click-modal="false">
-      <addConnect @saveSuccess="saveConnectSuccess" :id="currentConnectId" :key="addConnectKey" />
-    </el-dialog>
-  </div>
-
+              <el-dialog :title="currentConnectId ? $t('connect.modifyConnect') : $t('connect.addConnect')" width="40%" :visible.sync="dialogVisible" :close-on-click-modal="false">
+                <addConnect @saveSuccess="saveConnectSuccess" :id="currentConnectId" :key="addConnectKey" />
+              </el-dialog>
+            </div>
+          </div>
+      </template>
+      <template slot="paneR">
+          <myTabList ref="myTabs" navScrollClassList="dragRegion" tabListClassList="noDragRegion"></myTabList>
+      </template>
+  </split-pane>
 </template>
 
 <script>
+import myTabList from '@/renderer/components/tabs/index.vue';
 import addConnect from "./add/add-connect.vue";
 import connectList from "./connect-list.vue";
 import { ipcRenderer } from 'electron'
@@ -22,23 +31,22 @@ const remote = require("@electron/remote");
 
 export default {
   components: {
+    myTabList,
     addConnect,
     connectList
   },
   props: {
-    tab: Object,
+    mainPanel: Object,
   },  
   data() {
     return {
       addConnectKey: 1,
       dialogVisible: false,
-      currentConnectId: "",
+      currentConnectId: null,
     };
   },
   created() {
-    ipcRenderer.on('openAddConnectDialogEvent', (event) => {
-      this.openAddConnectDialog();
-    });
+    ipcRenderer.on('openAddConnectDialogEvent', () =>  this.openAddConnectDialog());
   },
   mounted() {
     let connectDiv = document.getElementById("connectDiv");
@@ -68,23 +76,11 @@ export default {
     });
   },
   methods: {
+    resize() {},
     // eslint-disable-next-line no-unused-vars
     saveConnectSuccess(data) {
       this.$refs.connectList.findConnectList();
       this.dialogVisible = false;
-    },
-    clickServiceInfo(data) {
-      let { serviceName, interfaceName, registryCenterId } = data;
-      this.tab.addTab({
-        title: interfaceName.split(".")[interfaceName.split(".").length - 1],
-        fullTitle: interfaceName,
-        componentName: 'dubboPage',
-        params: {
-          registryCenterId,
-          interfaceName,
-          uniqueServiceName: serviceName
-        }
-      });
     },
     openAddConnectDialog(id) {
       this.addConnectKey++;
@@ -108,7 +104,6 @@ export default {
 
 .addConnectDialog {
   margin: 6px 10px;
-  -webkit-app-region: drag;
 }
 
 .btn-plus {

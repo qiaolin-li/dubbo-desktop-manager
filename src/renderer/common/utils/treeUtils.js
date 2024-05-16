@@ -1,4 +1,7 @@
-function Node(label, serviceName = null) {
+import lodash from 'lodash';
+
+function Node(id, label, serviceName = null) {
+    this.id = id;
     this.label = label;
     this.serviceName = serviceName;
     this.childrenMap = new Map();
@@ -12,49 +15,17 @@ Node.prototype.addNode = function (serviceName, packages, index = 0) {
     }
 
     let pkg = packages[index];
-    // 最后一个目录，是接口名
-    // if (packages.length - 1 == index) {
-    //     let node = new Node(pkg, serviceName);
-    //     this.childrenMap.set(pkg, node);
-    //     this.children.push(node);
-    //     return;
-    // }
-
     // // 目录不够，不合并
     // if (packages.length <= index + 3) {
     let node = this.childrenMap.get(pkg);
     if (!node) {
-        node = new Node(pkg, serviceName);
+        node = new Node(lodash.join(lodash.slice(packages, 0, index + 1), "."), pkg, serviceName);
         this.childrenMap.set(pkg, node);
         this.children.push(node);
     }
 
     node.addNode(serviceName, packages, index + 1);
-    return;
-    // }
-
-    // let newPkg = "";
-    // for (let i = index; i < index + 3; i++) {
-    //     newPkg += packages[i];
-    //     let topNode = this.childrenMap.get(newPkg);
-    //     if (topNode) {
-    //         topNode.addNode(serviceName, packages, i);
-    //         return;
-    //     }
-
-    //     if (i < index + 3 - 1) {
-    //         newPkg += ".";
-    //     }
-    // }
-
-    // // 如果都没命中，那么创建一个
-    // let node = new Node(newPkg);
-    // this.childrenMap.set(newPkg, node);
-    // this.children.push(node);
-    // node.addNode(serviceName, packages, index + 3);
 };
-
-
 
 function createTree(filtedInterface, split) {
 
@@ -92,6 +63,7 @@ function mergeOptimization(children) {
         mergeOptimization(data.children);
 
         if (data.children.length == 1) {
+            data.id = data.children[0].id;
             data.label = data.label + "." + data.children[0].label;
             data.serviceName = data.children[0].serviceName;
             data.children = data.children[0].children;

@@ -8,12 +8,12 @@ import JSONFormater from "@/main/common/utils/JSONFormater";
 /**
  * 调用Dubbo接口
  * @param {Provider} provder 提供者信息
- * @param {*} method 方法名
+ * @param {*} methodInfo 方法名
  * @param {*} code 参数信息
  * @returns 
  */
-function invokeMethod( provder,metadata,  method, code) {
-    const telnetPort = metadata.parameters["qos.port"] || provder.port;
+function invokeMethod( provder, methodInfo, code) {
+    const telnetPort = provder.qosPort || provder.port;
     let {
         ip,
         serviceName
@@ -70,7 +70,7 @@ function invokeMethod( provder,metadata,  method, code) {
 
         tSocket.write(common.buildInvokeCommand({
             serviceName,
-            method,
+            method: methodInfo.name,
             params
         }));
     });
@@ -88,7 +88,7 @@ function invokeMethod( provder,metadata,  method, code) {
     // 调用成功
     if (errorMessage.length == 4) {
         let data = errorMessage[1].substring(8);
-        let elapsedTime = errorMessage[2].substring(9)
+        let elapsedTime = parseInt(errorMessage[2].substring(9, errorMessage[2].length - 4));
         try {
             return new common.InvokeResult(JSONFormater(data), elapsedTime);
         } catch (e) {

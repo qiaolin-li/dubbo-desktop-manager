@@ -1,0 +1,12 @@
+
+.dragRegion {
+    -webkit-app-region: drag;
+}
+
+.noDragRegion {
+    -webkit-app-region: no-drag;
+}
+
+.menu-aside {
+    padding-top: 20px;
+}

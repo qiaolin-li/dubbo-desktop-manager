@@ -8,14 +8,12 @@ import Splitpane from '@/renderer/components/split-pane/index.vue'
 
 
 import registryList from '@/renderer/views/connect/index.vue';
-import historyList from '@/renderer/views/history/index.vue';
 import dubboPage from '@/renderer/views/dubbo/index.vue';
-import welcome from '@/renderer/components/welcome.vue';
+import managePage from '@/renderer/views/manage.vue';
 import settings from '@/renderer/views/settings/index.vue';
 Vue.component('registryList', registryList);
-Vue.component('historyList', historyList);
 Vue.component('dubboPage', dubboPage);
-Vue.component('welcome', welcome);
+Vue.component('managePage', managePage);
 Vue.component('settings', settings);
 
 import dubboProviderList from "@/renderer/views/dubbo/dubbo-provider-list.vue";
@@ -29,7 +27,6 @@ Vue.component('dubboTelnet', dubboTelnet);
 Vue.component('dubboInvoke', dubboInvoke);
 Vue.component('dubboProviderConfiguration', dubboProviderConfiguration);
 
-
 import infiniteScroll from 'vue-infinite-scroll'
 Vue.use(infiniteScroll)
 
@@ -40,6 +37,8 @@ import i18n from '@/renderer/common/i18n'
 
 if(process.platform === 'win32'){
   import("./assets/style/windows.css")
+} else {
+  import("./assets/style/mac.css")
 }
 
 import moment from 'moment'

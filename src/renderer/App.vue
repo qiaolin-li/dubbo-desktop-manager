@@ -19,6 +19,7 @@ export default {
   -moz-osx-font-smoothing: grayscale;
 
   color: #2c3e50;
+  height: 100%;
 }
 
 #nav {
@@ -32,22 +33,5 @@ body {
   left: 0px;
   right: 0px;
 }
-
-
-.notSelect {
-  /* 不让用户选中 */
-  -webkit-touch-callout: none; /* iOS Safari */
-  -webkit-user-select: none; /* Chrome/Safari/Opera */
-  -khtml-user-select: none; /* Konqueror */
-  -moz-user-select: none; /* Firefox */
-  -ms-user-select: none; /* Internet Explorer/Edge */
-  user-select: none; /* Non-prefixed version, currently
-  not supported by any browser */
-}
-
-/* .el-tabs__item:focus.is-active.is-focus:not(:active) {
-	-webkit-box-shadow: none !important;
-	box-shadow: none !important;
-} */
 
 </style>

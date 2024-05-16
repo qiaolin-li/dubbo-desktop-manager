@@ -13,10 +13,19 @@ function ServiceInfo(name, serviceName, group){
 
 function ProviderInfo(data){
     this.application = data.application;
+    this.protocol = data.protocol;
     this.ip = data.ip;
     this.port = data.port;
     this.address = `${data.ip}:${data.port}`;
     this.serviceName = data.serviceName;
+    /**
+       "methods": [{
+            "name": "queryLimit",
+            "parameterTypes": ["indi.qiaolin.Request"],
+            "defaultParameter": "[]",
+            "returnType": "java.lang.String"
+        }],
+     */
     this.methods = data.methods;
     this.generic = data.generic;
     this.deprecated = data.deprecated;
@@ -28,6 +37,7 @@ function ProviderInfo(data){
     this.group = data.group;
     // 2.7x就是dubbo端口，3.0之后是指定的端口
     this.qosPort = data.qosPort || data.port;
+  
 }
 
 // consumer://10.255.189.77/com.indi.qiaolin.test.api.facade.TestFacade?

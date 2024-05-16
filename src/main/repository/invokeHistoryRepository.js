@@ -18,9 +18,29 @@ function save(invokeHistory) {
     return dbOperator.save(new InvokeHistory(invokeHistory));
 }
 
-function findList(serviceName, method, page, size) {
+
+function findLastRecord(registryCenterId, serviceName, method) {
+    serviceName = serviceName.indexOf(":") > -1 ? serviceName.split(":")[0] : serviceName;
+
     let queryParam = {
-        serviceName,
+        registryCenterId,
+        serviceName: serviceName,
+        method
+    };
+
+    let sortParam = {
+        createTime: -1
+    }
+
+    return dbOperator.findOne(queryParam, sortParam);
+}
+
+function findList(registryCenterId, serviceName, method, page, size) {
+    serviceName = serviceName.indexOf(":") > -1 ? serviceName.split(":")[0] : serviceName;
+
+    let queryParam = {
+        registryCenterId,
+        serviceName: serviceName,
         method
     };
 
@@ -35,10 +55,10 @@ function findList(serviceName, method, page, size) {
     return dbOperator.find(queryParam, sortParam, pageParam);
 }
 
-function findAllPage(keyword, page, size) {
+function findAllPage(registryCenterId, keyword, page, size) {
 
     let queryParam = {
-        ...(keyword ? { $or: [{ serviceName: keyword }, { method: 'keyword' }]} : {})
+        registryCenterId
     };
 
     let sortParam = {
@@ -54,6 +74,7 @@ function findAllPage(keyword, page, size) {
 
 let data = {
     save,
+    findLastRecord,
     findList,
     findAllPage,
     InvokeHistory,

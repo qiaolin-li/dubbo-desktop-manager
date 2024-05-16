@@ -1,15 +1,16 @@
 <template>
-  <div class="interfaceContainer" v-show="connectInfo.isShow">
+  <div class="interfaceContainer">
     <div class="searchTool">
-      <el-input v-model="searchKeyword" :placeholder="$t('connect.searchContent')" @input="searchKeywordChange($event)" size="mini"></el-input>
-      <span class="serviceSizeTool">{{this.connectInfo.serviceSize}}</span>
+      <el-input v-model="searchKeyword" :placeholder="$t('connect.searchContent')" @input="() => serviceList = optimizationTree()" size="mini"></el-input>
     </div>
 
     <!-- dubbo接口列表  -->
-    <el-tree class="notSelect" ref="tree" :data="serviceList" :props="defaultProps" node-key="label" :default-expanded-keys="defaultExpandIds" :highlight-current="true" :accordion="true" :expand-on-click-node="false" @node-click="handleNodeClick" @node-expand="handleNodeExpand" @node-collapse="handleNodeCollapse">
+    <el-tree class="notSelect interfaceTree" ref="tree" :data="serviceList" :props="defaultProps" node-key="id" :default-expanded-keys="defaultExpandIds"
+        :highlight-current="true" :accordion="true" :expand-on-click-node="false" @node-click="handleNodeClick" @node-expand="handleNodeExpand"
+        @node-collapse="handleNodeCollapse" @node-contextmenu="openContextMenu">
 
       <div class="custom-tree-icon" slot-scope="{ node, data }">
-        <i :class="['', data.children && data.children.length > 0  ? 'el-icon-folder' : 'test']"></i>
+        <i :class="['', data.children && data.children.length > 0  ? 'el-icon-folder' : 'interfaceIcon']"></i>
         <span>{{ data.label }}</span>
       </div>
 
@@ -19,7 +20,10 @@
 
 <script>
 import registry from "@/renderer/api/registryClient.js";
+import interfaceCollectClient from "@/renderer/api/interfaceCollectClient.js";
 import treeUtils from "@/renderer/common/utils/treeUtils.js";
+const remote = require("@electron/remote");
+import lodash from 'lodash';
 
 export default {
   components: {
@@ -42,30 +46,10 @@ export default {
   props: {
     connectInfo: Object,
   },
-  watch: {
-    "connectInfo.isShow": {
-      handler() {
-        this.show();
-      }
-    },
-    "connectInfo.refreshNum": {
-      handler() {
-        // 强行刷新
-        this.findInterfaceList();
-
-      }
-    }
+  mounted(){
+    this.findInterfaceList();
   },
   methods: {
-    show() {
-      // 已经初始化了
-      if (this.init) {
-        return;
-      }
-      this.init = true;
-      // 初始化
-      this.findInterfaceList();
-    },
     async findInterfaceList() {
       let list = await registry.getServiceList(this.connectInfo._id);
       for (let i = 0; i < list.length; i++) {
@@ -77,9 +61,6 @@ export default {
         type: "success",
         message: this.$t('connect.refreshSuccess'),
       });
-    },
-    searchKeywordChange() {
-      this.serviceList = this.optimizationTree();
     },
     handleNodeClick(serviceInfo) {
       // 不是接口
@@ -93,13 +74,96 @@ export default {
       };
       this.$emit("clickServiceInfo", data);
     },
-    optimizationTree() {
-      let keyword = "";
-      if (this.searchKeyword) {
-        keyword = this.searchKeyword.toLowerCase();
+    async openContextMenu(event, serviceInfo) {
+      const menuTemplate = [
+        ...(!serviceInfo.children || serviceInfo.children.length === 0 ? [{
+          label: this.$t('collect.open'),
+          click: async () => this.handleNodeClick(serviceInfo)
+        }] : []),
+        ...(serviceInfo.children && serviceInfo.children.length > 0 && !this.defaultExpandIds.find(item => item === serviceInfo.id) ? [{
+          label: this.$t('expand'),
+          click: async () => this.handleNodeExpand(serviceInfo)
+        }] : []),
+        ...(serviceInfo.children && serviceInfo.children.length > 0 && this.defaultExpandIds.find(item => item === serviceInfo.id) ? [{
+          label: this.$t('collapse'),
+          click: async () => this.handleNodeCollapse(serviceInfo)
+        }] : []),
+        { type: 'separator' },
+        ...(!serviceInfo.children || serviceInfo.children.length === 0 ? [{
+           label: this.$t('collect.copyInterfaceName'),
+          click: async () => {
+            navigator.clipboard.writeText(serviceInfo.serviceName)
+            this.$message({
+              type: "success",
+              message: this.$t('editor.copySuccess'),
+            });
+          }
+        }] : []),
+      ];
+
+      if(!serviceInfo.children || serviceInfo.children.length === 0 ) {
+        const collectMenuList = [];
+        const groupList = await interfaceCollectClient.findGroupList(this.connectInfo._id);
+        groupList.forEach(name => {
+          collectMenuList.push({
+            label: name,
+            click: async () => this.collectServiceToGroup(serviceInfo, name)
+          })
+        })
+    
+        collectMenuList.push({
+          label: this.$t('collect.newGroup'),
+          click: async () => {
+            this.$prompt(this.$t('collect.inputGroupName'), this.$t('hint'), {
+              confirmButtonText: this.$t('confirm'),
+              cancelButtonText:  this.$t('cancel')
+            }).then(({ value }) => {
+              this.collectServiceToGroup(serviceInfo, value);
+            });
+          }
+        })
+
+        collectMenuList.push({
+          label: this.$t('collect.defaultGroup'),
+          click: async () => this.collectServiceToGroup(serviceInfo)
+        })
+
+        menuTemplate.push({
+          label: this.$t('collect.collect'),
+          submenu: collectMenuList
+        });
       }
+
+      // 阻止默认行为
+      event.preventDefault();
+      // // 构建菜单项
+      const menu = remote.Menu.buildFromTemplate(menuTemplate);
+
+      // 弹出上下文菜单
+      menu.popup({
+        // 获取网页所属的窗口
+        window: remote.getCurrentWindow()
+      });
+    },
+    async collectServiceToGroup(serviceInfo, group = null) {
+      await interfaceCollectClient.save({
+        registryCenterId: this.connectInfo._id,
+        serviceName: serviceInfo.serviceName,
+        name: serviceInfo.id,
+        group: group
+      })
+
+      this.$message({
+        type: "success",
+        message: this.$t('editor.collectSuccess'),
+      });
+
+      this.$emit("collectServiceToGroup", serviceInfo, group);
+    },
+    optimizationTree() {
+      let keyword =  this.searchKeyword ?this.searchKeyword.toLowerCase() : "";
       let filtedInterface = this.allServiceList.filter((i) => this.match(i, keyword));
-      this.connectInfo.serviceSize = filtedInterface.length;
+      this.$emit("interfaceCountChange", filtedInterface.length);
       return treeUtils.createTree(filtedInterface, ".");
     },
     match(service, keyword) {
@@ -107,69 +171,66 @@ export default {
         return false;
       }
 
-      if (keyword) {
-        if (service.name.toLowerCase().indexOf(keyword) !== -1) {
-          return true;
-        }
-      } else {
+      if (!keyword) {
         return true;
       }
 
       // 未来还可能支持其他的过滤方式
-      return false;
+      return service.name.toLowerCase().indexOf(keyword) !== -1;
     },
     // 树节点展开
     handleNodeExpand(data) {
       // 保存当前展开的节点
-      let flag = false
-      this.defaultExpandIds.some(item => {
-        if (item === data.label) { // 判断当前节点是否存在， 存在不做处理
-          flag = true
-          return true
-        }
-      })
-      if (!flag) { // 不存在则存到数组里
-        this.defaultExpandIds.push(data.label)
+      // 不存在则存到数组里
+      if (!this.defaultExpandIds.find(item => item === data.id)) { 
+        this.defaultExpandIds.push(data.id)
       }
     },
     // 树节点关闭
     handleNodeCollapse(data) {
       // 删除当前关闭的节点
-      this.defaultExpandIds.some((item, i) => {
-        if (item === data.label) {
-          this.defaultExpandIds.splice(i, 1)
+      this.$refs.tree.store._getAllNodes().forEach(item => {
+        if(item.data.id === data.id){
+          item.expanded = false
         }
-      })
+      });
+      lodash.remove(this.defaultExpandIds, item =>  item === data.id);
       this.removeChildrenIds(data) // 这里主要针对多级树状结构，当关闭父节点时，递归删除父节点下的所有子节点
     },
 
     // 删除树子节点
     removeChildrenIds(data) {
-      const ts = this
-      if (data.children) {
-        data.children.forEach(function (item) {
-          const index = ts.defaultExpandIds.indexOf(item.label)
-          if (index > 0) {
-            ts.defaultExpandIds.splice(index, 1)
-          }
-          ts.removeChildrenIds(item)
-        })
+      if (!data.children) {
+        return;
       }
-
+      data.children.forEach((item) =>{
+        const index = this.defaultExpandIds.indexOf(item.id)
+        if (index > 0) {
+          this.defaultExpandIds.splice(index, 1)
+        }
+        this.removeChildrenIds(item)
+      })
     }
   },
 };
 </script>
 
 <style  >
+
+.interfaceContainer {
+  height: 100%;
+  min-width: max-content;
+  display: flex;
+  flex-direction: column;
+}
+
 .searchTool {
   display: flex;
 }
 
-.serviceSizeTool {
-  line-height: 40px;
-  width: 50px;
-  padding-left: 2px;
+.interfaceTree {
+  height: 100%;
+  overflow: auto;
 }
 
 .custom-tree-icon {
@@ -180,19 +241,6 @@ export default {
   margin-right: 5px;
   color: rgb(136, 241, 124);
   border-radius: 50%;
-}
-
-.test::before {
-  content: "I";
-  margin-right: 5px;
-  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-  background-color: rgb(136, 241, 124);
-  width: 17px;
-  height: 17px;
-  text-align: center;
-  font-size: 17px;
-  border-radius: 50%;
-  display: inline-block;
 }
 .el-input.is-active .el-input__inner, .el-input__inner:focus {
     border-color: rgb(62, 177, 78) !important;

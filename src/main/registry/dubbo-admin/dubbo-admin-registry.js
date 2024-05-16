@@ -3,6 +3,7 @@ const axios = require('axios').default;
 import configuration from '@/main/common/utils/Configuration';
 import i18n from '@/main/common/i18n'
 import transformer from "@/main/registry/dubbo-admin/transformer.js";
+import paramGenerator from "@/main/dubbo/generator/param/index.js";
 
 
 async function getToken(registryConfig) {
@@ -87,6 +88,28 @@ async function getProviderList(serviceName, registryConfig) {
                 providerInfo.disabled = true;
                 providerInfo.disabledType = "service";
             }
+
+            const methodList = [];
+            if(data.metadata){
+                providerInfo.metadata = data.metadata;
+                data.metadata.methods.forEach(method => {
+                    methodList.push({
+                        ...method,
+                        defaultParameter: JSON.stringify(paramGenerator.generateParam(data.metadata, method.name), null, 2) || "[]",
+                    });
+                })
+            } else {
+                providerInfo.methods.forEach(method => {
+                    methodList.push({
+                        name: method,
+                        parameterTypes: null,
+                        defaultParameter: "[]",
+                        returnType: null
+                    });
+                });
+            }
+            providerInfo.methods = methodList;
+  
             array.push(providerInfo)
         }
 
@@ -235,7 +258,6 @@ export default {
     getServiceList,
     getProviderList,
     getConsumerList,
-    getMetaData,
     getConfiguration,
     getCurrentConfiguration,
     saveConfiguration

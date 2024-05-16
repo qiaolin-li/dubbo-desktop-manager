@@ -3,6 +3,7 @@ const axios = require('axios').default;
 import configuration from '@/main/common/utils/Configuration';
 import i18n from '@/main/common/i18n'
 import qs from 'qs'
+import paramGenerator from "@/main/dubbo/generator/param/index.js";
 
 async function getServiceList(registryConfig) {
 
@@ -82,6 +83,29 @@ async function getProviderList(serviceName, registryConfig) {
                 providerInfo.disabled = true;
                 providerInfo.disabledType = "service";
             }
+
+            const metadata = await getMetaData(providerInfo, registryConfig);
+            const methodList = [];
+            if(metadata){
+                providerInfo.metadata = metadata;
+                metadata.methods.forEach(method => {
+                    methodList.push({
+                        ...method,
+                        defaultParameter: JSON.stringify(paramGenerator.generateParam(metadata, method.name), null, 2) || "[]",
+                    });
+                })
+              } else {
+                providerInfo.methods.forEach(method => {
+                  methodList.push({
+                    name: method,
+                    parameterTypes: null,
+                    defaultParameter: "[]",
+                    returnType: null
+                  });
+                });
+            }
+            providerInfo.methods = methodList;
+
             array.push(providerInfo)
         }
 
@@ -98,6 +122,7 @@ function parseProvderInfo(data) {
 
     return new common.ProviderInfo({
         application: metadata.application,
+        protocol: metadata.protocol,
         ip: data.ip,
         port: data.port,
         serviceName: metadata.interface,
@@ -168,6 +193,9 @@ async function getMetaData(providerInfo, registryConfig) {
         let response = await axios.get(url, { params });
         return response.data || [];
     } catch(error){
+        if(error.response.status === 404){
+            return null;
+        }
         throw new Error(i18n.t("connect.exportService.nacos.getMetaData.error", { e: error}));
     }
 }
@@ -293,7 +321,6 @@ export default {
     getServiceList,
     getProviderList,
     getConsumerList,
-    getMetaData,
     getConfiguration,
     getCurrentConfiguration,
     saveConfiguration

@@ -1,19 +1,10 @@
 <template>
-  <div>
-    <div class="toolbar">
+  <div class="json-editor-container">
+    <!-- <div class="toolbar">
       <div class="toolbar-left">
         <slot name="titel"></slot>
       </div>
-      <div class="toolbar-right">
-          <slot name="content"></slot>
-          <el-tooltip class="item" effect="light" :content="$t('dubbo.invokePage.format')" placement="top-start">
-            <i class="el-icon-lollipop" @click="formatContent"></i>
-          </el-tooltip>
-          <el-tooltip class="item" effect="light" :content="$t('editor.copy')" placement="top-start">
-            <i class="el-icon-document-copy" @click="copy"></i>
-          </el-tooltip>
-      </div>
-    </div>
+    </div> -->
     <codemirror
       ref="cm"
       v-model="codeConfig.code"
@@ -140,7 +131,7 @@ export default {
         // 高亮行功能
         styleActiveLine: true,
         // 调整scrollbar样式功能
-        scrollbarStyle: "overlay",
+        scrollbarStyle: "simple",
         // 自动括号匹配功能
         matchBrackets: true,
         foldGutter: true,
@@ -207,6 +198,9 @@ export default {
     formatContent() {
       let formatedCode = JSON.stringify(JSON.parse(this.codeConfig.code), null, 2)
       this.codeConfig.code = formatedCode;
+    },
+    focus() {
+      this.$refs.cm.refresh();
     }
   },
   mounted() {
@@ -215,10 +209,13 @@ export default {
       cm.showHint();
       if(change.origin === "paste") {
         try {
-          const str = JSON.stringify(JSON.parse(cm.getValue()), null, 2);
-          this.$refs.cm.codemirror.setValue(str)
-        } catch(e) {
-        }
+          // 全部内容被替换了，格式化一下
+          if(cm.getValue() === change.text.join("\n")){
+            const str = JSON.stringify(JSON.parse(cm.getValue()), null, 2);
+            this.$refs.cm.codemirror.setValue(str)
+          }
+        // eslint-disable-next-line no-empty
+        } catch(e) {}
       }
     });
 
@@ -234,11 +231,18 @@ export default {
       marker.innerHTML = "●";
       return marker;
     }
+
   },
 };
 </script>
 
 <style>
+.json-editor-container {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
 .autocomplete-div {
   display: inline-block;
   width: 100%;
@@ -262,9 +266,12 @@ export default {
   padding-right: 10px;
 }  
 
+.vue-codemirror {
+  height: 100%;
+}
 .CodeMirror {
   /* border: 1px solid #eee; */
-  height: 30vh;
+  height: 100%;
   font-size: 13px;
    line-height : 120%;
 }

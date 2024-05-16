@@ -1,15 +1,13 @@
 <template>
-  <div class="history-main-container">
-    <div class="history-container-title">调用历史</div>
-
-    <div v-infinite-scroll="loadMore" infinite-scroll-disabled="busy" infinite-scroll-distance="10">
+  <div class="history-main-container notSelect">
+    <div class="history-item-container" v-infinite-scroll="loadMore" infinite-scroll-disabled="busy" infinite-scroll-distance="10">
       <el-collapse v-model="activeNames">
         <el-collapse-item v-for="group in groupList" :key="group.label" :title="group.label" :name="group.label">
           <template slot="title">
             <span class="collapse-title">{{ group.label }}</span>
           </template>
           <ul class="invoke-ui">
-            <li v-for="invokeHistry in group.invokeHisotryList" :key="invokeHistry._id" class="invoke-li" @click="openInvokeTab(invokeHistry)">
+            <li v-for="invokeHistry in group.invokeHisotryList" :key="invokeHistry._id" class="invoke-li" @dblclick="openInvokeTab(invokeHistry)"  @contextmenu.stop="openMenuList($event, invokeHistry)">
               {{ `${$moment(new Date(invokeHistry.createTime)).format('LTS')}: ${invokeHistry.serviceName.split(".")[invokeHistry.serviceName.split(".").length - 1] }#${invokeHistry.method}` }}
             </li>
           </ul>
@@ -21,9 +19,13 @@
 
 <script>
 import invokeHisotryRecord from "@/renderer/api/invokeHistoryClient.js";
+import interfaceCollectClient from "@/renderer/api/interfaceCollectClient.js";
+const remote = require("@electron/remote");
+import { ipcRenderer } from 'electron'
+
 export default {
   props: {
-    tab: Object,
+    connectInfo: Object,
   },
   data() {
     return {
@@ -32,23 +34,21 @@ export default {
       size: 50,
       keyword: '',
       activeNames: [],
-      groupList: [
-
-      ],
+      groupList: [],
     };
   },
   mounted() {
     this.loadMore();
-    setInterval(() => {
+    ipcRenderer.on(`newInvokeHisotryRecordEvent-${this.connectInfo._id}`, () => {
       this.queryData(1, this.size, true);
-    }, 1000);
+    });
   },
   methods: {
     async loadMore() {
       this.queryData(this.page++, this.size);
     },
     async queryData(page, size, insertFront = false) {
-      const list = await invokeHisotryRecord.findAllPage(this.keyword, page, size);
+      const list = await invokeHisotryRecord.findAllPage(this.connectInfo._id, this.keyword, page, size);
       list.map(hisotry => {
         const momentDate = this.$moment(new Date(hisotry.createTime));
         const label = momentDate.isSame(new Date(), 'day') ? '今天' : momentDate.format('ll');
@@ -89,13 +89,100 @@ export default {
         multiInstance: true
       }
 
-      this.tab.addTab(tabData);
-    }
+      this.$emit('openTab', tabData);
+    },
+    
+    async openMenuList(event, invokeHistry){
+      const menuTemplate = [{
+          label: this.$t('collect.open'),
+          click: async () => this.openInvokeTab(invokeHistry)
+        },
+        { type: 'separator' },
+        {
+           label: this.$t('collect.copyInterfaceName'),
+          click: async () => {
+            navigator.clipboard.writeText(invokeHistry.serviceName)
+            this.$message({
+              type: "success",
+              message: this.$t('editor.copySuccess'),
+            });
+          }
+        },
+        { type: 'separator' },
+      ];
+
+      const collectMenuList = [];
+      const groupList = await interfaceCollectClient.findGroupList(invokeHistry.registryCenterId);
+      groupList.forEach(name => {
+        if(name === invokeHistry.group) return
+        collectMenuList.push({
+          label: name,
+          click: async () => this.collectServiceToGroup(invokeHistry, name)
+        })
+      })
+   
+      collectMenuList.push({
+        label: this.$t('collect.newGroup'),
+        click: async () => {
+          this.$prompt(this.$t('collect.inputGroupName'), this.$t('hint'), {
+            confirmButtonText: this.$t('confirm'),
+            cancelButtonText: this.$t('cancel')
+          }).then(({ value }) => {
+            this.collectServiceToGroup(invokeHistry, value);
+          });
+        }
+      })
+
+      collectMenuList.push({
+        label: this.$t('collect.defaultGroup'),
+        click: async () => this.collectServiceToGroup(invokeHistry)
+      })
+
+      menuTemplate.push({
+        label: this.$t('collect.collect'),
+        submenu: collectMenuList
+      });
+
+      // 阻止默认行为
+      event.preventDefault();
+      // // 构建菜单项
+      const menu = remote.Menu.buildFromTemplate(menuTemplate);
+
+      // 弹出上下文菜单
+      menu.popup({
+        // 获取网页所属的窗口
+        window: remote.getCurrentWindow()
+      });
+    },
+    async collectServiceToGroup(invokeHistry, group = null) {
+      await interfaceCollectClient.save({
+        registryCenterId: this.connectInfo._id,
+        serviceName: invokeHistry.serviceName,
+        name: invokeHistry.serviceName,
+        group: group
+      })
+      this.$message({
+        type: "success",
+        message: this.$t('editor.collectSuccess'),
+      });
+
+      this.$emit("collectServiceToGroup", {
+        registryCenterId: this.connectInfo._id,
+        serviceName: invokeHistry.serviceName,
+        name: invokeHistry.serviceName,
+        group: group
+      }, group);
+    },
   }
 }
 </script>
 
 <style>
+.history-main-container{
+  min-width: max-content;
+}
+
+
 .my-divider {
   margin: 2px 0px;
 }
@@ -124,13 +211,6 @@ export default {
 .el-collapse-item__header {
   flex: 1 0 auto;
   order: -1;
-}
-
-.history-container-title {
-  height: 30px;
-  line-height: 30px;
-  margin: 6px 10px;
-  -webkit-app-region: drag;
 }
 
 </style>

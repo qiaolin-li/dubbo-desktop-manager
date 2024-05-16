@@ -1,5 +1,5 @@
 <template>
-  <el-table :data="consumerList" :stripe="true" size="medium" :highlight-current-row="true" :border="true" :header-row-class-name="consumerListTableHeaderRowClassName">
+  <el-table :data="consumerList" :stripe="true" size="mini" :highlight-current-row="true" :border="true" :header-row-class-name="consumerListTableHeaderRowClassName">
     <el-table-column type="expand">
       <template slot="header">
         <el-tooltip class="item" effect="light" :content="$t('dubbo.consumerPage.exportExcel')" placement="top-start">
@@ -134,7 +134,6 @@ export default {
             type: "error",
             message: this.$t('dubbo.providePage.exportError'),
           });
-          console.log(e)
         }
       }
 
