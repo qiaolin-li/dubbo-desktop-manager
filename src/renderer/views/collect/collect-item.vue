@@ -77,12 +77,12 @@ export default {
     },
     async openMenuList(event, serviceInfo){
       const menuTemplate = [{
-          label: '打开',
+          label: this.$t('collect.open'),
           click: async () => this.handleNodeClick(serviceInfo)
         },
         { type: 'separator' },
         {
-           label: '复制接口名',
+           label: this.$t('collect.copyInterfaceName'),
           click: async () => {
             navigator.clipboard.writeText(serviceInfo.serviceName)
             this.$message({
@@ -93,7 +93,7 @@ export default {
         },
         { type: 'separator' },
         {
-          label: '取消收藏',
+          label: this.$t('collect.cancel'),
           click: async () => { 
             await interfaceCollectClient.deletCollect(serviceInfo._id)
             this.findInterfaceList();
@@ -113,11 +113,11 @@ export default {
       })
    
       collectMenuList.push({
-        label: '新分组',
+        label: this.$t('collect.newGroup'), 
         click: async () => {
-          this.$prompt('请输入新分组', '提示', {
-            confirmButtonText: '确定',
-            cancelButtonText: '取消'
+          this.$prompt(this.$t('collect.inputGroupName'), this.$t('hint'), {
+            confirmButtonText: this.$t('confirm'),
+            cancelButtonText: this.$t('cancel')
           }).then(({ value }) => {
             this.collectServiceToGroup(serviceInfo, value);
           });
@@ -125,12 +125,12 @@ export default {
       })
 
       collectMenuList.push({
-        label: '默认分组',
+        label: this.$t('collect.defaultGroup'),
         click: async () => this.collectServiceToGroup(serviceInfo)
       })
 
       menuTemplate.push({
-        label: '收藏接口',
+        label: this.$t('collect.collect'),
         submenu: collectMenuList
       });
 
@@ -200,6 +200,7 @@ export default {
 }
 
 .collectContainer {
+  min-width: max-content;
   height: 100%;
   display: flex;
   flex-direction: column;

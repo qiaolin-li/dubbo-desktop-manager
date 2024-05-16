@@ -11,10 +11,10 @@
 
         <!-- 操作按钮 -->
         <div class="connectContainer-right">
-          <el-tooltip effect="light" content="修改" placement="right-start">
+          <el-tooltip effect="light" :content="$t('base.modify')" placement="right-start">
             <i class="el-icon-edit iconButton" @click="editConnect($event, connectInfo._id)"></i>
           </el-tooltip>
-          <el-tooltip effect="light" content="删除" placement="right-start">
+          <el-tooltip effect="light" :content="$t('base.delete')" placement="right-start">
             <i class="el-icon-delete iconButton" @click="deleteConnect($event,connectInfo._id)"></i>
           </el-tooltip>
         </div>
@@ -97,7 +97,7 @@ export default {
     openMenuList(event, connectInfo){
       const menuTemplate = [
         {
-          label: '打开数据源',
+          label: this.$t('connect.open'),
           click: async () => this.openConnect(connectInfo)
         },
         { type: 'separator' },

@@ -1,6 +1,13 @@
 export default {
     code: "en-US",
     name: "English",
+    hint: "Hint",
+    confirm: "Confirm",
+    cancel: "Cancel",
+    expand: "expand",
+    collapse: "collapse",
+    count: "Count",  
+    refresh : "refresh",
     version : {
         message: "Discover a new version {latest}\n{releaseBody}",
         simpleMessage : "Find a new version {latest} with many new features. Do you want to download the latest version?",
@@ -10,8 +17,8 @@ export default {
         no : "no"
     },
     base: {
-        modify: "修改",
-        delete: "删除",
+        modify: "Modify",
+        delete: "Delete",
         confirm: "confirm",
         cancel: "cancel",
         close: "close",
@@ -30,7 +37,9 @@ export default {
         addConnect: "New Connection",
         datasource: "datasource",
         settings: "Settings",
-        reportBug: "report bug"
+        reportBug: "report bug",
+        myCollection: "My Collection",
+        invokeHistory: "Invoke History",
     },
     welcome: {
         productName: "DUBBO DESKTOP MANAGER",
@@ -61,6 +70,7 @@ export default {
     },
     connect: {
         addConnect: "New Connection",
+        modifyConnect: "Modify Connection",
         name: "name",
         address: "address",
         sessionTimeout: "timeout",
@@ -77,6 +87,7 @@ export default {
             inputConnectionAddress: "Please enter the link address",
         },
         createSuccess:"Adding a connection succeeded!",
+        open: "Open Datasource",
         updateSuccess:"Succeeded in modifying the connection!",
         searchContent: "search content",
         refreshSuccess: "Refreshing the service list is complete",
@@ -118,6 +129,15 @@ export default {
                 },
             }
         }
+    },
+    collect: {
+        collect: "collect",
+        open: "open",
+        copyInterfaceName: "Copy interface name",
+        cancel: "cancel collection",
+        newGroup: "New Group",
+        inputGroupName: "Please enter a new group",
+        defaultGroup: "Default Group",
     },
     dubbo: {
         serviceTab: {
@@ -195,6 +215,8 @@ export default {
             callDubboAdminError: "Failed to call dubco-admin, {info}",
             unselectedHistory:"No history parameter is selected",
             notFoundMatedata:"Metadata not found, method parameter type cannot be obtained, please add",
+        },
+        invokeHistory: {
         },
         telnetTerminal: {
             connecting: "connecting {ip} {port}",

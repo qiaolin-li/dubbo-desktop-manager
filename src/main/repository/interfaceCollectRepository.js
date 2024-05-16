@@ -4,7 +4,7 @@ let dbOperator = dbUtils("interfaceCollect");
 function InterfaceCollect({_id, registryCenterId, serviceName, name, group = null, createTime = new Date().getTime()}){
     this._id = _id, 
     this.registryCenterId = registryCenterId, 
-    this.name = serviceName;
+    this.name = name;
     this.group = group;
     this.serviceName = serviceName;
     this.createTime = createTime;

@@ -1,6 +1,6 @@
 <template>
   <div class="invoke-dubbo-dialog-content-hisotry">
-    {{ invokeHisotryList.length }}条
+    {{ $t('count') }}:{{ invokeHisotryList.length }}
     <br/>
     <br/>
     <el-timeline>

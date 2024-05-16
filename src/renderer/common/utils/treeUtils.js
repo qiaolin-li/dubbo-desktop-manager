@@ -63,6 +63,7 @@ function mergeOptimization(children) {
         mergeOptimization(data.children);
 
         if (data.children.length == 1) {
+            data.id = data.children[0].id;
             data.label = data.label + "." + data.children[0].label;
             data.serviceName = data.children[0].serviceName;
             data.children = data.children[0].children;

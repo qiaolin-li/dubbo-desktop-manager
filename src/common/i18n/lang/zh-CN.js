@@ -1,6 +1,13 @@
 export default {
     code: "zh-CN",
     name: "中文",
+    hint: "提示",
+    confirm: "确认",
+    cancel: "取消",
+    expand: "展开",
+    collapse: "收起",
+    count: "总数",  
+    refresh : "刷新",
     version : {
         message: "发现新版本{latest}\n{releaseBody}",
         simpleMessage : "发现新版本{latest}，更新了很多功能，是否去下载最新的版本？",
@@ -30,7 +37,9 @@ export default {
         addConnect: "新增连接",
         datasource: "数据源",
         settings: "设置",
-        reportBug: "上报问题"
+        reportBug: "上报问题",
+        myCollection: "我的收藏",
+        invokeHistory: "调用历史",
     },
     welcome: {
         productName: "Dubbo 桌面管理工具",
@@ -60,7 +69,8 @@ export default {
         collectSuccess : "收藏成功"
     },
     connect: {
-        addConnect: "新增连接",
+        addConnect: "新建链接",
+        modifyConnect: "修改链接",
         name: "链接名称",
         address: "链接地址",
         sessionTimeout: "超时时间",
@@ -78,6 +88,7 @@ export default {
         },
         createSuccess:"新增连接成功!",
         updateSuccess:"修改连接成功!",
+        open: "打开数据源",
         searchContent: "搜一搜",
         refreshSuccess: "刷新服务列表完成",
         refreshError: "刷新服务列表失败！原因：{e}",
@@ -118,6 +129,15 @@ export default {
                 },
             }
         }
+    },
+    collect: {
+        collect: "收藏接口",
+        open: "打开",
+        copyInterfaceName: "复制接口名",
+        cancel: "取消收藏",
+        newGroup: "新分组",
+        inputGroupName: "请输入新分组",
+        defaultGroup: "默认分组",
     },
     dubbo: {
         serviceTab: {
@@ -195,6 +215,8 @@ export default {
             callDubboAdminError: "调用dubbo-admin失败, {info}",
             unselectedHistory:"未选择历史参数",
             notFoundMatedata:"未找到元数据，无法获取到方法参数类型，请补充",
+        },
+        invokeHistory: {
         },
         telnetTerminal: {
             connecting: "正在连接 {ip} {port}",

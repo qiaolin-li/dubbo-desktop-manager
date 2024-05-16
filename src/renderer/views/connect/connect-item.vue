@@ -77,20 +77,20 @@ export default {
     async openContextMenu(event, serviceInfo) {
       const menuTemplate = [
         ...(!serviceInfo.children || serviceInfo.children.length === 0 ? [{
-          label: '打开',
+          label: this.$t('collect.open'),
           click: async () => this.handleNodeClick(serviceInfo)
         }] : []),
         ...(serviceInfo.children && serviceInfo.children.length > 0 && !this.defaultExpandIds.find(item => item === serviceInfo.id) ? [{
-          label: '展开',
+          label: this.$t('expand'),
           click: async () => this.handleNodeExpand(serviceInfo)
         }] : []),
         ...(serviceInfo.children && serviceInfo.children.length > 0 && this.defaultExpandIds.find(item => item === serviceInfo.id) ? [{
-          label: '收起',
+          label: this.$t('collapse'),
           click: async () => this.handleNodeCollapse(serviceInfo)
         }] : []),
         { type: 'separator' },
         ...(!serviceInfo.children || serviceInfo.children.length === 0 ? [{
-           label: '复制接口名',
+           label: this.$t('collect.copyInterfaceName'),
           click: async () => {
             navigator.clipboard.writeText(serviceInfo.serviceName)
             this.$message({
@@ -112,11 +112,11 @@ export default {
         })
     
         collectMenuList.push({
-          label: '新分组',
+          label: this.$t('collect.newGroup'),
           click: async () => {
-            this.$prompt('请输入新分组', '提示', {
-              confirmButtonText: '确定',
-              cancelButtonText: '取消'
+            this.$prompt(this.$t('collect.inputGroupName'), this.$t('hint'), {
+              confirmButtonText: this.$t('confirm'),
+              cancelButtonText:  this.$t('cancel')
             }).then(({ value }) => {
               this.collectServiceToGroup(serviceInfo, value);
             });
@@ -124,12 +124,12 @@ export default {
         })
 
         collectMenuList.push({
-          label: '默认分组',
+          label: this.$t('collect.defaultGroup'),
           click: async () => this.collectServiceToGroup(serviceInfo)
         })
 
         menuTemplate.push({
-          label: '收藏接口',
+          label: this.$t('collect.collect'),
           submenu: collectMenuList
         });
       }
@@ -149,7 +149,7 @@ export default {
       await interfaceCollectClient.save({
         registryCenterId: this.connectInfo._id,
         serviceName: serviceInfo.serviceName,
-        name: serviceInfo.label,
+        name: serviceInfo.id,
         group: group
       })
 
@@ -219,6 +219,7 @@ export default {
 
 .interfaceContainer {
   height: 100%;
+  min-width: max-content;
   display: flex;
   flex-direction: column;
 }
