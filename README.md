@@ -7,9 +7,9 @@
 <p align="center">
   <a href="../../releases">Windows下载</a>
   &nbsp;&nbsp;|&nbsp;&nbsp;
-  <a href="https://github.com/qiaolin-li/dubbo-desktop-manager/releases">Mac Intel 芯片下载</a>
+  <a href="../../releases">Mac Intel 芯片下载</a>
     &nbsp;&nbsp;|&nbsp;&nbsp;
-  <a href="https://github.com/qiaolin-li/dubbo-desktop-manager/releases">Mac M1 芯片下载</a>
+  <a href="../../releases">Mac M1 芯片下载</a>
 </p>
 
 ## 一、功能简介
