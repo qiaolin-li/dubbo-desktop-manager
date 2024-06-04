@@ -49,6 +49,8 @@ export default {
         baseSettings: {
             title: "基本设置",
             language: "语言",
+            jvmArgs: "JVM参数",
+            jvmArgsTips: "请输入JVM参数，如:-Xmx512m"
         },
         apply: "应用",
         invokerSettings : {

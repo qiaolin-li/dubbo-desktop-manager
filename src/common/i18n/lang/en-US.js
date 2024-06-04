@@ -49,6 +49,8 @@ export default {
         baseSettings: {
             title: "Base Settings",
             language: "Language",
+            jvmArgs: "JVM Args",
+            jvmArgsTips: "Enter JVM Args, such as -Xmx512m"
         },
         apply: "Apply",
         invokerSettings : {

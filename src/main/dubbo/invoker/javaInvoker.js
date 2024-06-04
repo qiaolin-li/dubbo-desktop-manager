@@ -9,6 +9,7 @@ import i18n from '@/main/common/i18n'
 import common from "./common.js";
 import appConfig from "@/main/common/config/appConfig.js";
 
+
 let jarPath;
 if (process.env.NODE_ENV === 'development') {
     jarPath = path.join(__dirname, '../public/jar/java-invoker.jar');
@@ -71,13 +72,18 @@ function executeJar(outFile) {
             elapsedTime : 0
         });
     }
+
+    const jvmArgs = appConfig.getProperty("jvmArgs");
     const commandArgs = [
+        ...(jvmArgs ? [jvmArgs] : []),
         '-Dfile.encoding=utf-8',
         '-jar', jarPath,
         outFile
     ];
     const config = {
         // maxBuffer: 100 * 1024 * 1024 * 1024, // 1G
+        cwd: constant.USER_HOME_DIR,
+        shell: true
     }
 
     // eslint-disable-next-line no-unused-vars
