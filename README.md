@@ -26,10 +26,32 @@
 ![](./docs/images/20242222.gif)
 
 
-## 三、如何自己构建DDM
+## 三、常见问题
+### 3.1、如何配置JDK17+
+使用jdk17+需要配置如下jvm参数
+```java
+ --add-opens java.management/java.lang.management=ALL-UNNAMED --add-opens jdk.management/com.sun.management.internal=ALL-UNNAMED --add-opens java.management/sun.management=ALL-UNNAMED --add-opens java.base/java.time=ALL-UNNAMED --add-opens java.base/java.util.concurrent=ALL-UNNAMED --add-opens java.base/java.util.concurrent.locks=ALL-UNNAMED --add-opens java.base/java.security=ALL-UNNAMED --add-opens java.base/jdk.internal.loader=ALL-UNNAMED --add-opens java.management/com.sun.jmx.mbeanserver=ALL-UNNAMED --add-opens java.base/java.net=ALL-UNNAMED --add-opens java.base/sun.nio.ch=ALL-UNNAMED --add-exports java.base/sun.security.action=ALL-UNNAMED --add-opens java.base/java.lang=ALL-UNNAMED --add-opens java.base/java.math=ALL-UNNAMED --add-opens java.base/java.util=ALL-UNNAMED --add-opens java.base/java.text=ALL-UNNAMED --add-opens java.base/sun.util.calendar=ALL-UNNAMED
+```
+![image](https://github.com/qiaolin-li/dubbo-desktop-manager/assets/32925394/002c30a7-62f9-48d0-9f7c-88104d4bffd6)
+
+### 3.2、如何连接到dubbo-admin?
+1、打开dubbo-admin并且打开F12
+2、从控制台中虽然找到一个发往后台的请求地址，拿到它的前缀
+<img width="1439" alt="image" src="https://github.com/qiaolin-li/dubbo-desktop-manager/assets/32925394/46d48ee5-5e48-46c2-b0be-92a54f1f58ad">
+3、新建连接，选择dubbo-admin
+<img width="1200" alt="image" src="https://github.com/qiaolin-li/dubbo-desktop-manager/assets/32925394/8ec1556f-7efe-4fb6-b472-e84c57fd51f3">
+
+### 3.3、为什么出现找不到元数据？
+1、dubbo2.7以后才有元数据，如果你是2.7之前的版本，那是没办法进行参数填充的，需要自行补齐参数类型
+2、如果是2.7之后的版本，那么检查一下是否配置了上报元数据
+3、如果上面都没问题，可能是元数据未上报....
+
+
+
+## 四、如何自己构建DDM
 [>>> 点我获得构建DDM的教程](./docs/build.md)
 
-## 四、参考资料
+## 五、参考资料
 因为下面这些框架、博客才有这个工具的诞生
 
 首先感谢 MARKSZのBlog 大佬Electron系列博客，大而全，给了我很多参考的地方，也从里面CV了部分代码
