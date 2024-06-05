@@ -202,7 +202,7 @@ export default {
 .menu-aside {
   height: 100%;
   align-items: center;
-  background-color: #ececec;
+  background-color: #f0f0f0;
 }
 
 .ddm-menu-list {

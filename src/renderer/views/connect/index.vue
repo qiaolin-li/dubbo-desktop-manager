@@ -10,7 +10,7 @@
               <el-divider class="my-divider"></el-divider>
               <connectList ref="connectList" :mainPanel="mainPanel" @editConnect="openAddConnectDialog"></connectList>
 
-              <el-dialog :title="currentConnectId ? $t('connect.modifyConnect') : $t('connect.addConnect')" width="40%" :visible.sync="dialogVisible" :close-on-click-modal="false">
+              <el-dialog :title="currentConnectId ? $t('connect.modifyConnect') : $t('connect.addConnect')" width="70%" :visible.sync="dialogVisible" :close-on-click-modal="false">
                 <addConnect @saveSuccess="saveConnectSuccess" :id="currentConnectId" :key="addConnectKey" />
               </el-dialog>
             </div>

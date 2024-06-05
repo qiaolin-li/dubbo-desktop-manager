@@ -1,5 +1,5 @@
 <template>
-  <el-form ref="form" :rules="rules" :model="form" label-width="100px">
+  <el-form ref="form" :rules="rules" :model="form" label-width="160px">
     <el-form-item :label="$t('connect.name')" prop="name">
       <el-input v-model="form.name"></el-input>
     </el-form-item>
@@ -11,6 +11,12 @@
     </el-form-item>
     <el-form-item :label="$t('connect.sessionTimeout')" prop="sessionTimeout">
       <el-input v-model="form.sessionTimeout"></el-input>
+    </el-form-item>
+    <el-form-item :label="$t('connect.nacos.groupName')" prop="groupName">
+      <el-input v-model="form.groupName"  :placeholder="$t('connect.nacos.groupNameTips')"  ></el-input>
+    </el-form-item>
+    <el-form-item :label="$t('connect.nacos.group')"  prop="group">
+      <el-input v-model="form.group" :placeholder="$t('connect.nacos.groupTips')" ></el-input>
     </el-form-item>
     <el-form-item>
       <el-button type="primary" @click="saveZkConnectInfo">{{$t('connect.save')}}</el-button>
@@ -32,6 +38,8 @@ export default {
         address: "http://127.0.0.1:8848",
         namespaceId: "",
         sessionTimeout: 5000,
+        groupName: '',
+        group: ''
       },
 
     };

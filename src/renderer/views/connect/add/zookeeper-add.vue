@@ -9,6 +9,14 @@
     <el-form-item :label="$t('connect.sessionTimeout')" prop="sessionTimeout">
       <el-input v-model="form.sessionTimeout"></el-input>
     </el-form-item>
+    <el-form-item label="ACL" prop="auth">
+      <el-input :placeholder="$t('connect.zookeeper.aclTips')"  v-model="form.auth" class="input-with-select">
+      <el-select v-model="form.scheme" slot="prepend" style="width:120px">
+        <el-option label="digest" value="digest"></el-option>
+        <el-option label="auth" value="auth"></el-option>
+      </el-select>
+    </el-input>
+    </el-form-item>
     <el-form-item>
       <el-button type="primary" @click="saveZkConnectInfo">{{$t('connect.save')}}</el-button>
     </el-form-item>
@@ -27,6 +35,7 @@ export default {
         name: "",
         address: "127.0.0.1:2181",
         sessionTimeout: 5000,
+        scheme: 'digest'
       },
 
     };
@@ -93,6 +102,7 @@ export default {
         this.form.name = "";
         this.form.address = "127.0.0.1:2181";
         this.form.sessionTimeout = 5000;
+        this.form.scheme = 'digest';
       }
     },
     async saveZkConnectInfo() {

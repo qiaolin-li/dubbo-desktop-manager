@@ -80,6 +80,15 @@ export default {
         namespaceId: "namespaceId",
         username: "username",
         password: "password",
+        zookeeper: {
+            aclTips: "Enter the authentication information, for example, test:test"
+        },
+        nacos: {
+            groupName: 'ServiceGroupName',
+            groupNameTips: 'Enter the name of the service GROUP. The DEFAULT is DEFAULT GROUP',
+            group: 'ConfiguringGroupName',
+            groupTips: 'Please enter the configuration group name. The default is dubbo',
+        },
         validateMessage: {
             timeOutNotNull: "The timeout period cannot be empty",
             inputNumber: " Please enter the first group now",
