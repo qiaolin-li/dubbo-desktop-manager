@@ -43,7 +43,7 @@ sudo xattr -d com.apple.quarantine /Applications/Dubbo-Desktop-Manager.app
 ### 3.3、如何连接到dubbo-admin?
 1. 打开dubbo-admin并且打开F12
 2. 从控制台中虽然找到一个发往后台的请求地址，拿到它的前缀
-<img width="1439" alt="image" src="https://github.com/qiaolin-li/dubbo-desktop-manager/assets/32925394/46d48ee5-5e48-46c2-b0be-92a54f1f58ad">
+<img width="1433" alt="image" src="https://github.com/qiaolin-li/dubbo-desktop-manager/assets/32925394/8f14350a-b79c-40cc-829a-1700263aa260">
 3. 新建连接，选择dubbo-admin
 <img width="1200" alt="image" src="https://github.com/qiaolin-li/dubbo-desktop-manager/assets/32925394/8ec1556f-7efe-4fb6-b472-e84c57fd51f3">
 
