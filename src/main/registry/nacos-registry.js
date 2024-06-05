@@ -10,7 +10,8 @@ async function getServiceList(registryConfig) {
     let params = {
         pageNo: 1,
         pageSize: 100,
-        namespaceId: registryConfig.namespaceId || ""
+        namespaceId: registryConfig.namespaceId || "",
+        groupName: registryConfig.groupName || ""
     }
     // `http://127.0.0.1:8848/nacos/v1/ns/service/list?pageNo=1&pageSize=20`
     let url = `${registryConfig.address}/nacos/v1/ns/service/list`
@@ -36,7 +37,7 @@ async function getServiceList(registryConfig) {
                 continue;
             }
 
-            array.push(new common.ServiceInfo(datas[1], serviceName, datas.length == 4 ? datas[3] : ""));
+            array.push(new common.ServiceInfo(datas[1], serviceName.substring("providers".length+1), datas.length == 4 ? datas[3] : ""));
         }
 
         count = data.doms.length;
@@ -61,8 +62,9 @@ async function getProviderList(serviceName, registryConfig) {
     let url = `${registryConfig.address}/nacos/v1/ns/instance/list`;
 
     let params = {
-        serviceName: serviceName,
-        namespaceId: registryConfig.namespaceId || ""
+        serviceName: `providers:${serviceName}`,
+        namespaceId: registryConfig.namespaceId || "",
+        groupName: registryConfig.groupName || ""
     }
 
     try {
@@ -145,8 +147,9 @@ async function getConsumerList(serviceName, registryConfig) {
     let url = `${registryConfig.address}/nacos/v1/ns/instance/list`;
 
     let params = {
-        serviceName: serviceName,
-        namespaceId: registryConfig.namespaceId || ""
+        serviceName: `consumers:${serviceName}`,
+        namespaceId: registryConfig.namespaceId || "",
+        groupName: registryConfig.groupName || ""
     }
 
     try {
@@ -169,10 +172,6 @@ async function getConsumerList(serviceName, registryConfig) {
 }
 
 async function getMetaData(providerInfo, registryConfig) {
-
-    // http://127.0.0.1:8848/nacos/v1/cs/configs
-    let url = `${registryConfig.address}/nacos/v1/cs/configs`;
-
     let {
         application,
         serviceName,
@@ -182,70 +181,45 @@ async function getMetaData(providerInfo, registryConfig) {
     version = version || "";
     let dataId = `${serviceName}:${version}:${group || ''}:provider:${application}`;
 
-    let params = {
-        dataId: dataId,
-        group: "dubbo",
-        namespaceId: registryConfig.namespaceId || "",
-        tenant: registryConfig.namespaceId || ""
-    }
-
-    try {
-        let response = await axios.get(url, { params });
-        return response.data || [];
-    } catch(error){
-        if(error.response.status === 404){
-            return null;
-        }
-        throw new Error(i18n.t("connect.exportService.nacos.getMetaData.error", { e: error}));
-    }
+    return JSON.parse(await getConfig(registryConfig, dataId));
 }
-
 
 // eslint-disable-next-line no-unused-vars
 async function getCurrentConfiguration(registryConfig, providerInfo) {
-
     let config = await getConfiguration(registryConfig, providerInfo);
 
-
     let configData = configuration.yamlToJSON(config);
-
     if(configData){
         return configData;
     }
-
     return configuration.createDefaultConfiguration(providerInfo.serviceName);
 }
 
 
-
 // eslint-disable-next-line no-unused-vars
 async function getConfiguration(registryConfig, providerInfo) {
+    return await getConfig(registryConfig, buildDataId(providerInfo));
+}
 
+async function getConfig(registryConfig, dataId){
     // http://127.0.0.1:8848/nacos/v1/cs/configs
-    let url = `${registryConfig.address}/nacos/v1/cs/configs`;
+    const url = `${registryConfig.address}/nacos/v1/cs/configs`;
 
-    let {
-        serviceName,
-        version,
-        group
-    } = providerInfo;
-    version = version || "";
-    let dataId = `${serviceName}:${version}:${group || ''}.configurators`;
-
-    let params = {
+    const params = {
         dataId: dataId,
-        group: "dubbo",
+        group: registryConfig.group || 'dubbo', 
         namespaceId: registryConfig.namespaceId || "",
-        tenant: registryConfig.namespaceId || ""
+        tenant: registryConfig.namespaceId || "",
+        show: 'all'
     }
 
     try {
-        let response = await axios.get(url, { params  })
-        return response.data || null;
-    } catch(error) {
-        if (error.response.status == 404) {
-            return null;
+        const response = await axios.get(url, { params  })
+        if(response.data && response.data.content){
+            return response.data.content;
         }
+        return null;  
+    } catch(error) {
         throw new Error(i18n.t("connect.exportService.nacos.getMetaData.error", { e: error}));
     }
 }
@@ -257,7 +231,7 @@ async function saveConfiguration(registryConfig, providerInfo, doc) {
 
     let params = {
         dataId: buildDataId(providerInfo),
-        group: "dubbo",
+        group: registryConfig.group || 'dubbo', 
         namespaceId: registryConfig.namespaceId || "",
         tenant: registryConfig.namespaceId || "",
     }
@@ -274,8 +248,6 @@ async function saveConfiguration(registryConfig, providerInfo, doc) {
         throw new Error(i18n.t("connect.exportService.nacos.saveConfiguration.error", { e: error}));
     }
 }
-
-
 
 /**
  * 
@@ -304,8 +276,6 @@ async function saveConfiguration(registryConfig, providerInfo, doc) {
 
   return addressList;
 }
-
-
 
 function buildDataId(providerInfo) {
     let {

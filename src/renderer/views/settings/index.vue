@@ -21,6 +21,9 @@
         <el-button slot="append" icon="el-icon-search" @click="selectJavaHomePath"></el-button>
       </el-input>
     </div>
+    <br/>
+    {{$t('settings.baseSettings.jvmArgs')}}：
+    <el-input :placeholder="$t('settings.baseSettings.jvmArgsTips')" v-model="jvmArgs" style="width: 90%"  > </el-input>
     <el-divider content-position="left"></el-divider>
 
     <el-button @click="saveConfig">{{$t('settings.apply')}}</el-button>
@@ -40,6 +43,7 @@ export default {
       messages: [],
       invokerType: "telnet",
       javaHome: "",
+      jvmArgs: "",
       invokerTypes: [
         {
           code: "telnet",
@@ -57,6 +61,7 @@ export default {
     this.messages = i18n.messages;
     this.invokerType = await appConfig.getProperty("invokerType") || "telnet";
     this.javaHome = await appConfig.getProperty("javaHome");
+    this.jvmArgs = await appConfig.getProperty("jvmArgs");
   },
   methods: {
     async selectJavaHomePath() {
@@ -74,6 +79,7 @@ export default {
       appConfig.setProperty("systemLocale", this.selectMessage);
       appConfig.setProperty("invokerType", this.invokerType);
       appConfig.setProperty("javaHome", this.javaHome);
+      appConfig.setProperty("jvmArgs", this.jvmArgs);
     }
   }
 

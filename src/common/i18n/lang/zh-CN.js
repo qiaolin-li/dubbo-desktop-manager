@@ -49,6 +49,8 @@ export default {
         baseSettings: {
             title: "基本设置",
             language: "语言",
+            jvmArgs: "JVM参数",
+            jvmArgsTips: "请输入JVM参数，如:-Xmx512m"
         },
         apply: "应用",
         invokerSettings : {
@@ -78,6 +80,15 @@ export default {
         namespaceId: "命名空间ID",
         username: "用户名",
         password: "密码",
+        zookeeper: {
+            aclTips: "请输入认证信息, 例如：test:test"
+        },
+        nacos: {
+            groupName: '服务分组名称',
+            groupNameTips: '请输入服务分组名称，默认为 DEFAULT_GROUP',
+            group: '配置分组名称',
+            groupTips: '请输入配置分组名称，默认为 dubbo',
+        },
         validateMessage: {
             timeOutNotNull: "超时时间不能为空",
             inputNumber: "请输入数字",

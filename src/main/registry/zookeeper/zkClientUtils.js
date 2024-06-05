@@ -13,6 +13,9 @@ function createConncetion(registryConfig) {
     let zkClient = new Promise((resolve, reject) => {
         let zk = zookeeperClient.createClient(address, OPTIONS);
         zk.on("connected", function () {
+          if(registryConfig.scheme && registryConfig.auth){
+            zk.addAuthInfo(registryConfig.scheme, Buffer.from(registryConfig.auth));  
+          }
           resolve(zk);
         });
     
@@ -22,7 +25,6 @@ function createConncetion(registryConfig) {
     
         zk.connect();
       });
-
 
     return zkClient;
   }
