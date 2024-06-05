@@ -35,16 +35,16 @@
 ![image](https://github.com/qiaolin-li/dubbo-desktop-manager/assets/32925394/002c30a7-62f9-48d0-9f7c-88104d4bffd6)
 
 ### 3.2、如何连接到dubbo-admin?
-1、打开dubbo-admin并且打开F12
-2、从控制台中虽然找到一个发往后台的请求地址，拿到它的前缀
+1. 打开dubbo-admin并且打开F12
+2. 从控制台中虽然找到一个发往后台的请求地址，拿到它的前缀
 <img width="1439" alt="image" src="https://github.com/qiaolin-li/dubbo-desktop-manager/assets/32925394/46d48ee5-5e48-46c2-b0be-92a54f1f58ad">
-3、新建连接，选择dubbo-admin
+3. 新建连接，选择dubbo-admin
 <img width="1200" alt="image" src="https://github.com/qiaolin-li/dubbo-desktop-manager/assets/32925394/8ec1556f-7efe-4fb6-b472-e84c57fd51f3">
 
 ### 3.3、为什么出现找不到元数据？
-1、dubbo2.7以后才有元数据，如果你是2.7之前的版本，那是没办法进行参数填充的，需要自行补齐参数类型
-2、如果是2.7之后的版本，那么检查一下是否配置了上报元数据
-3、如果上面都没问题，可能是元数据未上报....
+1. dubbo2.7以后才有元数据，如果你是2.7之前的版本，那是没办法进行参数填充的，需要自行补齐参数类型
+2. 如果是2.7之后的版本，那么检查一下是否配置了上报元数据
+3. 如果上面都没问题，可能是元数据未上报....
 
 
 
