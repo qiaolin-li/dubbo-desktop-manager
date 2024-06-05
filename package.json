@@ -7,7 +7,7 @@
     "email": "992004863@qq.com",
     "url": "https://github.com/qiaolin-li/dubbo-desktop-manager"
   },
-  "version": "1.0.8",
+  "version": "1.0.9",
   "private": true,
   "scripts": {
     "lint": "vue-cli-service lint",
