@@ -16,6 +16,8 @@ class Registry {
     async disableProvider(registryCenterId, providerInfo) {}
     
     async enableProvider(registryCenterId, providerInfo) {}
+
+    async invokeMethod(registryCenterId, providerInfo, methodInfo, code) {}
 }
 
 

@@ -1,10 +1,10 @@
-import registry from "./index";
+// import registry from "./index";
 
-export default [
+// export default [
 
-    // 配置管理对象
-    {
-        name: "registry",
-        target: registry,
-    } 
-]
+//     // 配置管理对象
+//     {
+//         name: "registry",
+//         target: registry,
+//     } 
+// ]
