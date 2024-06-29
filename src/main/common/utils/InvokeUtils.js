@@ -1,11 +1,7 @@
 /** 
  * 构建invoke命令 
  */
-function buildInvokeCommand({
-    serviceName,
-    method,
-    params
-}) {
+function buildInvokeCommand({serviceName, method, params}) {
     let paramStr = "";
     // let command = "invoke com.indi.qiaolin.test.api.facade.TestFacade.test(\"1\") \n";
     for (let i = 0; i < params.length; i++) {

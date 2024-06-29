@@ -2,8 +2,8 @@ import zookeeperClient from "node-zookeeper-client";
 import i18n from '@/main/common/i18n'
 
 
-
-function createConncetion(registryConfig) {
+class ZookeeperClientUtils {
+  createConncetion(registryConfig) {
     let { address } = registryConfig;
   
     const OPTIONS = {
@@ -28,8 +28,23 @@ function createConncetion(registryConfig) {
 
     return zkClient;
   }
-  
 
-  export default { 
-    createConncetion,
+  async getChildren(registryConfig, path){
+    const zk = await this.createConncetion(registryConfig);
+
+    return new Promise((resolve, reject) => {
+      zk.getChildren(path, async function (error, children) {
+        if (error) {
+          reject(new Error(i18n.t("connect.exportService.zookeeper.getServiceList.error", { e: error})));
+          return;
+        }
+  
+        resolve(children || []);
+      });
+    });
   }
+}
+
+
+
+export default new ZookeeperClientUtils();
