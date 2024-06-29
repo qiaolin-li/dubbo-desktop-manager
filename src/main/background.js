@@ -5,6 +5,7 @@ import Constant      from '@/main/common/Constant.js'
 import logger        from '@/main/common/logger';
 import template      from '@/main/menuList.js';
 import apiExportor   from '@/main/api/index.js'
+import appCore       from '@/main/AppCore.js';
 import appConfig from "@/main/common/config/appConfig.js";
 import pkg from '../../package.json'
 
@@ -51,6 +52,8 @@ app.on('activate', () => {
 app.on('ready', async () => {
  
   updateChecker();
+
+  apiExportor.exportApi();
   
   if(!appConfig.hasProperty("javaHome")){
     appConfig.setProperty("javaHome", process.env.JAVA_HOME)

@@ -1,0 +1,15 @@
+diff --git a/node_modules/electron-devtools-installer/dist/index.js b/node_modules/electron-devtools-installer/dist/index.js
+index 899839c..d1ae2d7 100644
+--- a/node_modules/electron-devtools-installer/dist/index.js
++++ b/node_modules/electron-devtools-installer/dist/index.js
+@@ -118,7 +118,9 @@ exports.ANGULARJS_BATARANG = {
+     electron: '>=1.2.1',
+ };
+ exports.VUEJS_DEVTOOLS = {
+-    id: 'nhdogjmejiglipccpnnnanhbledajbpd',
++    // id: 'nhdogjmejiglipccpnnnanhbledajbpd',
++    // 使用老版本的vue-devtools,新版本的有bug，打开了一直卡在图标界面
++    id: 'iaajmlceplecbljialhhkmedjlpdblhp',
+     electron: '>=1.2.1',
+ };
+ exports.VUEJS3_DEVTOOLS = {

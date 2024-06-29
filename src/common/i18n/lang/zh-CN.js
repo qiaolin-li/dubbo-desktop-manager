@@ -37,6 +37,7 @@ export default {
         addConnect: "新增连接",
         datasource: "数据源",
         settings: "设置",
+        plugins: "插件",
         reportBug: "上报问题",
         myCollection: "我的收藏",
         invokeHistory: "调用历史",
