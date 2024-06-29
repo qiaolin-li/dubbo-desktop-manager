@@ -4,7 +4,7 @@ let dbOperator = dbUtils("zkConnectInfo");
 
 function ZkConnectInfo(obj){
     Object.assign(this, obj)
-    this.createTime = new Date().getTime();
+    this.createTime = this.createTime || new Date().getTime();
 }
 
 function save(zkConnectInfo){
