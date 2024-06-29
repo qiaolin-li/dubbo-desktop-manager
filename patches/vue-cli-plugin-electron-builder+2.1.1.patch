@@ -1,0 +1,13 @@
+diff --git a/node_modules/vue-cli-plugin-electron-builder/lib/installVueDevtools/index.js b/node_modules/vue-cli-plugin-electron-builder/lib/installVueDevtools/index.js
+index 20c21f3..41824c8 100644
+--- a/node_modules/vue-cli-plugin-electron-builder/lib/installVueDevtools/index.js
++++ b/node_modules/vue-cli-plugin-electron-builder/lib/installVueDevtools/index.js
+@@ -28,7 +28,7 @@ const install = (forceDownload = false) => {
+     'See https://github.com/nklayman/vue-cli-plugin-electron-builder/releases/tag/v2.0.0-rc.4 for details.'
+   )
+   // return new Promise(resolve => {
+-  const chromeStoreID = 'nhdogjmejiglipccpnnnanhbledajbpd'
++  const chromeStoreID = 'iaajmlceplecbljialhhkmedjlpdblhp'
+   const extensionName = IDMap[chromeStoreID]
+   const extensionInstalled =
+     extensionName &&

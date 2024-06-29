@@ -118,7 +118,6 @@
 <script>
 
 import registry from "@/renderer/api/registryClient.js";
-import dubboInvoke from "@/renderer/api/dubboInvokerClient.js";
 import appConfig from "@/renderer/api/appConfig.js";
 import invokeHisotryRecord from "@/renderer/api/invokeHistoryClient.js";
 
@@ -129,6 +128,7 @@ import copyButton from "@/renderer/components/copyButton.vue";
 import dragTab from '@/renderer/components/tabs/dragTab.vue';
 import dragTabItem from '@/renderer/components/tabs/dragTabItem.vue';
 import dragTabToolBar from '@/renderer/components/tabs/dragTabToolBar.vue';
+import TelnetUtils from "@/common/TelnetUtils.js";
 
 export default {
   components: {
@@ -267,7 +267,8 @@ export default {
 
           const method = {...this.method, parameterTypes: JSON.parse(this.paramTypeCodeConfig.code)};
 
-          dubboInvoke.invokeMethod(
+          
+          registry.invokeMethod(
             this.registryCenterId,
             this.uniqueServiceName,
             this.currentProvider,
@@ -295,7 +296,7 @@ export default {
         method: this.method.name,
         params: JSON.parse(this.codeConfig.code),
       };
-      this.invokeReulst.code = await dubboInvoke.buildInvokeCommand(param);
+      this.invokeReulst.code = TelnetUtils.buildInvokeCommand(param);
     },
     openHistoryDialog() {
       this.dialogVisible = true;

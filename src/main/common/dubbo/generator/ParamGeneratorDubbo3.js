@@ -1,4 +1,4 @@
-import DEFAULT_VALUE_GENERATOR from './generator.js';
+import DEFAULT_VALUE_GENERATOR from './ValueGenerator.js';
 
 /**
  * 生成参数

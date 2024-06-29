@@ -37,6 +37,7 @@ export default {
         addConnect: "New Connection",
         datasource: "datasource",
         settings: "Settings",
+        plugins: "plugins",
         reportBug: "report bug",
         myCollection: "My Collection",
         invokeHistory: "Invoke History",

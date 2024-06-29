@@ -17,7 +17,7 @@ export default {
       terminal: Object,
       termOptions: {
         rows: 100,
-        scrollback: 800
+        scrollback: 800,
       },
       input: '',
       prefix: '',
@@ -70,14 +70,19 @@ export default {
     initTerm() {
       let term = new Terminal({
         rendererType: 'canvas',
+        fontFamily: "Monaco, Menlo, Consolas, 'Courier New', monospace",
+        theme: {
+          foreground: '#e5e5e5',
+          background: '#232322',
+        },
+        //cursorStyle: 'underline',
+        //scrollSensitivity: 15,
+        //tabStopWidth: 4,
+        // rendererType: 'canvas',
         cursorBlink: true,
         convertEol: true,
         scrollback: this.termOptions.scrollback,
         row: this.termOptions.rows,
-        theme: {
-          foreground: 'white',
-          background: '#060101'
-        }
       })
       const fitAddon = new FitAddon();
       term.loadAddon(fitAddon)
