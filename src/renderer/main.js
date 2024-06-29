@@ -10,10 +10,12 @@ import Splitpane from '@/renderer/components/split-pane/index.vue'
 import registryList from '@/renderer/views/connect/index.vue';
 import dubboPage from '@/renderer/views/dubbo/index.vue';
 import managePage from '@/renderer/views/manage.vue';
+import plugins from '@/renderer/views/plugin/index.vue';
 import settings from '@/renderer/views/settings/index.vue';
 Vue.component('registryList', registryList);
 Vue.component('dubboPage', dubboPage);
 Vue.component('managePage', managePage);
+Vue.component('plugins', plugins);
 Vue.component('settings', settings);
 
 import dubboProviderList from "@/renderer/views/dubbo/dubbo-provider-list.vue";
@@ -53,6 +55,8 @@ Vue.config.productionTip = false
 Vue.config.ignoredElements = [
   'tab-group',
 ]
+
+Vue.config.devtools = true;
 
 new Vue({
   i18n,
