@@ -62,9 +62,7 @@ class WindowHolder {
             }
         }
 
-        if(isMac){
-            mainWindowConfig.titleBarStyle = 'hidden';
-        } else {
+        if(!isMac){
             mainWindowConfig.webPreferences.sandbox = false;
             mainWindowConfig.webPreferences.preload = path.join(__dirname, 'preload.js');
         }
