@@ -4,7 +4,7 @@ import windowHolder  from '@/main/common/holder/WindowHolder.js';
 import Constant      from '@/main/common/Constant.js'
 import logger        from '@/main/common/logger';
 import template      from '@/main/menuList.js';
-import apiExportor   from '@/main/api/index.js'
+import apiExportor   from '@/main/api/ApiExportor.js';
 import appCore       from '@/main/AppCore.js';
 import appConfig from "@/main/common/config/appConfig.js";
 import pkg from '../../package.json'
@@ -93,5 +93,4 @@ if (Constant.IS_DEVELOPMENT) {
 
 process.on('uncaughtException', function (error) {
   logger.error(`发生了异常`, error);
-  
 })

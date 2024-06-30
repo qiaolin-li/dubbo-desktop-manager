@@ -3,6 +3,7 @@ import telnetSocket     from "telnet-stream";
 import i18n             from '@/main/common/i18n'
 import JSONFormater     from "@/main/common/utils/JSONFormater";
 import InvokeUtils      from "@/main/common/utils/InvokeUtils.js";
+import TelnetUtils      from "@/common/TelnetUtils.js";
 
 
 class TelnetInvoker {
@@ -65,7 +66,7 @@ class TelnetInvoker {
                 socket.end();
             })
 
-            tSocket.write(InvokeUtils.buildInvokeCommand({
+            tSocket.write(TelnetUtils.buildInvokeCommand({
                 serviceName,
                 method: methodInfo.name,
                 params

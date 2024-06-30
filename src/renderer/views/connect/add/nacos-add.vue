@@ -19,13 +19,13 @@
       <el-input v-model="form.group" :placeholder="$t('connect.nacos.groupTips')" ></el-input>
     </el-form-item>
     <el-form-item>
-      <el-button type="primary" @click="saveZkConnectInfo">{{$t('connect.save')}}</el-button>
+      <el-button type="primary" @click="saveDataSourceInfo">{{$t('connect.save')}}</el-button>
     </el-form-item>
   </el-form>
 </template>
 
 <script>
-import connectRepository from "@/renderer/api/connectManangerClient.js";
+import dataSourceRepository from "@/renderer/api/DataSourceRepositoryClient.js";
 
 export default {
   data() {
@@ -98,7 +98,7 @@ export default {
   methods: {
     async init() {
       if (this.id) {
-        this.form = await connectRepository.findById(this.id);
+        this.form = await dataSourceRepository.findById(this.id);
       } else {
         this.form.type = "nacos"
         this.form.name = "";
@@ -107,10 +107,10 @@ export default {
         this.form.sessionTimeout = 5000;
       }
     },
-    saveZkConnectInfo() {
+    saveDataSourceInfo() {
       this.$refs.form.validate(async (valid) => {
         if (valid) {
-          await connectRepository.save(this.form);
+          await dataSourceRepository.save(this.form);
           let data = { ...this.form };
           this.form.name = "";
           this.form.address = "127.0.0.1:2181";

@@ -1,9 +1,9 @@
 import common           from "@/main/datasource/dubbo/common.js";
 import zookeeperClient  from "node-zookeeper-client";
-import urlUtils         from "@/main/common/utils/urlUtils.js";
+import urlUtils         from "@/main/common/utils/UrlUtils.js";
 import i18n             from '@/main/common/i18n'
-import configuration    from '@/main/common/utils/Configuration';
-import zkClientUtils    from "@/main/common/zookeeper/zkClientUtils";
+import yamlUtils        from '@/main/common/utils/yamlUtils.js';
+import zkClientUtils    from "@/main/common/utils/ZookeeperClientUtils";
 import appCore          from '@/main/AppCore.js';
 
 const PRIVDER_PREFIX = "/dubbo";
@@ -114,9 +114,9 @@ async function getCurrentConfiguration(registryConfig, providerInfo) {
 
   let config = await getConfiguration(registryConfig, providerInfo);
 
-  let configData = configuration.yamlToJSON(config)
+  let configData = yamlUtils.yamlToJSON(config)
 
-  return configData || configuration.createDefaultConfiguration(providerInfo.serviceName);
+  return configData || yamlUtils.createDubboDefaultConfiguration(providerInfo.serviceName);
 }
 
 
@@ -173,10 +173,10 @@ async function saveConfiguration(registryConfig, providerInfo, doc) {
 
   // 更新
   // eslint-disable-next-line no-unused-vars
-  zkClient.setData(path, Buffer.from(configuration.JSONToYaml(doc)), -1, function (error, stat) {
+  zkClient.setData(path, Buffer.from(yamlUtils.JSONToYaml(doc)), -1, function (error, stat) {
     if (error && error.code == -101) {
       // eslint-disable-next-line no-unused-vars
-      zkClient.create(path, Buffer.from(configuration.JSONToYaml(doc)), zookeeperClient.CreateMode.PERSISTENT, function (error, stat) {
+      zkClient.create(path, Buffer.from(yamlUtils.JSONToYaml(doc)), zookeeperClient.CreateMode.PERSISTENT, function (error, stat) {
         if (error) {
           throw new Error(new Error(i18n.t("connect.exportService.zookeeper.saveConfiguration.error", { e: error})));
         }
@@ -268,8 +268,8 @@ function parseConsumerInfo(data) {
   });
 }
 
-async function invokeMethod(registryConfig, provder, methodInfo, code) {
-  return appCore.getInvoke('adapter').invokeMethod(provder, methodInfo, code);
+async function invokeMethod(registryConfig, provder, methodInfo, code, invokerType) {
+  return await appCore.getInvoke('adapter').invokeMethod(provder, methodInfo, code, invokerType);
 }
 
 

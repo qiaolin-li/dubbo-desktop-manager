@@ -3,7 +3,7 @@
     <el-tabs v-model="componentName">
       <el-tab-pane v-for="item in options" :key="item.value" @click="changeView(item.value)" :label="item.label" :name="item.value" :disabled="item.disabled" />
     </el-tabs>
-    <component :is="componentName" @saveSuccess="saveZkConnectInfo" :id="id"></component>
+    <component :is="componentName" @saveSuccess="saveDataSourceInfo" :id="id"></component>
   </div>
 </template>
 
@@ -11,7 +11,7 @@
 import zookeeperAdd from "./zookeeper-add.vue";
 import nacosAdd from "./nacos-add.vue";
 import dubboAdminAdd from "./dubbo-admin-add.vue";
-import connectRepository from "@/renderer/api/connectManangerClient.js";
+import dataSourceRepository from "@/renderer/api/DataSourceRepositoryClient.js";
 
 export default {
   components: {
@@ -58,7 +58,7 @@ export default {
   methods: {
     async init() {
       if (this.id) {
-        let connect = await connectRepository.findById(this.id);
+        let connect = await dataSourceRepository.findById(this.id);
         for (let index = 0; index < this.options.length; index++) {
           let element = this.options[index];
           if (element.label == connect.type) {
@@ -74,7 +74,7 @@ export default {
         this.createConnect = true;
       }
     },
-    saveZkConnectInfo(data) {
+    saveDataSourceInfo(data) {
       this.$message({
         type: "success",
         message: this.createConnect ? this.$t('connect.createSuccess') : this.$t('connect.updateSuccess'),

@@ -14,7 +14,7 @@
 </template>
 
 <script>
-import registry from "@/renderer/api/registryClient.js";
+import dataSource from "@/renderer/api/DataSourceClient.js";
 import yamlCodeEditor from "@/renderer/components/editor/yaml-code-editor.vue";
 
 export default {
@@ -40,10 +40,10 @@ export default {
   },
   methods: {
     async getConfiguration() {
-      this.codeConfig.code = await registry.getConfiguration(this.provider, this.registryCenterId);
+      this.codeConfig.code = await dataSource.getConfiguration(this.provider, this.registryCenterId);
     },
     async save() {
-      await registry.saveConfiguration(this.registryCenterId, this.provider, this.codeConfig.code);
+      await dataSource.saveConfiguration(this.registryCenterId, this.provider, this.codeConfig.code);
       this.$message({
         type: "success",
         message: this.$t('dubbo.configurationPage.saveSuccess'),

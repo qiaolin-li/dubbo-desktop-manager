@@ -1,5 +1,4 @@
-// 加载模块
-const nedb = require('nedb');
+import nedb from 'nedb';
 import constant from "@/main/common/Constant.js";
 
 function getDB(business) {

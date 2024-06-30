@@ -1,12 +1,11 @@
 import { app, Menu, shell } from 'electron'
 import windowHolder         from '@/main/common/holder/WindowHolder.js';
 import i18n                 from '@/main/common/i18n'
-
-const isMac = process.platform === 'darwin'
+import Constant             from '@/main/common/Constant.js'
 
 const template = [
   // { role: 'appMenu' }
-  ...(isMac ? [{
+  ...(Constant.IS_MAC ? [{
     label: app.name,
     submenu: [
       { role: 'about' },
@@ -41,7 +40,7 @@ const template = [
         }
       },
       { type: 'separator' },
-      isMac ? { role: 'close' } : { role: 'quit' }
+      Constant.IS_MAC ? { role: 'close' } : { role: 'quit' }
     ]
   },
   // { role: 'editMenu' }
@@ -54,7 +53,7 @@ const template = [
       { role: 'cut' },
       { role: 'copy' },
       { role: 'paste' },
-      ...(isMac ? [
+      ...(Constant.IS_MAC ? [
         { role: 'pasteAndMatchStyle' },
         { role: 'delete' },
         { role: 'selectAll' },
@@ -94,7 +93,7 @@ const template = [
     submenu: [
       { role: 'minimize' },
       { role: 'zoom' },
-      ...(isMac ? [
+      ...(Constant.IS_MAC ? [
         { type: 'separator' },
         { role: 'front' },
         { type: 'separator' },

@@ -1,9 +1,8 @@
 import Constant from '../common/Constant';
-import { ipcMain } from 'electron'
-import pkg from '../../../package.json'
 import logger  from '@/main/common/logger';
-import http from 'http';
 
+import HttpServer from './server/HttpServer';
+import IpcServer from './server/IpcServer';
 
 const ALREADY_REGISTERED_MODULES = new Map();
 class Response{
@@ -21,8 +20,20 @@ class Response{
 class ApiExportor {
 
     constructor(){
-        this.invoker = Constant.IS_DEVELOPMENT ? new HttpServer() : new IpcServer();
-        this.invoker.startListener(this);
+        this.server = Constant.IS_DEVELOPMENT ? new HttpServer() : new IpcServer();
+        this.server.startListener(this);
+    }
+
+    exportApi() {
+        //第一个参数表示相对的文件目录，第二个参数表示是否包括子目录中的文件，第三个参数表示引入的文件匹配的正则表达式。
+        const context = require.context('@/main/', true, /remoteApi\.js$/);
+        context.keys().forEach((key) => {
+            let modules = context(key).default || [];
+            modules.forEach(module => {
+                this.registry(module.target, module.name);
+                logger.info(`API Exportor module: ${module.name}`);
+            });
+        })
     }
 
     async invokeMethod(moduleName, method, args){
@@ -55,37 +66,5 @@ class ApiExportor {
     }
 }
 
-
-class HttpServer {
-    startListener(apiExportor) {
-        // 创建服务器
-        http.createServer(async (request, response) => {  
-            const moduleName = request.url.substring('/api/'.length).split('/')[0];
-            const method = request.url.substring('/api/'.length).split('/')[1];
-            let data = '';
-            request.on('data', chunk => data += chunk);
-            request.on('end', async () => {
-                response.writeHead(200, {'Content-Type': 'application/json;charset=utf-8'});    
-                response.write(JSON.stringify(await apiExportor.invokeMethod(moduleName, method,JSON.parse(data))));        
-                response.end();
-            })
-        }).listen(pkg.port);
-            
-        console.log(`Server running at http://127.0.0.1:${pkg.port}/`);
-    }
-
-}
-
-class IpcServer {
-    startListener(apiExportor) {
-        const COMMUNICATION_CHANNEL = "ipc-main-unify";
-        ipcMain.on(COMMUNICATION_CHANNEL, async (event, invocation) => {
-            let {moduleName, method, args, replyChannel, requestId} = invocation;
-            const response = await apiExportor.invokeMethod(moduleName, method, args);
-            response.setRequestId(requestId);
-            event.sender.send(replyChannel, await response);
-        })
-    }
-}
 
 export default new ApiExportor();

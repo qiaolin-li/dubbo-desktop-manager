@@ -2,82 +2,83 @@ import dbUtils from "@/main/common/utils/DBUtils.js";
 let dbOperator = dbUtils("invokeHistory");
 
 
-function InvokeHistory({ _id, registryCenterId, serviceName, uniqueServiceName, address, method, param, result, createTime }) {
-    this._id = _id,
-    this.registryCenterId = registryCenterId;
-    this.serviceName = serviceName;
-    this.uniqueServiceName = uniqueServiceName;
-    this.address = address;
-    this.method = method;
-    this.param = param;
-    this.result = result;
-    this.createTime = createTime || new Date().getTime();
-}
+/**
+ * 调用历史记录实体类
+ */
+class InvokeHistory {
 
-function save(invokeHistory) {
-    return dbOperator.save(new InvokeHistory(invokeHistory));
-}
-
-
-function findLastRecord(registryCenterId, serviceName, method) {
-    serviceName = serviceName.indexOf(":") > -1 ? serviceName.split(":")[0] : serviceName;
-
-    let queryParam = {
-        registryCenterId,
-        serviceName: serviceName,
-        method
-    };
-
-    let sortParam = {
-        createTime: -1
+    constructor({ _id, registryCenterId, serviceName, uniqueServiceName, address, method, param, result, createTime }) {
+        this._id = _id,
+        this.registryCenterId = registryCenterId;
+        this.serviceName = serviceName;
+        this.uniqueServiceName = uniqueServiceName;
+        this.address = address;
+        this.method = method;
+        this.param = param;
+        this.result = result;
+        this.createTime = createTime || new Date().getTime();
     }
-
-    return dbOperator.findOne(queryParam, sortParam);
 }
 
-function findList(registryCenterId, serviceName, method, page, size) {
-    serviceName = serviceName.indexOf(":") > -1 ? serviceName.split(":")[0] : serviceName;
+ class InvokeHistoryRepository {
 
-    let queryParam = {
-        registryCenterId,
-        serviceName: serviceName,
-        method
-    };
-
-    let sortParam = {
-        createTime: -1
+    async save(invokeHistory) {
+        return await dbOperator.save(new InvokeHistory(invokeHistory));
     }
-
-    let pageParam = {
-        page, size
+    
+    async findLastRecord(registryCenterId, serviceName, method) {
+        serviceName = serviceName.indexOf(":") > -1 ? serviceName.split(":")[0] : serviceName;
+    
+        const queryParam = {
+            registryCenterId,
+            serviceName,
+            method
+        };
+    
+        const sortParam = {
+            createTime: -1
+        }
+    
+        return await dbOperator.findOne(queryParam, sortParam);
     }
-
-    return dbOperator.find(queryParam, sortParam, pageParam);
-}
-
-function findAllPage(registryCenterId, keyword, page, size) {
-
-    let queryParam = {
-        registryCenterId
-    };
-
-    let sortParam = {
-        createTime: -1
+    
+    async findList(registryCenterId, serviceName, method, page, size) {
+        serviceName = serviceName.indexOf(":") > -1 ? serviceName.split(":")[0] : serviceName;
+    
+        const queryParam = {
+            registryCenterId,
+            serviceName: serviceName,
+            method
+        };
+    
+        const sortParam = {
+            createTime: -1
+        }
+    
+        const pageParam = {
+            page, size
+        }
+    
+        return await dbOperator.find(queryParam, sortParam, pageParam);
     }
-
-    let pageParam = {
-        page, size
+    
+    async findAllPage(registryCenterId, keyword, page, size) {
+    
+        const queryParam = {
+            registryCenterId
+        };
+    
+        const sortParam = {
+            createTime: -1
+        }
+    
+        const pageParam = {
+            page, size
+        }
+    
+        return await dbOperator.find(queryParam, sortParam, pageParam);
     }
+    
+ }
 
-    return dbOperator.find(queryParam, sortParam, pageParam);
-}
-
-let data = {
-    save,
-    findLastRecord,
-    findList,
-    findAllPage,
-    InvokeHistory,
-}
-
-export default data
+export default new InvokeHistoryRepository();

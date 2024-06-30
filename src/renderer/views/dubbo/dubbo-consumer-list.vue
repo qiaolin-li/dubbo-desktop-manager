@@ -33,8 +33,8 @@
 </template>
 
 <script>
-import registry from "@/renderer/api/registryClient.js";
-import ExcelExportUtils from "@/renderer/api/excelExporterClient.js";
+import dataSource from "@/renderer/api/DataSourceClient.js";
+import excelExportUtils from "@/renderer/api/ExcelExporterClient.js";
 const remote = require("@electron/remote");
 
 export default {
@@ -62,7 +62,7 @@ export default {
   },
   methods: {
     async handleNodeClick() {
-      this.consumerList = await registry.getConsumerList(this.uniqueServiceName, this.registryCenterId);
+      this.consumerList = await dataSource.getConsumerList(this.uniqueServiceName, this.registryCenterId);
     },
     consumerListTableHeaderRowClassName() {
       return "consumer-list-table-header";
@@ -124,7 +124,7 @@ export default {
         let filePath = filePaths[0] + `/${this.$t('dubbo.serviceTab.consumerList').replace(/\s/g, '_')}-${suffix}.xlsx`;
         try {
 
-          ExcelExportUtils.generateExcelAndWriterFile(headerList, this.consumerList, filePath);
+          excelExportUtils.generateExcelAndWriterFile(headerList, this.consumerList, filePath);
           this.$message({
             type: "success",
             message: this.$t('dubbo.providePage.exportSuccess'),

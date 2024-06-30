@@ -1,7 +1,8 @@
+/* eslint-disable no-unused-vars */
 import consumer from './Consumer';
 
 
-class Registry {
+class DataSourceClient {
 
     async getServiceList(registryCenterId) {}
 
@@ -21,4 +22,4 @@ class Registry {
 }
 
 
-export default consumer.wrapper(new Registry(), "registry");
+export default consumer.wrapper(new DataSourceClient(), "dataSourceFacade");

@@ -49,8 +49,8 @@
     </split-pane>
 </template>
 <script>
-import appConfig from "@/renderer/api/appConfig.js";
-import pluginManager from "@/renderer/api/pluginManager.js";
+import appConfig from "@/renderer/api/AppConfigClient.js";
+import pluginManager from "@/renderer/api/PluginManager.js";
 const remote = require("@electron/remote");
 const axios = require('axios').default;
 

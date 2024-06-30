@@ -33,7 +33,7 @@
 <script>
 
 import i18n from '@/renderer/common/i18n'
-import appConfig from "@/renderer/api/appConfig.js";
+import appConfig from "@/renderer/api/AppConfigClient.js";
 const remote = require("@electron/remote");
 
 export default {

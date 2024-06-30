@@ -1,11 +1,11 @@
-const axios = require('axios').default;
-import common               from "@/main/datasource/dubbo/common.js";
-import configuration        from '@/main/common/utils/Configuration';
-import i18n                 from '@/main/common/i18n'
-import JSONFormater         from "@/main/common/utils/JSONFormater";
-import InvokeUtils          from "@/main/common/utils/InvokeUtils.js";
-import urlUtils             from "@/main/common/utils/urlUtils.js";
-import appCore              from '@/main/AppCore.js';
+import axios from "axios";
+import common                                           from "@/main/datasource/dubbo/common.js";
+import yamlUtils                                        from '@/main/common/utils/yamlUtils';
+import i18n                                             from '@/main/common/i18n'
+import JSONFormater                                     from "@/main/common/utils/JSONFormater";
+import InvokeUtils                                      from "@/main/common/utils/InvokeUtils.js";
+import urlUtils                                         from "@/main/common/utils/UrlUtils.js";
+import appCore                                          from '@/main/AppCore.js';
 
 async function getToken(registryConfig) {
     let params = {
@@ -198,10 +198,10 @@ async function getConfiguration(registryConfig, providerInfo) {
     let config = await getCurrentConfiguration(registryConfig, providerInfo);
 
     if(!config){
-        config = configuration.createDefaultConfiguration(providerInfo.serviceName);
+        config = yamlUtils.createDubboDefaultConfiguration(providerInfo.serviceName);
     }
     
-    return  configuration.JSONToYaml(config);
+    return  yamlUtils.JSONToYaml(config);
 
 }
 
@@ -285,7 +285,7 @@ function parseConsumerInfo(data) {
 
 
 
-async function invokeMethod(registryConfig, provder, methodInfo, code) {
+async function invokeMethod(registryConfig, provder, methodInfo, code, invokerType) {
 
     const startTime = new Date().getTime();
     const data = {

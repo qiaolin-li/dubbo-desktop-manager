@@ -18,13 +18,13 @@
     </el-input>
     </el-form-item>
     <el-form-item>
-      <el-button type="primary" @click="saveZkConnectInfo">{{$t('connect.save')}}</el-button>
+      <el-button type="primary" @click="saveDataSourceInfo">{{$t('connect.save')}}</el-button>
     </el-form-item>
   </el-form>
 </template>
 
 <script>
-import connectRepository from "@/renderer/api/connectManangerClient.js";
+import dataSourceRepository from "@/renderer/api/DataSourceRepositoryClient.js";
 
 export default {
   data() {
@@ -95,7 +95,7 @@ export default {
   methods: {
     async init() {
       if (this.id) {
-        let connect = await connectRepository.findById(this.id);
+        let connect = await dataSourceRepository.findById(this.id);
         this.form = connect;
       } else {
         this.form.type = "zookeeper"
@@ -105,10 +105,10 @@ export default {
         this.form.scheme = 'digest';
       }
     },
-    async saveZkConnectInfo() {
+    async saveDataSourceInfo() {
       this.$refs.form.validate(async (valid) => {
         if (valid) {
-          await connectRepository.save(this.form);
+          await dataSourceRepository.save(this.form);
           let data = { ...this.form };
           this.form.name = "";
           this.form.address = "127.0.0.1:2181";

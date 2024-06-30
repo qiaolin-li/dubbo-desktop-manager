@@ -1,11 +1,11 @@
-import connectRepository from "./connectRepository"
-import invokeHistoryRepository from './invokeHistoryRepository'
-import interfaceCollectRepository from './interfaceCollectRepository'
+import dataSourceRepository from "./DataSourceRepository"
+import invokeHistoryRepository from './InvokeHistoryRepository'
+import serviceCollectRepository from './ServiceCollectRepository'
 
 export default [
     {
-        name: "connectRepository",
-        target: connectRepository,
+        name: "dataSourceRepository",
+        target: dataSourceRepository,
     },
 
     {
@@ -14,7 +14,7 @@ export default [
     },
 
     {
-        name: "interfaceCollectRepository",
-        target: interfaceCollectRepository
+        name: "serviceCollectRepository",
+        target: serviceCollectRepository
     }
 ]

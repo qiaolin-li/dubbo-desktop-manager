@@ -15,7 +15,7 @@
 
 <script>
 
-import invokeHisotryRecord from "@/renderer/api/invokeHistoryClient.js";
+import invokeHisotryRecord from "@/renderer/api/InvokeHistoryClient.js";
 
 export default {
   data() {

@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import consumer from './Consumer';
 
 class AppConfig {

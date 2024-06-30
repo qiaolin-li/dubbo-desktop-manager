@@ -1,5 +1,5 @@
 import appCore       from '@/main/AppCore.js';
-import registry from "./index";
+import dataSourceFacade from "./DataSourceFacade";
 
 import zookeeperDataSource from "./dubbo/ZookeeperDataSource";
 import nacosDataSource from "./dubbo/NacosDataSource";
@@ -13,7 +13,7 @@ export default  [
 
     // 配置管理对象
     {
-        name: "registry",
-        target: registry,
+        name: "dataSourceFacade",
+        target: dataSourceFacade,
     } 
 ]

@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-vars */
 import consumer from './Consumer';
 
-class InterfaceCollectManager {
+class ServiceCollectManager {
     save(interfaceInfo){}
     findList(registryCenterId){}
     findById(id){}
@@ -9,4 +9,4 @@ class InterfaceCollectManager {
     deletCollect(id){}
 }
 
-export default consumer.wrapper(new InterfaceCollectManager(), "interfaceCollectRepository");
+export default consumer.wrapper(new ServiceCollectManager(), "serviceCollectRepository");

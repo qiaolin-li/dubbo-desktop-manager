@@ -3,7 +3,7 @@ import qs               from 'qs'
 import common           from "@/main/datasource/dubbo/common.js";
 import i18n             from '@/main/common/i18n'
 import appCore          from '@/main/AppCore.js';
-import configuration    from '@/main/common/utils/Configuration';
+import yamlUtils        from '@/main/common/utils/yamlUtils.js';
 
 async function getServiceList(registryConfig) {
 
@@ -186,11 +186,11 @@ async function getMetaData(providerInfo, registryConfig) {
 async function getCurrentConfiguration(registryConfig, providerInfo) {
     let config = await getConfiguration(registryConfig, providerInfo);
 
-    let configData = configuration.yamlToJSON(config);
+    let configData = yamlUtils.yamlToJSON(config);
     if(configData){
         return configData;
     }
-    return configuration.createDefaultConfiguration(providerInfo.serviceName);
+    return yamlUtils.createDubboDefaultConfiguration(providerInfo.serviceName);
 }
 
 
@@ -237,7 +237,7 @@ async function saveConfiguration(registryConfig, providerInfo, doc) {
     try {
         // 有配置项，保存，反之删除
         if(doc && doc.configs && doc.configs.length > 0){
-            params.content = configuration.JSONToYaml(doc);
+            params.content = yamlUtils.JSONToYaml(doc);
             await axios.post(url, qs.stringify(params));
         } else {
             await axios.delete(url, { params });
@@ -285,8 +285,8 @@ function buildDataId(providerInfo) {
     return `${serviceName}:${version}:${group || ''}.configurators`;
 }
 
-async function invokeMethod(registryConfig, provder, methodInfo, code) {
-    return appCore.getInvoke('adapter').invokeMethod(registryConfig, provder, methodInfo, code);
+async function invokeMethod(registryConfig, provder, methodInfo, code, invokerType) {
+    return appCore.getInvoke('adapter').invokeMethod(provder, methodInfo, code, invokerType);
 }
 
 export default {

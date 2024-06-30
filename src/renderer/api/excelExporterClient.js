@@ -1,8 +1,9 @@
+/* eslint-disable no-unused-vars */
 import consumer from './Consumer';
 
 // 这里只是一个空壳，最终会调用主进程的方法
 class ExcelExportor {
-    generateExcel() {};
+    generateExcel() {}
 
     generateExcelAndWriterFile() {}
 }

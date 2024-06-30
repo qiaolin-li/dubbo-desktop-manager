@@ -18,8 +18,8 @@
 </template>
 
 <script>
-import invokeHisotryRecord from "@/renderer/api/invokeHistoryClient.js";
-import interfaceCollectClient from "@/renderer/api/interfaceCollectClient.js";
+import invokeHisotryRecord from "@/renderer/api/InvokeHistoryClient.js";
+import interfaceCollectClient from "@/renderer/api/ServiceCollectClient.js";
 const remote = require("@electron/remote");
 import { ipcRenderer } from 'electron'
 

@@ -44,8 +44,8 @@
 </template>
 
 <script>
-import registry from "@/renderer/api/registryClient.js";
-import ExcelExportUtils from "@/renderer/api/excelExporterClient.js";
+import dataSource from "@/renderer/api/DataSourceClient.js";
+import excelExportUtils from "@/renderer/api/ExcelExporterClient.js";
 const remote = require("@electron/remote");
 
 export default {
@@ -128,7 +128,7 @@ export default {
       let suffix = this.$moment(new Date()).format("YYYYMMDD_HHmmss");
       let filePath = filePaths[0] + `/${this.$t('dubbo.serviceTab.providerList').replace(/\s/g, '_')}-${suffix}.xlsx`;
       try {
-        ExcelExportUtils.generateExcelAndWriterFile(headerList, this.providerList, filePath);
+        excelExportUtils.generateExcelAndWriterFile(headerList, this.providerList, filePath);
         this.$message({
           type: "success",
           message: this.$t('dubbo.providePage.exportSuccess'),
@@ -141,7 +141,7 @@ export default {
       }
     },
     async refreshProviderList() {
-      this.providerList = await registry.getProviderList(this.uniqueServiceName, this.registryCenterId);
+      this.providerList = await dataSource.getProviderList(this.uniqueServiceName, this.registryCenterId);
     },
     openInvokeDrawer(provider) {
       const startIndex = this.interfaceName.lastIndexOf(".") || -1;
@@ -208,13 +208,13 @@ export default {
         row.disabled ? {
           label: this.$t('dubbo.providePage.serviceEnable'),
           click: async () => {
-            await registry.enableProvider(this.registryCenterId, row);
+            await dataSource.enableProvider(this.registryCenterId, row);
             this.refreshProviderList();
           }
         } : {
           label: this.$t('dubbo.providePage.serviceDisable'),
           click: async () => {
-            await registry.disableProvider(this.registryCenterId, row);
+            await dataSource.disableProvider(this.registryCenterId, row);
             this.refreshProviderList();
           }
         }

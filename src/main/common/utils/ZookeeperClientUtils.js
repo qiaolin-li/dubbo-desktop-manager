@@ -1,7 +1,6 @@
 import zookeeperClient from "node-zookeeper-client";
 import i18n from '@/main/common/i18n'
 
-
 class ZookeeperClientUtils {
   createConncetion(registryConfig) {
     let { address } = registryConfig;
@@ -44,7 +43,5 @@ class ZookeeperClientUtils {
     });
   }
 }
-
-
 
 export default new ZookeeperClientUtils();

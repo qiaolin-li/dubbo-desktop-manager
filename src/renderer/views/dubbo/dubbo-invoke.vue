@@ -117,9 +117,9 @@
 
 <script>
 
-import registry from "@/renderer/api/registryClient.js";
-import appConfig from "@/renderer/api/appConfig.js";
-import invokeHisotryRecord from "@/renderer/api/invokeHistoryClient.js";
+import dataSource from "@/renderer/api/DataSourceClient.js";
+import appConfig from "@/renderer/api/AppConfigClient.js";
+import invokeHisotryRecord from "@/renderer/api/InvokeHistoryClient.js";
 
 import jsonCodeEditor from "@/renderer/components/editor/json-code-editor.vue";
 import Loading from "@/renderer/common/utils/MyLoading";
@@ -210,7 +210,7 @@ export default {
       this.currentProvider = this.provider;
     }
 
-    this.providerList = await registry.getProviderList(this.uniqueServiceName, this.registryCenterId);
+    this.providerList = await dataSource.getProviderList(this.uniqueServiceName, this.registryCenterId);
     if (this.providerList.length === 0) {
       return;
     }
@@ -268,7 +268,7 @@ export default {
           const method = {...this.method, parameterTypes: JSON.parse(this.paramTypeCodeConfig.code)};
 
           
-          registry.invokeMethod(
+          dataSource.invokeMethod(
             this.registryCenterId,
             this.uniqueServiceName,
             this.currentProvider,

@@ -25,7 +25,7 @@
 
 <script>
 const remote = require("@electron/remote");
-import connectRepository from "@/renderer/api/connectManangerClient.js";
+import dataSourceRepository from "@/renderer/api/DataSourceRepositoryClient.js";
 import lodash from 'lodash';
 
 
@@ -50,7 +50,7 @@ export default {
   },
   methods: {
     async findConnectList() {
-      let connectInfoList = await connectRepository.findList();
+      let connectInfoList = await dataSourceRepository.findList();
       for (let i = 0; i < connectInfoList.length; i++) {
         connectInfoList[i].interfaceList = [];
       }
@@ -83,7 +83,7 @@ export default {
         type: "warning",
       }).then(async () => {
         // eslint-disable-next-line no-unused-vars
-        await connectRepository.deleteConnect(id);
+        await dataSourceRepository.deleteConnect(id);
         this.$message({
           type: "success",
           message: this.$t('base.deleteSuccess'),

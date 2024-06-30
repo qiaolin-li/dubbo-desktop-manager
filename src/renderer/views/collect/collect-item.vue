@@ -24,7 +24,7 @@
 </template>
 
 <script>
-import interfaceCollectClient from "@/renderer/api/interfaceCollectClient.js";
+import interfaceCollectClient from "@/renderer/api/ServiceCollectClient.js";
 const remote = require("@electron/remote");
 const lodash = require('lodash');
 

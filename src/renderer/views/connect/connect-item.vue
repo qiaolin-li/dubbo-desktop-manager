@@ -19,8 +19,8 @@
 </template>
 
 <script>
-import registry from "@/renderer/api/registryClient.js";
-import interfaceCollectClient from "@/renderer/api/interfaceCollectClient.js";
+import dataSource from "@/renderer/api/DataSourceClient.js";
+import serviceCollectClient from "@/renderer/api/ServiceCollectClient.js";
 import treeUtils from "@/renderer/common/utils/treeUtils.js";
 const remote = require("@electron/remote");
 import lodash from 'lodash';
@@ -51,7 +51,7 @@ export default {
   },
   methods: {
     async findInterfaceList() {
-      let list = await registry.getServiceList(this.connectInfo._id);
+      let list = await dataSource.getServiceList(this.connectInfo._id);
       for (let i = 0; i < list.length; i++) {
         list[i].leaf = true;
       }
@@ -103,7 +103,7 @@ export default {
 
       if(!serviceInfo.children || serviceInfo.children.length === 0 ) {
         const collectMenuList = [];
-        const groupList = await interfaceCollectClient.findGroupList(this.connectInfo._id);
+        const groupList = await serviceCollectClient.findGroupList(this.connectInfo._id);
         groupList.forEach(name => {
           collectMenuList.push({
             label: name,
@@ -146,7 +146,7 @@ export default {
       });
     },
     async collectServiceToGroup(serviceInfo, group = null) {
-      await interfaceCollectClient.save({
+      await serviceCollectClient.save({
         registryCenterId: this.connectInfo._id,
         serviceName: serviceInfo.serviceName,
         name: serviceInfo.id,
