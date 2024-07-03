@@ -51,7 +51,7 @@
 </template>
 <script>
 import appConfig from "@/renderer/api/AppConfigClient.js";
-import pluginManager from "@/renderer/api/PluginManager.js";
+import pluginManager from "@/renderer/api/PluginManagerClient.js";
 const remote = require("@electron/remote");
 const pluginPrefix = "ddp-plugin-";
 
