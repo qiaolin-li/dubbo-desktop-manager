@@ -48,7 +48,7 @@ class HttpClient{
                 type: "error",
                 message: response.data.errorMessage,
             });
-            return new Error(response.data.errorMessage);
+            throw new Error(response.data.errorMessage);
         }
         return response.data.data;
     }

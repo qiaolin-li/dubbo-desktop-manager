@@ -1,10 +1,10 @@
-import path from 'path';
-import fs from 'fs';
-import resolve from 'resolve'
-import constant from "@/main/common/Constant.js";
-import appConfig from "@/main/common/config/appConfig.js";
-import { Notification } from 'electron';
-import pluginManager from "@/main/plugin/PluginManager.js";
+import fs                   from 'fs';
+import path                 from 'path';
+import resolve              from 'resolve'
+import constant             from "@/main/common/Constant.js";
+import appConfig            from "@/main/common/config/appConfig.js";
+import { Notification }     from 'electron';
+import pluginManager        from "@/main/plugin/PluginManager.js";
 
 // eslint-disable-next-line no-undef
 const requireFunc = typeof __webpack_require__ === 'function' ? __non_webpack_require__ : require
@@ -37,11 +37,7 @@ class PluginLoader {
         const json = JSON.parse(fs.readFileSync(packagePath)) // 读取package.json
         const pluginNameList = Object.keys(json.dependencies || {}).concat(Object.keys(json.devDependencies || {}));
 
-        this.load(pluginNameList);
-    }
 
-    async load(pluginNameList) {
-       
         // 1.获取插件列表
         const modules = pluginNameList.filter((name) => {
             if (!/^ddp-plugin-|^@[^/]+\/ddp-plugin-/.test(name)) return false
@@ -51,30 +47,30 @@ class PluginLoader {
         })
 
         const pluginConfig = appConfig.getProperty['pluginConfig'] || {};
-
         for (let i in modules) {
-            this.list.push(modules[i]) // 把插件push进插件列表
-            
+            const module = modules[i]
             // 3.判断插件是否被禁用，如果是undefined则为新安装的插件，默认不禁用
-            if (pluginConfig[modules[i]] !== false) { 
-                try {
-                    // 4.调用插件的`register`方法进行注册
-                    const plugin = this.getPlugin(modules[i]).register() 
-                    pluginManager.register(modules[i], plugin)
-
-                    // 将插件设为启用-->让新安装的插件的值从undefined变成true
-                    pluginConfig[modules[i]] = true
-                } catch (e) {
-                    new Notification({
-                        title: `Plugin ${modules[i]} Load Error`,
-                        body: e
-                    }).show()
-                    console.log(e);
-                }
+            if (pluginConfig[module] === false) { 
+                continue;
+            }
+            try {
+                this.load(module);
+            } catch (error) {
+                new Notification({ title: '插件[${module}]加载失败', body: error.message }).show();
             }
         }
+        
+    }
 
-        appConfig.setProperty('pluginConfig', pluginConfig)
+    async load(module) {
+        // 调用插件的`register`方法进行注册
+        try {
+            const plugin = this.getPlugin(module).register() 
+            pluginManager.register(module, plugin)
+        } catch (error) {
+            throw new Error(`插件${module}加载失败，错误原因：${error}`)
+        }
+        this.list.push(module) // 把插件push进插件列表
     }
     resolvePlugin(name) { // 获取插件路径
         try {

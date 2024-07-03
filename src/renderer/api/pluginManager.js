@@ -2,9 +2,14 @@
 import consumer from './Consumer';
 
 class Plugin {
-    async install(plugins) {}
 
-    async load(plugins) {}
+    search(keyword){}
+    
+    install(plugins) {}
+
+    load(plugins) {}
+
+    uninstall(plugin) {}
 }
 
 

@@ -37,6 +37,7 @@
                 <div>
                     <span class="config-button ing" v-if="currentPlugin.hasInstall && !currentPlugin.ing" > 已安装 </span>
                     <span class="config-button install" v-if="!currentPlugin.hasInstall && !currentPlugin.ing" @click="installPlugin(currentPlugin)">安装</span>
+                    <span class="config-button install" v-if="currentPlugin.hasInstall && !currentPlugin.ing" @click="uninstallPlugin(currentPlugin)">卸载</span>
                     <span v-if="!currentPlugin.hasInstall && currentPlugin.ing" class="config-button ing">安装中</span>
                     <div>
                         <i v-if="currentPlugin.enabled" class="el-icon-setting" @click="buildContextMenu(currentPlugin)"></i>
@@ -52,10 +53,7 @@
 import appConfig from "@/renderer/api/AppConfigClient.js";
 import pluginManager from "@/renderer/api/PluginManager.js";
 const remote = require("@electron/remote");
-const axios = require('axios').default;
-
 const pluginPrefix = "ddp-plugin-";
-const pluginRegex = /ddp-plugin-/;
 
 export default {
     name: "plugin",
@@ -75,20 +73,33 @@ export default {
     },
     methods: {
         resize() {},
-        getPluginList() {
-            this.$electron.ipcRenderer.send("getPluginList");
-        },
         async installPlugin(plugin) {
-            plugin.ing = true;
-            await pluginManager.install([plugin.packageName])
-            plugin.ing = false;
-            plugin.hasInstall = true;
-            this.handleReload();
+            try {
+                plugin.ing = true;
+                await pluginManager.install(plugin.id, plugin.version)
+
+                this.$message({
+                    type: "success",
+                    message: `插件【${plugin.name}-${plugin.version}】安装成功`,
+                });
+                plugin.hasInstall = true;
+                this.handleReload();
+            } finally {
+                plugin.ing = false;
+            }
         },
-        uninstallPlugin(plugin) {
-            plugin.ing = true;
-            this.$electron.ipcRenderer.send("uninstallPlugin", plugin.name);
-            plugin.hasInstall = false;
+        async uninstallPlugin(plugin) {
+            try {
+                plugin.ing = true;
+                await pluginManager.uninstall(plugin.id)
+                plugin.hasInstall = false;
+                this.$message({
+                    type: "success",
+                    message: `插件【${plugin.name}】卸载成功`,
+                });
+            } finally {
+                plugin.ing = false;
+            }
         },
         updatePlugin(plugin) {
             plugin.ing = true;
@@ -111,10 +122,14 @@ export default {
                 ? this.searchText
                 : this.searchText !== "" ? pluginPrefix + this.searchText : pluginPrefix;
 
-            // this.$http.get(`https://api.npms.io/v2/search?q=${val}`)
             try {
-                const response = await axios.get(`https://registry.npmjs.com/-/v1/search?text=${searchVal}`);
-                this.pluginList = response.data.objects.map((item) => this.handleSearchResult(item));
+                const pluginList = await pluginManager.search(searchVal);
+                pluginList.forEach((item) => {
+                    item.logoLoadSuccess = true;
+                    item.ing = false;
+                })
+
+                this.pluginList = pluginList;
                 this.currentPlugin = this.pluginList[0] || {};
                 this.loading = false;
             } catch(err) {
@@ -122,28 +137,8 @@ export default {
                 this.loading = false;
             }
         },
-        handleSearchResult(item) {
-            const name = item.package.name.replace(pluginRegex, "");
-            return {
-                name: name,
-                packageName: item.package.name,
-                author: item.package.author.name,
-                description: item.package.description,
-                logo: `https://cdn.jsdelivr.net/npm/${item.package.name}/logo.png`,
-                logoLoadSuccess: true,
-                config: {},
-                homepage: item.package.links ? item.package.links.homepage : "",
-                hasInstall: this.pluginNameList.some(
-                    (plugin) => plugin === item.package.name.replace(pluginRegex, "")
-                ),
-                version: item.package.version,
-                ing: false, // installing or uninstalling
-            };
-        },
         openHomepage(url) {
-            if (url) {
-                remote.shell.openExternal(url);
-            }
+            if (url) remote.shell.openExternal(url);
         },
         buildContextMenu(plugin) {
             let menuTemplate = [

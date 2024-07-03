@@ -42,10 +42,14 @@ export default {
     APPLICATION_DATA_DIR,
     APPLICATION_LOG_ERROR_File,
     APPLICATION_LOG_COMBINED_FILE,
+
     APPLICATION_PLUGINS_DIR,
     APPLICATION_INTERNAL_PLUGINS_DIR,
+    APPLICATION_PLUGINS_NAME_PREFIX: 'ddp-plugin-',
+
     APPLICATION_TEMP_DIR,
     JAVA_COMMAND_PATH,
     APPLICATION_JAVA_INVOKE_DIR,
-    IS_MAC: process.platform === 'darwin'
+    IS_MAC: process.platform === 'darwin',
+    
 }
