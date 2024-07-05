@@ -7,7 +7,7 @@
     "email": "992004863@qq.com",
     "url": "https://github.com/qiaolin-li/dubbo-desktop-manager"
   },
-  "version": "1.0.9",
+  "version": "1.1.0",
   "private": true,
   "port": "10678",
   "scripts": {
@@ -32,7 +32,7 @@
     "core-js": "^3.6.5",
     "cross-spawn": "^7.0.3",
     "custom-electron-titlebar": "file:./custom-electron-titlebar",
-    "electron": "^13.0.0",
+    "electron": "^16.2.8",
     "electron-devtools-installer": "^3.1.0",
     "electron-find": "^1.0.7",
     "element-ui": "2.15.14",
@@ -42,6 +42,7 @@
     "json-bigint": "^1.0.0",
     "jsonlint": "^1.6.3",
     "lowdb": "^1.0.0",
+    "mavon-editor": "^2.10.4",
     "moment": "^2.29.1",
     "mousetrap": "^1.6.5",
     "nedb": "^1.8.0",

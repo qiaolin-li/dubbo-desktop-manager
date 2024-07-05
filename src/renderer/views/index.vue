@@ -81,6 +81,7 @@ export default {
         is: menu.componentName,
         ...menu.params,
         mainPanel: this,
+        switchCurrentMenu: () => this.switchMenu(menu),
       };
     },
     addMenu(menu, location){

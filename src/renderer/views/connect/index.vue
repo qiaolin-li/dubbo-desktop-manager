@@ -37,6 +37,7 @@ export default {
   },
   props: {
     mainPanel: Object,
+    switchCurrentMenu: Function
   },  
   data() {
     return {
@@ -46,7 +47,10 @@ export default {
     };
   },
   created() {
-    ipcRenderer.on('openAddConnectDialogEvent', () =>  this.openAddConnectDialog());
+    ipcRenderer.on('openAddConnectDialogEvent', () =>  {
+      this.switchCurrentMenu();
+      this.openAddConnectDialog()
+    });
   },
   mounted() {
     let connectDiv = document.getElementById("connectDiv");

@@ -4,7 +4,7 @@
             <div class="plugin-view">
                 <el-input v-model="searchText" placeholder="搜索npm上的PicGo插件，或者点击上方按钮查看优秀插件列表" size="small"  @input="getSearchResult" ></el-input>
                 <div class="plugin-list" v-loading="loading">
-                    <div class="plugin-item" v-for="item in pluginList" :key="item.name" @click="currentPlugin = item">
+                    <div class="plugin-item" v-for="item in pluginList" :key="item.name" @click="selectPlugin(item)">
                         <img class="plugin-item__logo" v-if="item.logoLoadSuccess" :src="item.logo" @error="() => item.logoLoadSuccess = false" />
                         <img class="plugin-item__logo"  v-else src="../../assets/icon.png"/>
                         <div class="plugin-item__content" :class="{ disabled: !item.enabled }">
@@ -44,7 +44,7 @@
                         <i v-else class="el-icon-remove-outline" @click="buildContextMenu(currentPlugin)"></i>
                     </div>
                 </div>
-                <div class="plugin-desc" :title="currentPlugin.description">{{ currentPlugin.description }}</div>
+                <mavon-editor class="plugin-desc" ref="md" :toolbars="markdownOption" :codeStyle="codeStyle" defaultOpen="preview" :toolbarsFlag="false" :subfield="false" v-model="value"   />
             </div>
         </template>
     </split-pane>
@@ -54,18 +54,25 @@ import appConfig from "@/renderer/api/AppConfigClient.js";
 import pluginManager from "@/renderer/api/PluginManagerClient.js";
 const remote = require("@electron/remote");
 const pluginPrefix = "ddp-plugin-";
+import axios from "axios";
+
 
 export default {
     name: "plugin",
-    components: {
-    },
     data() {
         return {
             searchText: "",
             pluginList: [],
             pluginNameList: [],
             loading: false,
-            currentPlugin: {}
+            currentPlugin: {},
+            value: '',
+            codeStyle: '',
+            markdownOption: {
+                bold: true, // 粗体
+                navigation: true, // 导航目录
+
+            },
         };
     },
     created() {
@@ -130,12 +137,23 @@ export default {
                 })
 
                 this.pluginList = pluginList;
-                this.currentPlugin = this.pluginList[0] || {};
+                this.selectPlugin(this.pluginList[0] || {})
                 this.loading = false;
             } catch(err) {
                 console.log(err);
                 this.loading = false;
             }
+        },
+        async selectPlugin(plugin){
+            try {
+                const response = await axios.get(`https://cdn.jsdelivr.net/npm/${plugin.id}/README.md`);
+                this.value = response.data;
+                const markdownIt = this.$refs.md.markdownIt;
+                markdownIt.set({ breaks: false });
+            } catch(err) {
+                this.value = plugin.description;
+            }
+            this.currentPlugin = plugin;
         },
         openHomepage(url) {
             if (url) remote.shell.openExternal(url);
@@ -221,4 +239,23 @@ export default {
     transition: all .2s ease-in-out;
 }
 
+.plugin-content {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.plugin-desc {
+    height: 100%;
+    overflow: auto;
+}
+
+.hljs {
+    background-color: #f6f8fa;
+}
+
+.v-note-wrapper {
+    z-index: 0 !important;
+
+}
 </style>

@@ -1,7 +1,5 @@
 import i18n from '@/renderer/common/i18n'
-import {
-    ipcRenderer
-} from 'electron'
+import { ipcRenderer } from 'electron'
 
 export default {
     topMenu: [
@@ -9,6 +7,10 @@ export default {
             label: i18n.t("menu.datasource"),
             icon: "el-icon-house",
             componentName: "registryList",
+            ready(mananger, self) {
+                mananger.switchMenu(self);
+                ipcRenderer.on('openSettingsTabEvent', () => mananger.switchMenu(self));
+            }
         },
     ],
     bottomMenu: [

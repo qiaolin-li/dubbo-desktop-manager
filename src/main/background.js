@@ -1,4 +1,4 @@
-import { app, protocol, BrowserWindow, Menu, session } from 'electron'
+import { app, shell, protocol, BrowserWindow, Menu, session } from 'electron'
 import updateChecker from '@/main/common/autoupdate/updateChecker.js';
 import windowHolder  from '@/main/common/holder/WindowHolder.js';
 import Constant      from '@/main/common/Constant.js'
@@ -75,6 +75,15 @@ app.on('ready', async () => {
   //   ('CommandOrControl+X is pressed')
   // }); 
 })
+
+  
+app.on('web-contents-created', (e, webContents) => {
+    webContents.on('new-window', (event, url) => {
+        event.preventDefault();
+        shell.openExternal(url);
+    });
+});
+
 
 // Exit cleanly on request from parent process in development mode.
 if (Constant.IS_DEVELOPMENT) {

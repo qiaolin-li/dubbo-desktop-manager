@@ -58,6 +58,12 @@ Vue.config.ignoredElements = [
 
 Vue.config.devtools = true;
 
+import MavonEditor from 'mavon-editor'
+import 'mavon-editor/dist/css/index.css'
+const markdownIt = MavonEditor.mavonEditor.getMarkdownIt()
+markdownIt.set({ breaks: false });
+Vue.use(MavonEditor)
+
 new Vue({
   i18n,
   render: h => h(App)

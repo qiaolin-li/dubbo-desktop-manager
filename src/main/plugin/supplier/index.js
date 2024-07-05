@@ -6,8 +6,13 @@ import spawn                    from 'cross-spawn'
 class NPMPluginSupplier {
 
     async search(keyword){
-        const response = await axios.get(`https://registry.npmjs.com/-/v1/search?text=${keyword}`);
-        return response.data.objects.map(item => this.handleResult(item));
+        try {
+            const response = await axios.get(`https://registry.npmmirror.com/-/v1/search?text=${constant.APPLICATION_PLUGINS_NAME_PREFIX}${keyword}&time=${new Date().getTime()}`);
+            return response.data.objects.map(item => this.handleResult(item));
+        } catch(e){
+        const response = await axios.get(`https://registry.npmjs.com/-/v1/search?text=${constant.APPLICATION_PLUGINS_NAME_PREFIX}${keyword}&time=${new Date().getTime()}`);
+            return response.data.objects.map(item => this.handleResult(item));
+        }
     }
 
     handleResult(item) {

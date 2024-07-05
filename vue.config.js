@@ -1,4 +1,7 @@
 module.exports = {
+  configureWebpack: {
+    devtool: 'source-map'
+  },
   pluginOptions: {
     electronBuilder: {
       // Use this to change the entrypoint of your app's main process
