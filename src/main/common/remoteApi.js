@@ -1,5 +1,8 @@
+import axios                    from 'axios';
+import urlUtils                 from "@/main/common/utils/UrlUtils.js";
 import appCore                  from '@/main/AppCore.js';
 import appConfig                from "./config/appConfig"
+import yamlUtils                from '@/main/common/utils/yamlUtils.js';
 import excelExporter            from './excel/ExcelExporter'
 
 import TelnetInvoker            from "@/main/common/dubbo/invoker/TelnetInvoker.js";
@@ -21,6 +24,9 @@ appCore.registerParamGenerator('dubbo2.7', paramGeneratorDubbo2_7);
 appCore.registerParamGenerator('dubbo3', paramGeneratorDubbo3);
 appCore.registerParamGenerator('adapter', new ParamGeneratorAdapter(paramGeneratorDubbo2_7, paramGeneratorDubbo3));
 
+appCore.yamlUtils = yamlUtils;
+appCore.axios = axios;
+appCore.urlUtils = urlUtils
 
 export default [
 

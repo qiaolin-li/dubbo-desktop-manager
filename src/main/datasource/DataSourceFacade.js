@@ -1,3 +1,4 @@
+import i18n                     from '@/main/common/i18n'
 import appCore                  from '@/main/AppCore.js';
 import windowHolder             from '@/main/common/holder/WindowHolder.js';
 import yamlUtils                from '@/main/common/utils/yamlUtils';
@@ -8,18 +9,30 @@ import dataSourceRepository     from "@/main/repository/DataSourceRepository.js"
 class DataSourceFacade {
 
     async getServiceList(registryCenterId) {
-        let registryConfig = await this.getDataSourceInfo(registryCenterId);
-        return await this.getRealRegistry(registryConfig).getServiceList(registryConfig);
+        try {
+            let registryConfig = await this.getDataSourceInfo(registryCenterId);
+            return await this.getRealRegistry(registryConfig).getServiceList(registryConfig);
+        } catch (error) {
+            throw new Error(i18n.t("connect.exportService.nacos.getServiceList.error", { e: error}));
+        }
     }
 
     async getProviderList(serviceName, registryCenterId) {
-        let registryConfig = await this.getDataSourceInfo(registryCenterId);
-        return await this.getRealRegistry(registryConfig).getProviderList(serviceName, registryConfig);
+        try {
+            let registryConfig = await this.getDataSourceInfo(registryCenterId);
+            return await this.getRealRegistry(registryConfig).getProviderList(serviceName, registryConfig);
+        } catch (error) {
+            throw new Error(i18n.t("connect.exportService.nacos.getProviderList.error", { e: error }));
+        }
     }
 
     async getConsumerList(serviceName, registryCenterId) {
-        let registryConfig = await this.getDataSourceInfo(registryCenterId);
-        return await this.getRealRegistry(registryConfig).getConsumerList(serviceName, registryConfig);
+        try {
+            let registryConfig = await this.getDataSourceInfo(registryCenterId);
+            return await this.getRealRegistry(registryConfig).getConsumerList(serviceName, registryConfig);
+        } catch (error) {
+            throw new Error(i18n.t("connect.exportService.nacos.getConsumerList.error", {e: error}));
+        }
     }
 
     async getConfiguration(providerInfo, registryCenterId) {
@@ -99,7 +112,7 @@ class DataSourceFacade {
         let registry = appCore.getDataSource(type);
 
         if (!registry) {
-            return Promise.reject(new Error(`注册中心类型不支持 [${registryConfig.type}]`))
+            throw new Error(`注册中心类型不支持 [${registryConfig.type}]`);
         }
         return registry;
     }
