@@ -3,17 +3,16 @@ import path                 from 'path';
 import resolve              from 'resolve'
 import constant             from "@/main/common/Constant.js";
 import appConfig            from "@/main/common/config/appConfig.js";
-import { Notification }     from 'electron';
 import pluginManager        from "@/main/plugin/PluginManager.js";
+import appCore              from '@/main/AppCore.js';
 
 // eslint-disable-next-line no-undef
 const requireFunc = typeof __webpack_require__ === 'function' ? __non_webpack_require__ : require
 
 
+
 class PluginLoader {
-    constructor(ctx) {
-        this.ctx = ctx
-        this.list = [] // 插件列表
+    constructor() {
         this.init()
     }
 
@@ -40,7 +39,7 @@ class PluginLoader {
 
         // 1.获取插件列表
         const modules = pluginNameList.filter((name) => {
-            if (!/^ddp-plugin-|^@[^/]+\/ddp-plugin-/.test(name)) return false
+            if (!/^ddm-plugin-|^@[^/]+\/ddm-plugin-/.test(name)) return false
 
             // 获取插件路径
             return fs.existsSync(this.resolvePlugin(name))
@@ -56,21 +55,57 @@ class PluginLoader {
             try {
                 this.load(module);
             } catch (error) {
-                new Notification({ title: '插件[${module}]加载失败', body: error.message }).show();
+                appCore.notify('插件[${module}]加载失败', error.message)
             }
         }
         
     }
 
     async load(module) {
+        const registerInfo = {
+            dataSourceList: [],
+            invokeList: [],
+            paramGeneratorList: [],
+        };
+
+        const appCoreWrapper =  Object.create(appCore);
+        appCoreWrapper.registerDataSource = (type,  dataSource) => {
+            appCore.registerDataSource(type, dataSource)
+            registerInfo.dataSourceList.push(type)
+        }
+        
+        appCoreWrapper.registerInvoke =  (type, invoker) => {
+            appCore.registerInvoke(type, invoker)
+            registerInfo.invokeList.push(type)
+        }
+
+        appCoreWrapper.registerParamGenerator =  (type, generator) => {
+            appCore.registerParamGenerator(type, generator)
+            registerInfo.paramGeneratorList.push(type)
+        }
+
         // 调用插件的`register`方法进行注册
         try {
-            const plugin = this.getPlugin(module).register() 
+            // 通过插件名获取插件
+            const pluginDir = path.join(constant.APPLICATION_PLUGINS_DIR, 'node_modules/', module)
+
+            // 读取package.json
+            const packageJson = JSON.parse(fs.readFileSync(path.join(pluginDir, 'package.json'))) 
+
+            const mainJs = packageJson.main ? path.join(pluginDir, packageJson.main) : path.join(pluginDir, 'index.js')
+
+            const plugin = this.getPlugin(mainJs)(appCoreWrapper).register() 
+            plugin.version = packageJson.version;
+            plugin.id = module;
+            plugin.uninstall = () => {
+                registerInfo.dataSourceList.forEach((type) => appCore.removeDataSource(type));
+                registerInfo.invokeList.forEach((type) => appCore.removeInvoke(type));
+                registerInfo.paramGeneratorList.forEach((type) => appCore.removeParamGenerator(type));
+            }
             pluginManager.register(module, plugin)
         } catch (error) {
             throw new Error(`插件${module}加载失败，错误原因：${error}`)
         }
-        this.list.push(module) // 把插件push进插件列表
     }
     resolvePlugin(name) { // 获取插件路径
         try {
@@ -81,13 +116,14 @@ class PluginLoader {
             return path.join(constant.APPLICATION_PLUGINS_DIR, 'node_modules', name)
         }
     }
-    getPlugin(name) { 
-        // 通过插件名获取插件
-        const pluginDir = path.join(constant.APPLICATION_PLUGINS_DIR, 'node_modules/')
-        
+    getPlugin(mainJs) { 
+
         // 2.通过require获取插件并传入ctx
-        delete requireFunc.cache[requireFunc.resolve(pluginDir + name)];
-        return requireFunc(pluginDir + name)(this.ctx) 
+        delete requireFunc.cache[requireFunc.resolve(mainJs)];
+        const module = requireFunc(mainJs);
+
+
+        return module;
     }
 }
 

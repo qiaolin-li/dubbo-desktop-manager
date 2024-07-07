@@ -21,6 +21,11 @@ class PluginManager {
     get (id){
       return this.list[id]
     }
+
+    // 通过插件ID删除插件
+    remove (id){
+      delete this.list[id]
+    }
   
     // 获取插件列表
     getList (){

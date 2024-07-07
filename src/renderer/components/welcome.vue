@@ -1,5 +1,5 @@
 <template>
-  <div class="welcomeContainer notSelect">
+  <div class="welcomeContainer notSelect dragRegion">
     <div class="contentContainer">
       <div class="imgContainer">
         <img src="../assets/icon.png" width="120" height="120" />

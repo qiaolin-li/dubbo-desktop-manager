@@ -1,64 +1,56 @@
 <template>
-    <split-pane @resize="resize" split="vertical" :min-percent="20" :default-percent="30">
-        <template slot="paneL">
-            <div class="plugin-view">
-                <el-input v-model="searchText" placeholder="搜索npm上的PicGo插件，或者点击上方按钮查看优秀插件列表" size="small"  @input="getSearchResult" ></el-input>
-                <div class="plugin-list" v-loading="loading">
-                    <div class="plugin-item" v-for="item in pluginList" :key="item.name" @click="selectPlugin(item)">
-                        <img class="plugin-item__logo" v-if="item.logoLoadSuccess" :src="item.logo" @error="() => item.logoLoadSuccess = false" />
-                        <img class="plugin-item__logo"  v-else src="../../assets/icon.png"/>
-                        <div class="plugin-item__content" :class="{ disabled: !item.enabled }">
-                            <div class="plugin-item__content_info">
-                                <div class="plugin-item__name">{{ item.name }}</div>
-                                <div>
-                                    <span class="config-button ing" v-if="item.hasInstall && !item.ing" > 已安装 </span>
-                                    <span class="config-button ing" v-if="!currentPlugin.enabled" > 已禁用 </span>
-                                    <span v-if="!item.hasInstall && item.ing" class="config-button ing">安装中</span>
+    <div class="plugin-container">
+        <split-pane @resize="resize" split="vertical" :min-percent="20" :default-percent="30">
+            <template slot="paneL">
+                <div class="plugin-view">
+                    <el-input v-model="searchText" placeholder="搜索npm上的PicGo插件，或者点击上方按钮查看优秀插件列表" size="small"  @input="getSearchResult" >
+                      <template #prefix></template>
+                    </el-input>
+                    <div class="plugin-list" v-loading="loading">
+                        <div class="plugin-item element-hover" v-for="item in pluginList" :key="item.name" @click="selectPlugin(item)">
+                            <img class="plugin-item__logo" v-if="item.logoLoadSuccess" :src="item.logo" @error="() => item.logoLoadSuccess = false" />
+                            <img class="plugin-item__logo"  v-else src="../../assets/icon.png"/>
+                            <div class="plugin-item__content" :class="{ disabled: !item.enabled }">
+                                <div class="plugin-item__content_info">
+                                    <div class="plugin-item__name">{{ item.name }}</div>
+                                    <div>
+                                        <span class="config-button ing" v-if="item.installStatus === 'installed' && !item.ing" > 已安装</span>
+                                        <span class="config-button ing" v-if="item.installStatus === 'update' && !item.ing" >更新</span>
+                                        <span class="config-button ing" v-if="item.installStatus === 'update' && item.ing" >更新中</span>
+                                        <span class="config-button ing" v-if="item.installStatus === 'uninstalled' && !item.ing" >安装</span>
+                                        <span class="config-button ing" v-if="item.installStatus === 'uninstalled' && item.ing" >安装中</span>
+                                        <!-- <span class="config-button ing" v-if="item.installStatus === 'disabled'" > 已禁用 </span> -->
+                                    </div>
                                 </div>
+                                <div> 
+                                    <span class="plugin-item__version">{{ item.version }}</span>
+                                    <span>&nbsp;&nbsp;</span>
+                                    <span class="plugin-item__author">{{ item.author }}</span>
+                                </div>    
                             </div>
-                            <!-- <div class="plugin-item__desc" :title="item.description">{{ item.description }}</div> -->
-                            <div> 
-                                <span class="plugin-item__version">{{ item.version }}</span>
-                                <span class="plugin-item__author">{{ item.author }}</span>
-                            </div>    
-
                         </div>
                     </div>
                 </div>
-            </div>
-        </template>
-        <template slot="paneR">
-            <div class="plugin-content" :class="{ disabled: !currentPlugin.enabled }">
-                <div class="plugin-name">{{ currentPlugin.name }} <small>{{ " " + currentPlugin.version }}</small></div>
-                <div>
-                    <span class="plugin-author">{{ currentPlugin.author }}</span>
-                    <span class="plugin-home"  @click="openHomepage(currentPlugin.homepage)">{{ currentPlugin.author }}</span>
-                </div>
-                <div>
-                    <span class="config-button ing" v-if="currentPlugin.hasInstall && !currentPlugin.ing" > 已安装 </span>
-                    <span class="config-button install" v-if="!currentPlugin.hasInstall && !currentPlugin.ing" @click="installPlugin(currentPlugin)">安装</span>
-                    <span class="config-button install" v-if="currentPlugin.hasInstall && !currentPlugin.ing" @click="uninstallPlugin(currentPlugin)">卸载</span>
-                    <span v-if="!currentPlugin.hasInstall && currentPlugin.ing" class="config-button ing">安装中</span>
-                    <div>
-                        <i v-if="currentPlugin.enabled" class="el-icon-setting" @click="buildContextMenu(currentPlugin)"></i>
-                        <i v-else class="el-icon-remove-outline" @click="buildContextMenu(currentPlugin)"></i>
-                    </div>
-                </div>
-                <mavon-editor class="plugin-desc" ref="md" :toolbars="markdownOption" :codeStyle="codeStyle" defaultOpen="preview" :toolbarsFlag="false" :subfield="false" v-model="value"   />
-            </div>
-        </template>
-    </split-pane>
+            </template>
+            <template slot="paneR">
+                <pluginDetails  class="plugin-content"  :plugin="currentPlugin" @installPlugin="installPlugin" @uninstallPlugin="uninstallPlugin"></pluginDetails>
+            </template>
+        </split-pane>
+    </div>
 </template>
 <script>
 import appConfig from "@/renderer/api/AppConfigClient.js";
 import pluginManager from "@/renderer/api/PluginManagerClient.js";
 const remote = require("@electron/remote");
-const pluginPrefix = "ddp-plugin-";
-import axios from "axios";
+import lodash from "lodash";
+import pluginDetails from "./details.vue";
 
 
 export default {
     name: "plugin",
+    components: {
+        pluginDetails,
+    },
     data() {
         return {
             searchText: "",
@@ -66,13 +58,6 @@ export default {
             pluginNameList: [],
             loading: false,
             currentPlugin: {},
-            value: '',
-            codeStyle: '',
-            markdownOption: {
-                bold: true, // 粗体
-                navigation: true, // 导航目录
-
-            },
         };
     },
     created() {
@@ -89,7 +74,7 @@ export default {
                     type: "success",
                     message: `插件【${plugin.name}-${plugin.version}】安装成功`,
                 });
-                plugin.hasInstall = true;
+                plugin.installStatus = 'installed';
                 this.handleReload();
             } finally {
                 plugin.ing = false;
@@ -99,7 +84,7 @@ export default {
             try {
                 plugin.ing = true;
                 await pluginManager.uninstall(plugin.id)
-                plugin.hasInstall = false;
+                plugin.installStatus = 'uninstalled';
                 this.$message({
                     type: "success",
                     message: `插件【${plugin.name}】卸载成功`,
@@ -107,12 +92,6 @@ export default {
             } finally {
                 plugin.ing = false;
             }
-        },
-        updatePlugin(plugin) {
-            plugin.ing = true;
-            this.$electron.ipcRenderer.send("updatePlugin", plugin.name);
-            plugin.ing = false;
-            plugin.hasInstall = true;
         },
         handleReload() {
             const successNotification = new window.Notification("更新成功", {
@@ -124,39 +103,27 @@ export default {
             };
         },
         async getSearchResult () {
+            const searchResult = lodash.throttle(async () => {
+                try {
+                    const pluginList = await pluginManager.search(this.searchText);
+                    pluginList.forEach((item) => {
+                        item.logoLoadSuccess = true;
+                        item.ing = false;
+                    })
 
-            const searchVal = this.searchText.match(pluginPrefix)
-                ? this.searchText
-                : this.searchText !== "" ? pluginPrefix + this.searchText : pluginPrefix;
+                    this.pluginList = pluginList;
+                    this.selectPlugin(this.pluginList[0] || {})
+                    this.loading = false;
+                } catch(err) {
+                    console.log(err);
+                    this.loading = false;
+                }
+            }, 1000)
 
-            try {
-                const pluginList = await pluginManager.search(searchVal);
-                pluginList.forEach((item) => {
-                    item.logoLoadSuccess = true;
-                    item.ing = false;
-                })
-
-                this.pluginList = pluginList;
-                this.selectPlugin(this.pluginList[0] || {})
-                this.loading = false;
-            } catch(err) {
-                console.log(err);
-                this.loading = false;
-            }
+            return searchResult();
         },
         async selectPlugin(plugin){
-            try {
-                const response = await axios.get(`https://cdn.jsdelivr.net/npm/${plugin.id}/README.md`);
-                this.value = response.data;
-                const markdownIt = this.$refs.md.markdownIt;
-                markdownIt.set({ breaks: false });
-            } catch(err) {
-                this.value = plugin.description;
-            }
             this.currentPlugin = plugin;
-        },
-        openHomepage(url) {
-            if (url) remote.shell.openExternal(url);
         },
         buildContextMenu(plugin) {
             let menuTemplate = [
@@ -186,7 +153,7 @@ export default {
                 },
                 {
                     label: "更新插件",
-                    click: () => this.updatePlugin(plugin)
+                    // click: () => this.updatePlugin(plugin)
                 },
             ];
 
@@ -197,6 +164,10 @@ export default {
 };
 </script>
 <style>
+.plugin-container {
+    height: 100%;    
+}
+
 .plugin-list {
     height: 100%;
     width: 100%;
@@ -220,6 +191,10 @@ export default {
 
 .plugin-item__content {
     width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
 }
 
 .plugin-item__content_info {
@@ -227,7 +202,6 @@ export default {
     flex-direction: row;
     justify-content: space-between;
     width: 100%;
-    height: 100%;
 }
 
 .plugin-item__name {
@@ -237,25 +211,5 @@ export default {
     line-height: 22px;
     cursor: pointer;
     transition: all .2s ease-in-out;
-}
-
-.plugin-content {
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-}
-
-.plugin-desc {
-    height: 100%;
-    overflow: auto;
-}
-
-.hljs {
-    background-color: #f6f8fa;
-}
-
-.v-note-wrapper {
-    z-index: 0 !important;
-
 }
 </style>

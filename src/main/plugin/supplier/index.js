@@ -1,18 +1,12 @@
-import axios                    from 'axios'
 import constant                 from '@/main/common/Constant'
 import pluginManager            from '@/main/plugin/PluginManager'
 import spawn                    from 'cross-spawn'
+import pluginSearch             from '@/main/plugin/supplier/PluginSearcher.js'
 
 class NPMPluginSupplier {
 
-    async search(keyword){
-        try {
-            const response = await axios.get(`https://registry.npmmirror.com/-/v1/search?text=${constant.APPLICATION_PLUGINS_NAME_PREFIX}${keyword}&time=${new Date().getTime()}`);
-            return response.data.objects.map(item => this.handleResult(item));
-        } catch(e){
-        const response = await axios.get(`https://registry.npmjs.com/-/v1/search?text=${constant.APPLICATION_PLUGINS_NAME_PREFIX}${keyword}&time=${new Date().getTime()}`);
-            return response.data.objects.map(item => this.handleResult(item));
-        }
+    async search(keyword) {
+        return await pluginSearch.search(keyword)
     }
 
     handleResult(item) {
