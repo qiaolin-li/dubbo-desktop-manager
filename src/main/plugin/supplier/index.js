@@ -10,35 +10,27 @@ class NPMPluginSupplier {
 
     async search(keyword) {
         const remotePluginList = await pluginSearch.search(keyword);
-        // return await this.localLinkPluginList(remotePluginList);
-        return remotePluginList;
+        return await this.localLinkPluginList(remotePluginList);
+        // return remotePluginList;
     }
 
     async localLinkPluginList(pluginList){
-        const result = await npmUtils.execCommand('ls', [ '--global', '--depth', '0' ], constant.APPLICATION_PLUGINS_DIR);
-        // const result = await this.execCommand('ls', [ '--global', '--depth', '0' ], constant.APPLICATION_PLUGINS_DIR);
-        // // eslint-disable-next-line no-control-regex
-        // const cleanedResult = result.replace(/\x1b\[[0-9;]*m/g, '');
+        const rootPath = await npmUtils.execCommand('root', [ '-g' ], constant.APPLICATION_PLUGINS_DIR);
 
-        // const regex = /^\+--\s(ddm-plugin-[^\s]+)\s->\s(.*)$/gm;
-        // let match;
-                
-        // 分割成行
-        const lines = result.split('\n');
+        // 获取root目录下所有子目录
+        fs.readdirSync(rootPath).forEach((name) => {
+            if(!name.startsWith('ddm-plugin-')) {
+                return;
+            }
+            // const parts = line.split(' -> ');
+            // const name = parts[0].split(' ')[1].split('@')[0];
 
-        // 过滤出包含 'ddm-plugin-' 的行
-        const ddmPluginLines = lines.filter(line => line.includes('ddm-plugin-'));
-
-        // 转换为需要的格式
-        ddmPluginLines.map(line => {
-            const parts = line.split(' -> ');
-            const name = parts[0].split(' ')[1].split('@')[0];
-
-            const pluginPath = parts[1].substring(0, parts[1].lastIndexOf(name) + name.length);
+            const pluginPath = rootPath + '/' + name;
 
             const packagePath = path.join(pluginPath, 'package.json')
             const pkg = JSON.parse(fs.readFileSync(packagePath)) // 读取package.json
             
+            name = pkg.name;
             const plugin = pluginManager.get(name);
 
             let installStatus = 'uninstalled';
@@ -55,7 +47,7 @@ class NPMPluginSupplier {
                 path: path.join(pluginPath),
                 author: pkg.author,
                 description: pkg.description,
-                logo: path.join(pluginPath, 'logo.png'),
+                logo: 'file://' + path.join(pluginPath, 'logo.png'),
                 readme: path.join(pluginPath, 'README.md'),
                 config: {},
                 installVersion:plugin ? plugin.version : '',
@@ -65,6 +57,57 @@ class NPMPluginSupplier {
             });
 
         });
+
+        // const result = await npmUtils.execCommand('ls', [ '--global', '--depth', '0' ], constant.APPLICATION_PLUGINS_DIR);
+        // const result = await this.execCommand('ls', [ '--global', '--depth', '0' ], constant.APPLICATION_PLUGINS_DIR);
+        // // eslint-disable-next-line no-control-regex
+        // const cleanedResult = result.replace(/\x1b\[[0-9;]*m/g, '');
+
+        // const regex = /^\+--\s(ddm-plugin-[^\s]+)\s->\s(.*)$/gm;
+        // let match;
+                
+        // 分割成行
+        // const lines = result.split('\n');
+
+        // // 过滤出包含 'ddm-plugin-' 的行
+        // const ddmPluginLines = lines.filter(line => line.includes('ddm-plugin-'));
+
+        // 转换为需要的格式
+        // ddmPluginLines.map(line => {
+        //     const parts = line.split(' -> ');
+        //     const name = parts[0].split(' ')[1].split('@')[0];
+
+        //     const pluginPath = parts[1].substring(0, parts[1].lastIndexOf(name) + name.length);
+
+        //     const packagePath = path.join(pluginPath, 'package.json')
+        //     const pkg = JSON.parse(fs.readFileSync(packagePath)) // 读取package.json
+            
+        //     const plugin = pluginManager.get(name);
+
+        //     let installStatus = 'uninstalled';
+        //     if (plugin) {
+        //         // 本地插件，可无脑更新
+        //         installStatus = 'update';
+        //     }
+
+        //     pluginList = pluginList.filter(p => p.name !== name);
+            
+        //     pluginList.unshift({
+        //         id: name,
+        //         name: pkg.pluginName || name.replace(`${constant.APPLICATION_PLUGINS_NAME_PREFIX}`, ''),
+        //         path: path.join(pluginPath),
+        //         author: pkg.author,
+        //         description: pkg.description,
+        //         logo: path.join(pluginPath, 'logo.png'),
+        //         readme: path.join(pluginPath, 'README.md'),
+        //         config: {},
+        //         installVersion:plugin ? plugin.version : '',
+        //         installStatus: installStatus,
+        //         version: pkg.version,
+        //         source: 'local'
+        //     });
+
+        // });
         
         return pluginList;
     }
@@ -134,8 +177,11 @@ class NPMPluginSupplier {
     async install(plugin) {
 
         try {
+
+            const command = plugin.source === 'local' ? 'install' : 'link'
+            const params = plugin.source === 'local' ? [plugin] : [plugin, '--local']
          
-            return await npmUtils.execCommand('install', [ plugin ], constant.APPLICATION_PLUGINS_DIR);
+            return await npmUtils.execCommand(command, params, constant.APPLICATION_PLUGINS_DIR);
             //   return await this.execCommand('install', [ plugin ], constant.APPLICATION_PLUGINS_DIR)
         } catch (error) {
             throw new Error(`插件[${plugin}]安装失败，错误信息：${error}`)
