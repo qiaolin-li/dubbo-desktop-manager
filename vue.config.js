@@ -25,9 +25,11 @@ module.exports = {
           "allowToChangeInstallationDirectory": true
         },
         asar: true,
+        extraFiles: ["./node_modules/npm"],
         // 这里其实是相对打包后的位置，不是打包前工程所在的位置
         "asarUnpack": [
-          "./jar/**"
+          "./jar/**",
+          "./plugins/**"
         ]
       },
     }

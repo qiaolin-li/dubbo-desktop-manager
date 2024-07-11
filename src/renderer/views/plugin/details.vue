@@ -28,6 +28,7 @@
 </template>
 
 <script>
+import pluginManager from "@/renderer/api/PluginManagerClient.js";
 const remote = require("@electron/remote");
 import axios from "axios";
 
@@ -51,8 +52,16 @@ export default {
             deep: false,
             async handler(plugin) {
                 try {
-                    const response = await axios.get(`https://cdn.jsdelivr.net/npm/${plugin.id}@${plugin.version}/README.md`);
-                    this.value = response.data;
+
+                    let content;
+                    if(plugin.source === 'local') {
+                        content = await pluginManager.getReadMeFile(plugin);
+                    } else {
+                        const response = await axios.get(`https://cdn.jsdelivr.net/npm/${plugin.id}@${plugin.version}/README.md`);
+                        content = response.data;
+                    }
+
+                    this.value = content;
                     const markdownIt = this.$refs.md.markdownIt;
                     markdownIt.set({ breaks: false });
                 } catch(err) {

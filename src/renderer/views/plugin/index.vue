@@ -68,7 +68,7 @@ export default {
         async installPlugin(plugin) {
             try {
                 plugin.ing = true;
-                await pluginManager.install(plugin.id, plugin.version)
+                await pluginManager.install(plugin)
 
                 this.$message({
                     type: "success",

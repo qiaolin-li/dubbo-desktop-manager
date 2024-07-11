@@ -37,11 +37,14 @@ function checkAndCreateDir(path) {
 export default {
     IS_DEVELOPMENT,
     USER_HOME_DIR,
+
     APPLICATION_DIR,
     APPLICATION_CONFIG_FILE,
     APPLICATION_DATA_DIR,
     APPLICATION_LOG_ERROR_File,
     APPLICATION_LOG_COMBINED_FILE,
+
+    APPLICATION_NPM_PATH_PREFIX:  path.join(__dirname, IS_DEVELOPMENT ? '../node_modules/npm/' : '../../node_modules/npm/'),
 
     APPLICATION_PLUGINS_DIR,
     APPLICATION_INTERNAL_PLUGINS_DIR,

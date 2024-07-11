@@ -62,7 +62,8 @@
     "xlsx-style": "^0.8.13",
     "xterm": "^4.17.0",
     "xterm-addon-fit": "^0.5.0",
-    "xterm-addon-search": "^0.8.2"
+    "xterm-addon-search": "^0.8.2",
+    "npm": "8.19.4"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "~4.5.0",

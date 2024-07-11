@@ -6,9 +6,8 @@ import logger        from '@/main/common/logger';
 import template      from '@/main/menuList.js';
 import apiExportor   from '@/main/api/ApiExportor.js';
 import appCore       from '@/main/AppCore.js';
-import appConfig from "@/main/common/config/appConfig.js";
-import pkg from '../../package.json'
-
+import appConfig     from "@/main/common/config/appConfig.js";
+import pkg           from '../../package.json'
 
 // Scheme must be registered before the app is ready
 protocol.registerSchemesAsPrivileged([

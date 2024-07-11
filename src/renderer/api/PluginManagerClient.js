@@ -5,7 +5,9 @@ class Plugin {
 
     search(keyword){}
     
-    install(plugins) {}
+    getReadMeFile(plugin) {}
+
+    install(plugin) {}
 
     load(plugins) {}
 
