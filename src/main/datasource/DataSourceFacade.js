@@ -8,6 +8,27 @@ import dataSourceRepository     from "@/main/repository/DataSourceRepository.js"
 
 class DataSourceFacade {
 
+    async getDataSourceList() {
+        return Array.from(appCore.datasources.entries()).map(([key, value]) => ({
+            type: key,
+            label: value.title || key,
+        }));
+    }
+
+    async getFormConfig(dataSourceType){
+        try {
+            let registry = appCore.getDataSource(dataSourceType);
+
+            if (!registry) {
+                throw new Error(`注册中心类型不支持 [${dataSourceType}]`);
+            }
+
+            return await registry.getFormConfig();
+        } catch (error) {
+            throw new Error(i18n.t("connect.exportService.nacos.getServiceList.error", { e: error}));
+        }
+    }
+
     async getServiceList(registryCenterId) {
         try {
             let registryConfig = await this.getDataSourceInfo(registryCenterId);

@@ -75,6 +75,7 @@ export default {
         addConnect: "新建链接",
         modifyConnect: "修改链接",
         name: "链接名称",
+        type: "类型",
         address: "链接地址",
         sessionTimeout: "超时时间",
         save: "立即创建",

@@ -12,6 +12,7 @@ class NpmUtils {
         }
         
 
+        process.argv[0] = ''
         process.argv[1] = 'dist_electron'
         process.argv[2] = command
         for (let i = 0; i < modules.length; i++) {
@@ -41,23 +42,6 @@ class NpmUtils {
         }
 
         const npm = new MyNpm(where)
-        // npm.localPrefix = where;
-
-        // fs.writeFileSync(constant.APPLICATION_DIR + '/9999999999-' + new Date().getTime() +'.txt', JSON.stringify(process.argv))
-        // fs.writeFileSync(constant.APPLICATION_DIR + '/888888-' + new Date().getTime() +'.txt', JSON.stringify(process.argv[1]))
-    
-        // if npm is called as "npmg" or "npm_g", then
-        // run in global mode.
-        // if (process.argv[1][process.argv[1].length - 1] === 'g') {
-        //     process.argv.splice(1, 1, 'npm', '-g')
-        // }
-    
-        
-        // now actually fire up npm and run the command.
-        // this is how to use npm programmatically:
-        // let output = '';
-        // npm.output = (...msg) => output += msg;
-        // npm.outputError = (...msg) => output += msg;
 
         await npm.load()
         if (npm.config.get('version', 'cli')) {

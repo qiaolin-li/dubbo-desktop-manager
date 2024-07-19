@@ -332,6 +332,7 @@ function getMethodParameterTypes(methodInfo) {
 
 
 export default {
+    title: "Dubbo Admin",
     getServiceList,
     getProviderList,
     getConsumerList,

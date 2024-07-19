@@ -4,6 +4,10 @@ import consumer from './Consumer';
 
 class DataSourceClient {
 
+    async getDataSourceList() {}
+
+    async getFormConfig(dataSourceType){}
+
     async getServiceList(registryCenterId) {}
 
     async getProviderList(serviceName, registryCenterId) {}

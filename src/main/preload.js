@@ -6,6 +6,13 @@
  * https://www.electronjs.org/docs/latest/tutorial/sandbox
  */
 const { CustomTitlebar, TitlebarColor } = require('custom-electron-titlebar')
+// const { contextBridge } = require('electron')
+import constant      from '@/main/common/Constant.js'
+import appConfig     from "@/main/common/config/appConfig"
+
+window.constant = constant;
+window.appConfig = appConfig;
+
 window.addEventListener('DOMContentLoaded', () => {
 	// eslint-disable-next-line no-new
 	new CustomTitlebar({

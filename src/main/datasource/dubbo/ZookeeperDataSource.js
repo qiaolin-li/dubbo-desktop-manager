@@ -274,6 +274,46 @@ async function invokeMethod(registryConfig, provder, methodInfo, code, invokerTy
 
 
 export default {
+  title: "zookeeper",
+  getFormConfig(){
+    return  {
+      name: "Dubbo-Nacos",
+      type: "my-nacos",
+      invokerTypeList: ['java', 'telnet'], // 可用的执行器列表，如果不填则为全部
+      properties: [{
+          label: i18n.t('connect.address'),			// 显示名称，如果不存在，取name
+          name: "address",		 // 配置key名称
+          type: "input",			 // 交互类型：input、password、select、switch
+          required: true, 
+          placeholder: i18n.t('connect.address'),
+          default: '127.0.0.1:2181',
+      },
+      {
+        label: i18n.t('connect.sessionTimeout'),			// 显示名称，如果不存在，取name
+        name: "sessionTimeout",		 // 配置key名称
+        type: "input",			 // 交互类型：input、password、select、switch
+        required: true, 
+        default: "5000",
+      },{
+        label: 'ACL',			// 显示名称，如果不存在，取name
+        name: "auth",		 // 配置key名称
+        type: "selectAndInput",			 // 交互类型：input、password、select、switch
+        required: true, 
+        placeholder: i18n.t('connect.zookeeper.aclTips'),
+        default: '',
+
+        selectName: "scheme",
+        defaultSelect:'auth',
+        choices: [{    		 
+            name: 'digest',
+            value: 'digest',
+        },{
+          name: 'auth',
+          value: 'auth',
+        }],
+      }],
+    }
+  },
   getServiceList,
   getProviderList,
   getConsumerList,

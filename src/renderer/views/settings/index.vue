@@ -26,6 +26,7 @@
     <el-input :placeholder="$t('settings.baseSettings.jvmArgsTips')" v-model="jvmArgs" style="width: 90%"  > </el-input>
     <el-divider content-position="left"></el-divider>
 
+    <el-checkbox v-model="developerModel">开发者模式</el-checkbox>
     <el-button @click="saveConfig">{{$t('settings.apply')}}</el-button>
   </div>
 </template>
@@ -44,6 +45,7 @@ export default {
       invokerType: "telnet",
       javaHome: "",
       jvmArgs: "",
+      developerModel: false,
       invokerTypes: [
         {
           code: "telnet",
@@ -62,6 +64,7 @@ export default {
     this.invokerType = await appConfig.getProperty("invokerType") || "telnet";
     this.javaHome = await appConfig.getProperty("javaHome");
     this.jvmArgs = await appConfig.getProperty("jvmArgs");
+    this.developerModel = await appConfig.getProperty('developer-model') || false;
   },
   methods: {
     async selectJavaHomePath() {
@@ -76,10 +79,21 @@ export default {
     },
     async saveConfig() {
       i18n.locale = this.selectMessage;
-      appConfig.setProperty("systemLocale", this.selectMessage);
-      appConfig.setProperty("invokerType", this.invokerType);
-      appConfig.setProperty("javaHome", this.javaHome);
-      appConfig.setProperty("jvmArgs", this.jvmArgs);
+      await appConfig.setProperty("systemLocale", this.selectMessage);
+      await appConfig.setProperty("invokerType", this.invokerType);
+      await appConfig.setProperty("javaHome", this.javaHome);
+      await appConfig.setProperty("jvmArgs", this.jvmArgs);
+      const developerModel = await appConfig.getProperty('developer-model') || false;
+      if(developerModel !== this.developerModel){
+        await appConfig.setProperty("developer-model", this.developerModel);
+        const successNotification = new window.Notification("重启通知", {
+                body: "请点击此通知重启应用以生效",
+            });
+            successNotification.onclick = () => {
+                remote.app.relaunch();
+                remote.app.exit(0);
+            };
+      }
     }
   }
 

@@ -1,5 +1,5 @@
 <template>
-    <div class="plugin-content" :class="{ disabled: !plugin.enabled }">
+    <div class="plugin-content">
         <div class="plugin-header dragRegion notSelect">
             <div class="plugin-name">{{ plugin.name }}</div>
             <div class="plugin-info">
@@ -9,21 +9,9 @@
                     <el-button size="mini"  v-if="(plugin.installStatus === 'installed' || plugin.installStatus === 'update')" @click="!plugin.ing && $emit('uninstallPlugin', plugin)" >{{ plugin.ing ? "卸载中" : "卸载" }}</el-button>
                 </el-row>
                 <el-link type="primary" class="plugin-home" @click="openHomepage(plugin.homepage)">插件主页</el-link>
-                <!-- <span class="plugin-author">{{ plugin.author }}</span> -->
             </div>
-                <!-- <span class="config-button ing" v-if="plugin.hasInstall && !plugin.ing" > 已安装 </span>
-                <span class="config-button install" v-if="!plugin.hasInstall && !plugin.ing" @click="$emit('installPlugin', plugin)">安装</span>
-                <span class="config-button install" v-if="plugin.hasInstall && !plugin.ing" @click="$emit('uninstallPlugin', plugin)">卸载</span>
-                <span v-if="!plugin.hasInstall && plugin.ing" class="config-button ing">安装中</span>
-                <div>
-                    <i v-if="plugin.enabled" class="el-icon-setting" @click="buildContextMenu(plugin)"></i>
-                    <i v-else class="el-icon-remove-outline" @click="buildContextMenu(plugin)"></i>
-                </div> -->
-
-            <el-row>
-            </el-row>
         </div>
-        <mavon-editor class="plugin-desc" ref="md" :toolbars="markdownOption" defaultOpen="preview" :toolbarsFlag="false" :subfield="false" v-model="value"   />
+        <mavon-editor class="plugin-desc" ref="md" :toolbars="markdownOption" defaultOpen="preview" :toolbarsFlag="false" :subfield="false"  :xssOptions="false" v-model="value"   />
     </div>
 </template>
 
@@ -31,6 +19,7 @@
 import pluginManager from "@/renderer/api/PluginManagerClient.js";
 const remote = require("@electron/remote");
 import axios from "axios";
+import markdownItReplaceLink from 'markdown-it-replace-link'
 
 export default {
     name: "pluginDetails",
@@ -43,15 +32,61 @@ export default {
             markdownOption: {
                 bold: true, // 粗体
                 navigation: true, // 导航目录
-
             },
         };
+    },
+    mounted(){
+        const markdownIt = this.$refs.md.markdownIt;
+        markdownIt.set({ breaks: false, linkify: false });
+        var defaultRender = markdownIt.renderer.rules.link_open || function(tokens, idx, options, env, self) {
+            return self.renderToken(tokens, idx, options);
+        };
+        markdownIt.renderer.rules.link_open = function (tokens, idx, options, env, self) {
+            // If you are sure other plugins can't add `target` - drop check below
+            var aIndex = tokens[idx].attrIndex('target');
+
+            if (aIndex < 0) {
+                tokens[idx].attrPush(['target', '_blank']); // add new attribute
+            } else {
+                tokens[idx].attrs[aIndex][1] = '_blank';    // replace value of existing attr
+            }
+
+            // pass token to default renderer.
+            return defaultRender(tokens, idx, options, env, self);
+        };
+        markdownIt.use(markdownItReplaceLink, {
+            processHTML: true, // defaults to false for backwards compatibility
+            replaceLink: (link, env, token, htmlToken) => {
+                if(htmlToken && htmlToken.name === 'a'){
+                    htmlToken.attribs.target = '_blank'
+                }
+                try {
+                    // 如果能成功解析为 URL，则不是相对路径
+                    new URL(link);
+                    return link; 
+                } catch (e) {
+                    // 忽略
+                }
+
+                if(this.plugin.source === 'local'){
+                    return 'D:\\projects\\ddm-plugin-dubbo-zookeeper-support\\logo.png';
+                }
+                return 'https://cdn.jsdelivr.net/npm/ddm-plugin-demo/' + link;
+            }
+        })
+
+        var imagedefault = markdownIt.renderer.rules.image;
+        markdownIt.renderer.rules.image = function(tokens, idx, options, env, slf){
+            debugger
+            return imagedefault(tokens, idx, options, env, slf);
+        }
     },
     watch: {
         plugin: {
             deep: false,
             async handler(plugin) {
                 try {
+                   
 
                     let content;
                     if(plugin.source === 'local') {
@@ -62,8 +97,6 @@ export default {
                     }
 
                     this.value = content;
-                    const markdownIt = this.$refs.md.markdownIt;
-                    markdownIt.set({ breaks: false });
                 } catch(err) {
                     this.value = plugin.description;
                 }

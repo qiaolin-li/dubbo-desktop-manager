@@ -42,6 +42,7 @@
     "json-bigint": "^1.0.0",
     "jsonlint": "^1.6.3",
     "lowdb": "^1.0.0",
+    "markdown-it-replace-link": "^1.2.1",
     "mavon-editor": "^2.10.4",
     "moment": "^2.29.1",
     "mousetrap": "^1.6.5",

@@ -1,8 +1,9 @@
-import Constant from '../common/Constant';
-import logger  from '@/main/common/logger';
+import logger        from '@/main/common/logger';
+import appConfig     from "@/main/common/config/appConfig"
+import constant      from '@/main/common/Constant';
 
-import HttpServer from './server/HttpServer';
-import IpcServer from './server/IpcServer';
+import HttpServer    from './server/HttpServer';
+import IpcServer     from './server/IpcServer';
 
 const ALREADY_REGISTERED_MODULES = new Map();
 class Response{
@@ -20,7 +21,7 @@ class Response{
 class ApiExportor {
 
     constructor(){
-        this.server = Constant.IS_DEVELOPMENT ? new HttpServer() : new IpcServer();
+        this.server = (constant.IS_DEVELOPMENT || appConfig.getProperty('developer-model')) ? new HttpServer() : new IpcServer();
         this.server.startListener(this);
     }
 

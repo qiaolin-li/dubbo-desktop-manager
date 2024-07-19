@@ -1,45 +1,41 @@
 <template>
   <div>
-    <el-tabs v-model="componentName">
-      <el-tab-pane v-for="item in options" :key="item.value" @click="changeView(item.value)" :label="item.label" :name="item.value" :disabled="item.disabled" />
+    <el-tabs v-model="currentType" v-if="isCreate" @tab-click="init" >
+      <el-tab-pane v-for="item in options" :key="item.type" :label="item.label" :name="item.type" />
     </el-tabs>
-    <component :is="componentName" @saveSuccess="saveDataSourceInfo" :id="id"></component>
+  
+    <dynamicForm ref="dynamicForm" :ruleForm="ruleForm" :formConfig="formConfig">
+      <template v-slot:top>
+        <el-form-item :label="$t('connect.type')" prop="type" >
+          <el-input v-model="(options.find(o => o.type === ruleForm.type) || {}).label" disabled></el-input>
+        </el-form-item>
+        <el-form-item :label="$t('connect.name')" prop="name">
+          <el-input v-model="ruleForm.name"></el-input>
+        </el-form-item>
+      </template>
+      <el-form-item>
+        <el-button type="primary" @click="saveDataSourceInfo">{{$t('connect.save')}}</el-button>
+      </el-form-item>
+    </dynamicForm>
   </div>
 </template>
 
 <script>
-import zookeeperAdd from "./zookeeper-add.vue";
-import nacosAdd from "./nacos-add.vue";
-import dubboAdminAdd from "./dubbo-admin-add.vue";
 import dataSourceRepository from "@/renderer/api/DataSourceRepositoryClient.js";
+import dynamicForm from "@/renderer/components/dynamicForm.vue";
+import dataSource from "@/renderer/api/DataSourceClient.js";
 
 export default {
   components: {
-    zookeeperAdd,
-    nacosAdd,
-    dubboAdminAdd
+    dynamicForm
   },
   data() {
     return {
-      componentName: "zookeeperAdd",
-      createConnect : true,
-      options: [
-        {
-          value: "zookeeperAdd",
-          label: "zookeeper",
-          disabled: false
-        },
-        {
-          value: "nacosAdd",
-          label: "nacos",
-          disabled: false
-        },
-        {
-          value: "dubboAdminAdd",
-          label: "dubbo-admin",
-          disabled: false
-        },
-      ],
+      currentType: "zookeeper",
+      isCreate : true,
+      ruleForm: {},
+      formConfig: [],
+      options: [],
     };
   },
   props: {
@@ -53,33 +49,45 @@ export default {
     }
   },
   async mounted() {
+    this.options = await dataSource.getDataSourceList();
+    this.currentType = this.options[0].type;
     this.init();
   },
   methods: {
     async init() {
+      const formConfig = await dataSource.getFormConfig('zookeeper');
+      
+      let ruleForm ;
       if (this.id) {
-        let connect = await dataSourceRepository.findById(this.id);
-        for (let index = 0; index < this.options.length; index++) {
-          let element = this.options[index];
-          if (element.label == connect.type) {
-            this.componentName = element.value;
-          }
-          element.disabled = true;
-        }
-        this.createConnect = false;
+        ruleForm = await dataSourceRepository.findById(this.id);
       } else {
-        for (let index = 0; index < this.options.length; index++) {
-          this.options[index].disabled = false;
+        // 生成默认值
+        ruleForm = {
+          name: "",
+          type: this.currentType
+        };
+        for(let i = 0; i < formConfig.properties.length; i++) {
+          const item = formConfig.properties[i];
+          ruleForm[item.name] = item.default || '';
+          if(item.type === 'selectAndInput'){
+            ruleForm[item.selectName] = item.defaultSelect || '';
+          }
         }
-        this.createConnect = true;
       }
+      
+      this.isCreate = this.id ? false : true;
+      this.ruleForm = ruleForm;
+      this.formConfig = formConfig.properties;
     },
-    saveDataSourceInfo(data) {
-      this.$message({
-        type: "success",
-        message: this.createConnect ? this.$t('connect.createSuccess') : this.$t('connect.updateSuccess'),
+    saveDataSourceInfo() {
+      this.$refs.dynamicForm.submit(async () => {
+          await dataSourceRepository.save(this.ruleForm);
+          this.$message({
+            type: "success",
+            message: this.isCreate ? this.$t('connect.createSuccess') : this.$t('connect.updateSuccess'),
+          });
+          this.$emit("saveSuccess", this.ruleForm);
       });
-      this.$emit("saveSuccess", data);
     }
   },
 };

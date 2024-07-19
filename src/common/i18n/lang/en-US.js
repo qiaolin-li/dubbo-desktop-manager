@@ -75,6 +75,7 @@ export default {
         addConnect: "New Connection",
         modifyConnect: "Modify Connection",
         name: "name",
+        type: "type",
         address: "address",
         sessionTimeout: "timeout",
         save: "save",

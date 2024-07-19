@@ -290,6 +290,7 @@ async function invokeMethod(registryConfig, provder, methodInfo, code, invokerTy
 }
 
 export default {
+    title: "Nacos",
     getServiceList,
     getProviderList,
     getConsumerList,

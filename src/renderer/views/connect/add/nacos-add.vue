@@ -29,8 +29,6 @@ import dataSourceRepository from "@/renderer/api/DataSourceRepositoryClient.js";
 
 export default {
   data() {
-
-
     return {
       form: {
         type: "nacos",

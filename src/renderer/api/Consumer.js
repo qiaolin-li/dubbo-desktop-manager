@@ -11,7 +11,7 @@ const waitResponsePromiseMap = new Map();
 class Consumer{
 
     constructor(){
-        this.invoker = IS_DEVELOPMENT ? new HttpClient() : new IpcClient();
+        this.invoker = (IS_DEVELOPMENT || window.appConfig.getProperty('developer-model')) ? new HttpClient() : new IpcClient();
     }
 
     wrapper(target, moduleName) {
