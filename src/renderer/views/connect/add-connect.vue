@@ -6,7 +6,7 @@
   
     <dynamicForm ref="dynamicForm" :ruleForm="ruleForm" :formConfig="formConfig">
       <template v-slot:top>
-        <el-form-item :label="$t('connect.type')" prop="type" >
+        <el-form-item :label="$t('connect.type')" prop="type"  v-if="!isCreate" >
           <el-input v-model="(options.find(o => o.type === ruleForm.type) || {}).label" disabled></el-input>
         </el-form-item>
         <el-form-item :label="$t('connect.name')" prop="name">
@@ -55,13 +55,15 @@ export default {
   },
   methods: {
     async init() {
-      const formConfig = await dataSource.getFormConfig('zookeeper');
       
       let ruleForm ;
+      let formConfig;
       if (this.id) {
         ruleForm = await dataSourceRepository.findById(this.id);
+        formConfig = await dataSource.getFormConfig(ruleForm.type);
       } else {
         // 生成默认值
+        formConfig = await dataSource.getFormConfig(this.currentType);
         ruleForm = {
           name: "",
           type: this.currentType

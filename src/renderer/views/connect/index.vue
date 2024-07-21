@@ -24,7 +24,7 @@
 
 <script>
 import myTabList from '@/renderer/components/tabs/index.vue';
-import addConnect from "./add/add-connect.vue";
+import addConnect from "./add-connect.vue";
 import connectList from "./connect-list.vue";
 import { ipcRenderer } from 'electron'
 const remote = require("@electron/remote");

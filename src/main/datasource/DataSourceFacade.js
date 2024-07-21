@@ -11,7 +11,7 @@ class DataSourceFacade {
     async getDataSourceList() {
         return Array.from(appCore.datasources.entries()).map(([key, value]) => ({
             type: key,
-            label: value.title || key,
+            label: value.name || key,
         }));
     }
 

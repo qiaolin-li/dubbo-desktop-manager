@@ -48,6 +48,7 @@
     "mousetrap": "^1.6.5",
     "nedb": "^1.8.0",
     "node-zookeeper-client": "^1.1.1",
+    "npm": "8.19.4",
     "os-locale": "^5.0.0",
     "qs": "^6.11.0",
     "sortablejs": "^1.15.0",
@@ -63,8 +64,8 @@
     "xlsx-style": "^0.8.13",
     "xterm": "^4.17.0",
     "xterm-addon-fit": "^0.5.0",
-    "xterm-addon-search": "^0.8.2",
-    "npm": "8.19.4"
+    "xterm-addon-search": "^0.8.2"
+  
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "~4.5.0",
@@ -103,6 +104,7 @@
   "overrides": {
     "vue-cli-plugin-electron-builder": {
       "electron-builder": "^23.0.6"
-    }
+    },
+    "htmlparser2": "8.0.2"
   }
 }

@@ -7,10 +7,10 @@
       <el-form-item v-for="(item, index) in formConfig" :label="item.label || item.name" :required="item.required" :prop="item.name" :key="item.name + index" >
         
         <el-input v-if="item.type === 'input'" type="input"
-          v-model="ruleForm[item.name]" :placeholder="item.message || item.name" ></el-input>
+          v-model="ruleForm[item.name]" :placeholder="item.placeholder" ></el-input>
 
         <el-input v-else-if="item.type === 'password'" type="password"
-          v-model="ruleForm[item.name]" :placeholder="item.message || item.name" ></el-input>
+          v-model="ruleForm[item.name]" :placeholder="item.placeholder" show-password ></el-input>
 
         <el-input v-else-if="item.type === 'selectAndInput'" :placeholder="item.placeholder" v-model="ruleForm[item.name]" class="input-with-select">
           <el-select v-model="ruleForm[item.selectName]" slot="prepend" style="width:120px" :placeholder="item.selectPlaceholder" >

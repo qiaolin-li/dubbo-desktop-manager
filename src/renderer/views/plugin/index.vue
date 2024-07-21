@@ -3,7 +3,7 @@
         <split-pane @resize="resize" split="vertical" :min-percent="20" :default-percent="30">
             <template slot="paneL">
                 <div class="plugin-view">
-                    <el-input v-model="searchText" placeholder="搜索npm上的PicGo插件，或者点击上方按钮查看优秀插件列表" size="small"  @input="getSearchResult" >
+                    <el-input v-model="searchText" placeholder="搜索npm上的插件，或者点击上方按钮查看优秀插件列表" size="small"  @input="getSearchResult" >
                       <template #prefix></template>
                     </el-input>
                     <div class="plugin-list" v-loading="loading">

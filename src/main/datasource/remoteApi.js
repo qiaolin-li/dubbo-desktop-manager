@@ -1,13 +1,5 @@
-import appCore       from '@/main/AppCore.js';
 import dataSourceFacade from "./DataSourceFacade";
 
-import zookeeperDataSource from "./dubbo/ZookeeperDataSource";
-import nacosDataSource from "./dubbo/NacosDataSource";
-import dubboAdminDataSource from './dubbo/DubboAdminDataSource';
-
-appCore.registerDataSource('zookeeper', zookeeperDataSource);
-appCore.registerDataSource('nacos', nacosDataSource);
-appCore.registerDataSource('dubbo-admin', dubboAdminDataSource);
 
 export default  [
 

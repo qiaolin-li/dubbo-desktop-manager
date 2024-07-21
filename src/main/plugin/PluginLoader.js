@@ -1,6 +1,7 @@
 import fs                   from 'fs';
 import path                 from 'path';
 import resolve              from 'resolve'
+import i18n                     from '@/main/common/i18n';   
 import constant             from "@/main/common/Constant.js";
 import appConfig            from "@/main/common/config/appConfig.js";
 import pluginManager        from "@/main/plugin/PluginManager.js";
@@ -82,6 +83,19 @@ class PluginLoader {
         appCoreWrapper.registerParamGenerator =  (type, generator) => {
             appCore.registerParamGenerator(type, generator)
             registerInfo.paramGeneratorList.push(type)
+        }
+
+        appCoreWrapper.registryPluginLocal = (locale, message) => {
+            const localeMessage = i18n.getLocaleMessage(locale);
+            if(!localeMessage.pluginLocale){
+                localeMessage.pluginLocale = {};
+            }
+
+            localeMessage.pluginLocale[module] = message;
+            i18n.setLocaleMessage(locale, localeMessage);
+        }
+        appCoreWrapper.t = (key) => {
+            return i18n.t(`pluginLocale.${module}.${key}`)
         }
 
         // 调用插件的`register`方法进行注册
