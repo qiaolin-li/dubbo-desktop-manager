@@ -53,7 +53,7 @@ export default {
                 }
 
                 if(this.plugin.source === 'local'){
-                    return 'D:\\projects\\ddm-plugin-dubbo-zookeeper-support\\logo.png';
+                    return 'file:' + this.plugin.path + "/" + link;
                 }
                 return 'https://cdn.jsdelivr.net/npm/ddm-plugin-demo/' + link;
             }

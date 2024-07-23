@@ -12,10 +12,10 @@ class DataSourceFacade {
             get(target, prop) {
                 // 检查方法是否存在
                 if (typeof target[prop] === 'function') {
-                    return target[prop].bind(target); // 返回绑定的函数
+                    return target[prop].bind(target); 
                 } else {
-                    return function() {
-                        target.handleError(prop); // 调用通用方法
+                    return function () {
+                        return target.otherMethod(prop, [...arguments])
                     };
                 }
             }
@@ -52,19 +52,19 @@ class DataSourceFacade {
         }
     }
 
-    async getProviderList(serviceName, registryCenterId) {
+    async getProviderList(registryCenterId, serviceName) {
         try {
             let registryConfig = await this.getDataSourceInfo(registryCenterId);
-            return await this.getRealRegistry(registryConfig).getProviderList(serviceName, registryConfig);
+            return await this.getRealRegistry(registryConfig).getProviderList(registryConfig, serviceName);
         } catch (error) {
             throw new Error(i18n.t("connect.getProviderListError", { e: error }));
         }
     }
 
-    async getConsumerList(serviceName, registryCenterId) {
+    async getConsumerList(registryCenterId, serviceName) {
         try {
             let registryConfig = await this.getDataSourceInfo(registryCenterId);
-            return await this.getRealRegistry(registryConfig).getConsumerList(serviceName, registryConfig);
+            return await this.getRealRegistry(registryConfig).getConsumerList(registryConfig, serviceName);
         } catch (error) {
             throw new Error(i18n.t("connect.getConsumerListError", {e: error}));
         }
@@ -74,7 +74,7 @@ class DataSourceFacade {
         try {
             let registryConfig = await this.getDataSourceInfo(registryCenterId);
 
-            await this.getRealRegistry(registryConfig).disableProvider(registryConfig, providerInfo, providerInfo);
+            await this.getRealRegistry(registryConfig).disableProvider(registryConfig, providerInfo);
         } catch (error) {
             throw new Error(i18n.t("connect.disableProviderError", {e: error}));
         }
@@ -83,7 +83,7 @@ class DataSourceFacade {
     async enableProvider(registryCenterId, providerInfo) {
         try {
             let registryConfig = await this.getDataSourceInfo(registryCenterId);
-            return await this.getRealRegistry(registryConfig).enableProvider(registryConfig, providerInfo, providerInfo);
+            return await this.getRealRegistry(registryConfig).enableProvider(registryConfig, providerInfo);
         } catch (error) {
             throw new Error(i18n.t("connect.enableProviderError", {e: error}));
         }
@@ -122,16 +122,20 @@ class DataSourceFacade {
     }
 
 
-    async otherMethod(methodName, registryCenterId, data) {
+    async otherMethod(methodName, args) {
         try {
+            const registryCenterId = args[0];
+
             let registryConfig = await this.getDataSourceInfo(registryCenterId);
-            const method = this.getRealRegistry(registryConfig)['methodName'];
-            if (!method) {
+            const registry = this.getRealRegistry(registryConfig);
+
+            if (!registry[methodName]) {
                 const registry = appCore.getDataSource(registryConfig.type);
                 throw new Error(`注册中心 [${registry.name || registry.key}]不支持[${methodName}]方法`);
             }
         
-            return await method(registryConfig, data);
+            args[0] = registryConfig;
+            return await Reflect.apply(registry[methodName], registry, args);
         } catch (error) {
             throw new Error(i18n.t("connect.invokeMethodError", {e: error}));
         }
