@@ -71,26 +71,7 @@ export default {
         copySuccess : "复制成功",
         collectSuccess : "收藏成功"
     },
-    connect: {
-        addConnect: "新建链接",
-        modifyConnect: "修改链接",
-        name: "链接名称",
-        type: "类型",
-        address: "链接地址",
-        sessionTimeout: "超时时间",
-        save: "立即创建",
-        namespaceId: "命名空间ID",
-        username: "用户名",
-        password: "密码",
-        zookeeper: {
-            aclTips: "请输入认证信息, 例如：test:test"
-        },
-        nacos: {
-            groupName: '服务分组名称',
-            groupNameTips: '请输入服务分组名称，默认为 DEFAULT_GROUP',
-            group: '配置分组名称',
-            groupTips: '请输入配置分组名称，默认为 dubbo',
-        },
+    dynamicForm: {
         validateMessage: {
             timeOutNotNull: "超时时间不能为空",
             inputNumber: "请输入数字",
@@ -99,6 +80,14 @@ export default {
             rangeLimit: "长度在 1 到 32 个字符",
             inputConnectionAddress: "请输入链接地址",
         },
+    },
+    connect: {
+        addConnect: "新建链接",
+        modifyConnect: "修改链接",
+        name: "链接名称",
+        type: "类型",
+        save: "立即创建",
+        
         createSuccess:"新增连接成功!",
         updateSuccess:"修改连接成功!",
         open: "打开数据源",
@@ -106,42 +95,14 @@ export default {
         refreshSuccess: "刷新服务列表完成",
         refreshError: "刷新服务列表失败！原因：{e}",
         confirmDeleteConnect: "此操作将永久删除链接, 是否继续?",
-        exportService : {
-            zookeeper : {
-                getServiceList : {
-                    error:"获取服务列表错误! 原因: {e}"
-                },
-                getProviderList : {
-                    error:"获取提供者列表错误! 原因: {e}"
-                },
-                getConsumerList : {
-                    error:"获取提消费者列表错误! 原因: {e}"
-                },
-                getMetaData : {
-                    error:"获取元数据列表错误! 原因: {e}"
-                },
-                saveConfiguration : {
-                    error:"获取动态配置错误! 原因: {e}"
-                },
-            },
-            nacos : {
-                getServiceList : {
-                    error:"获取服务列表错误! 原因: {e}"
-                },
-                getProviderList : {
-                    error:"获取提供者列表错误! 原因: {e}"
-                },
-                getConsumerList : {
-                    error:"获取提消费者列表错误! 原因: {e}"
-                },
-                getMetaData : {
-                    error:"获取元数据列表错误! 原因: {e}"
-                },
-                saveConfiguration : {
-                    error:"获取动态配置错误! 原因: {e}"
-                },
-            }
-        }
+
+        getFromDataError: "获取数据源表单错误! 原因: {e}",
+        getServiceListError:"获取服务列表错误! 原因: {e}",
+        getProviderListError:"获取提供者列表错误! 原因: {e}",
+        getConsumerListError:"获取提消费者列表错误! 原因: {e}",
+        invokeMethodError:"调用接口错误! 原因:{e}",
+        disableProviderError: "禁用提供者失败！原因：{e}",
+        enableProviderError: "启用提供者失败！原因：{e}",
     },
     collect: {
         collect: "收藏接口",

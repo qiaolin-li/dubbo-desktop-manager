@@ -10,11 +10,11 @@ class DataSourceClient {
 
     async getServiceList(registryCenterId) {}
 
-    async getProviderList(serviceName, registryCenterId) {}
+    async getProviderList(registryCenterId, serviceName) {}
     
-    async getConsumerList(serviceName, registryCenterId) {}
+    async getConsumerList(registryCenterId, serviceName) {}
     
-    async getConfiguration(providerInfo, registryCenterId) {}
+    async getConfiguration(registryCenterId, providerInfo) {}
     
     async saveConfiguration(registryCenterId, providerInfo, doc) {}
     

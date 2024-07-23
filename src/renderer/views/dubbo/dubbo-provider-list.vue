@@ -141,7 +141,7 @@ export default {
       }
     },
     async refreshProviderList() {
-      this.providerList = await dataSource.getProviderList(this.uniqueServiceName, this.registryCenterId);
+      this.providerList = await dataSource.getProviderList(this.registryCenterId, this.uniqueServiceName);
     },
     openInvokeDrawer(provider) {
       const startIndex = this.interfaceName.lastIndexOf(".") || -1;

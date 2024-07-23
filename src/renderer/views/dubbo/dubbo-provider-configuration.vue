@@ -40,7 +40,7 @@ export default {
   },
   methods: {
     async getConfiguration() {
-      this.codeConfig.code = await dataSource.getConfiguration(this.provider, this.registryCenterId);
+      this.codeConfig.code = await dataSource.getConfiguration(this.registryCenterId, this.provider);
     },
     async save() {
       await dataSource.saveConfiguration(this.registryCenterId, this.provider, this.codeConfig.code);

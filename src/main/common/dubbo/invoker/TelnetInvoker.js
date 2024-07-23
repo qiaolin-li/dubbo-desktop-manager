@@ -36,7 +36,7 @@ class TelnetInvoker {
 
             const tSocket = new telnetSocket.TelnetSocket(socket);
             let mainBuffer = Buffer.from("");
-            tSocket.on("data", function (buffer) {
+            tSocket.on("data", (buffer) => {
         
                 mainBuffer = Buffer.concat([mainBuffer, buffer], mainBuffer.length + buffer.length);
 

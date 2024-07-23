@@ -32,6 +32,8 @@ Vue.component('dubboProviderConfiguration', dubboProviderConfiguration);
 import infiniteScroll from 'vue-infinite-scroll'
 Vue.use(infiniteScroll)
 
+window.Vue = Vue;
+
 import jsonlint from 'jsonlint' 
 window.jsonlint = jsonlint
 

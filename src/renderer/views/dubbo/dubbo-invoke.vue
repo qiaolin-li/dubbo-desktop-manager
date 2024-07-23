@@ -210,7 +210,7 @@ export default {
       this.currentProvider = this.provider;
     }
 
-    this.providerList = await dataSource.getProviderList(this.uniqueServiceName, this.registryCenterId);
+    this.providerList = await dataSource.getProviderList(this.registryCenterId, this.uniqueServiceName);
     if (this.providerList.length === 0) {
       return;
     }

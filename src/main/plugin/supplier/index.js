@@ -125,22 +125,38 @@ class NPMPluginSupplier {
     }
 
     async install(plugin) {
+        const argv = [...process.argv];
+        const env = {...process.env};
         try {
             const command = plugin.source === 'local' ? 'link' : 'install'
             const params = plugin.source === 'local' ?  [plugin, '--local']  : [plugin]
          
-            return await npmUtils.execCommand(command, params, constant.APPLICATION_PLUGINS_DIR);
+            const result = await npmUtils.execCommand(command, params, constant.APPLICATION_PLUGINS_DIR);
          
-            //   return await this.execCommand('install', [ plugin ], constant.APPLICATION_PLUGINS_DIR)
+            process.argv = argv;
+            process.env = env;
+            return result;
         } catch (error) {
+            process.env = env;
+            process.argv = argv;
             throw new Error(`插件[${plugin}]安装失败，错误信息：${error}`)
         }
     }
 
     async uninstall(plugin) {
-        return await npmUtils.execCommand('uninstall', [ plugin ], constant.APPLICATION_PLUGINS_DIR);
+        const argv = [...process.argv];
+        const env = {...process.env};
+        try {
+            const result = await npmUtils.execCommand('uninstall', [ plugin ], constant.APPLICATION_PLUGINS_DIR);
 
-        //return await this.execCommand('uninstall', [ plugin ], constant.APPLICATION_PLUGINS_DIR)
+            process.argv = argv;
+            process.env = env;
+            return result;
+        } catch (error) {
+            process.env = env;
+            process.argv = argv;
+            throw new Error(`插件[${plugin}]安装失败，错误信息：${error}`)
+        }
     }
 
 }

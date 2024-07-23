@@ -113,6 +113,7 @@ class Logger {
     }
     
     error () {
+        console.log(arguments)
         //logger.error.apply(logger, formatLogArguments(arguments))
     }
 }

@@ -62,7 +62,7 @@ export default {
   },
   methods: {
     async handleNodeClick() {
-      this.consumerList = await dataSource.getConsumerList(this.uniqueServiceName, this.registryCenterId);
+      this.consumerList = await dataSource.getConsumerList(this.registryCenterId, this.uniqueServiceName);
     },
     consumerListTableHeaderRowClassName() {
       return "consumer-list-table-header";
