@@ -12,6 +12,7 @@ import InvokerAdapter           from "@/main/common/dubbo/invoker/InvokerAdapter
 import paramGeneratorDubbo2_7   from '@/main/common/dubbo/generator/ParamGeneratorDubbo2_7';
 import paramGeneratorDubbo3     from '@/main/common/dubbo/generator/ParamGeneratorDubbo3';
 import ParamGeneratorAdapter    from '@/main/common/dubbo/generator/ParamGeneratorAdapter';
+import dubboConfigrationUtils   from '@/main/common/dubbo/DubboConfigrationUtils';
 
 const telnetInvoker = new TelnetInvoker();
 const javaInvoker = new JavaInvoker();
@@ -27,6 +28,7 @@ appCore.registerParamGenerator('adapter', new ParamGeneratorAdapter(paramGenerat
 appCore.yamlUtils = yamlUtils;
 appCore.axios = axios;
 appCore.urlUtils = urlUtils
+appCore.dubboConfigrationUtils = dubboConfigrationUtils
 
 export default [
 

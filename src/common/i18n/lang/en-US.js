@@ -71,26 +71,7 @@ export default {
         copySuccess : "Copy success",
         collectSuccess : "Successful collection"
     },
-    connect: {
-        addConnect: "New Connection",
-        modifyConnect: "Modify Connection",
-        name: "name",
-        type: "type",
-        address: "address",
-        sessionTimeout: "timeout",
-        save: "save",
-        namespaceId: "namespaceId",
-        username: "username",
-        password: "password",
-        zookeeper: {
-            aclTips: "Enter the authentication information, for example, test:test"
-        },
-        nacos: {
-            groupName: 'ServiceGroupName',
-            groupNameTips: 'Enter the name of the service GROUP. The DEFAULT is DEFAULT GROUP',
-            group: 'ConfiguringGroupName',
-            groupTips: 'Please enter the configuration group name. The default is dubbo',
-        },
+    dynamicForm: {
         validateMessage: {
             timeOutNotNull: "The timeout period cannot be empty",
             inputNumber: " Please enter the first group now",
@@ -99,49 +80,28 @@ export default {
             rangeLimit: "The value contains 1 to 32 characters",
             inputConnectionAddress: "Please enter the link address",
         },
+    },
+    connect: {
+        addConnect: "New Connection",
+        modifyConnect: "Modify Connection",
+        name: "name",
+        type: "type",
+        save: "save",
         createSuccess:"Adding a connection succeeded!",
-        open: "Open Datasource",
         updateSuccess:"Succeeded in modifying the connection!",
+        open: "Open Datasource",
         searchContent: "search content",
         refreshSuccess: "Refreshing the service list is complete",
         refreshError: "Failed to refresh the service list! The reason: {e}",
         confirmDeleteConnect: "This action will permanently delete the link. Do you want to continue?",
-        exportService : {
-            zookeeper : {
-                getServiceList : {
-                    error:"Error getting service list! The reason:{e}"
-                },
-                getProviderList : {
-                    error:"Error getting provider list! The reason:{e}"
-                },
-                getConsumerList : {
-                    error:"Error getting list of fetch consumers! The reason:{e}"
-                },
-                getMetaData : {
-                    error:"Error getting list of fetch consumers! The reason: {e}"
-                },
-                saveConfiguration : {
-                    error:"Error getting dynamic configuration! The reason:{e}"
-                },
-            },
-            nacos : {
-                getServiceList : {
-                    error:"Error getting service list! The reason:{e}"
-                },
-                getProviderList : {
-                    error:"Error getting provider list! The reason:{e}"
-                },
-                getConsumerList : {
-                    error:"Error getting list of fetch consumers! The reason:{e}"
-                },
-                getMetaData : {
-                    error:"Error getting list of fetch consumers! The reason: {e}"
-                },
-                saveConfiguration : {
-                    error:"Error getting dynamic configuration! The reason:{e}"
-                },
-            }
-        }
+      
+        getFromDataError: "Get data source form error! Reason: {e}",
+        getServiceListError:"Error getting service list! The reason:{e}",
+        getProviderListError:"Error getting provider list! The reason:{e}",
+        getConsumerListError:"Error getting list of fetch consumers! The reason:{e}",
+        invokeMethodError:"Call interface error! Reason :{e}",
+        disableProviderError: "Failed to disable provider! Reason: {e}",
+        enableProviderError: "Provider enablement failed! Reason: {e}",
     },
     collect: {
         collect: "collect",

@@ -38,22 +38,6 @@ export default {
     mounted(){
         const markdownIt = this.$refs.md.markdownIt;
         markdownIt.set({ breaks: false, linkify: false });
-        var defaultRender = markdownIt.renderer.rules.link_open || function(tokens, idx, options, env, self) {
-            return self.renderToken(tokens, idx, options);
-        };
-        markdownIt.renderer.rules.link_open = function (tokens, idx, options, env, self) {
-            // If you are sure other plugins can't add `target` - drop check below
-            var aIndex = tokens[idx].attrIndex('target');
-
-            if (aIndex < 0) {
-                tokens[idx].attrPush(['target', '_blank']); // add new attribute
-            } else {
-                tokens[idx].attrs[aIndex][1] = '_blank';    // replace value of existing attr
-            }
-
-            // pass token to default renderer.
-            return defaultRender(tokens, idx, options, env, self);
-        };
         markdownIt.use(markdownItReplaceLink, {
             processHTML: true, // defaults to false for backwards compatibility
             replaceLink: (link, env, token, htmlToken) => {
@@ -74,12 +58,6 @@ export default {
                 return 'https://cdn.jsdelivr.net/npm/ddm-plugin-demo/' + link;
             }
         })
-
-        var imagedefault = markdownIt.renderer.rules.image;
-        markdownIt.renderer.rules.image = function(tokens, idx, options, env, slf){
-            debugger
-            return imagedefault(tokens, idx, options, env, slf);
-        }
     },
     watch: {
         plugin: {
