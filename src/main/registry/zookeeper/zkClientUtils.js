@@ -3,7 +3,7 @@ import i18n from '@/main/common/i18n'
 
 
 
-function createConncetion(registryConfig) {
+function createConnection(registryConfig) {
     let { address } = registryConfig;
   
     const OPTIONS = {
@@ -31,5 +31,5 @@ function createConncetion(registryConfig) {
   
 
   export default { 
-    createConncetion,
+    createConncetion: createConnection,
   }
