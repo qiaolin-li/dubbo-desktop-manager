@@ -30,6 +30,6 @@ function createConnection(registryConfig) {
   }
   
 
-  export default { 
-    createConncetion: createConnection,
+  export default {
+      createConnection,
   }
