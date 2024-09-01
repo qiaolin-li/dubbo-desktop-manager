@@ -4,8 +4,6 @@ class AppCore {
 
     constructor() {
         this.datasources = new Map();
-        this.invokes = new Map();
-        this.paramGenerators = new Map();
     }
 
     registerDataSource(type,  dataSource) {
@@ -16,32 +14,14 @@ class AppCore {
         this.datasources.delete(type);
     }
 
+    /**
+     * 从数据源映射中获取指定类型的数据源。
+     *
+     * @param {string} type - 要获取的数据源类型（默认为 'adapter'）
+     * @return {*} 与给定类型关联的数据源，未找到时返回 undefined
+     */
     getDataSource(type = 'adapter') {
         return this.datasources.get(type);
-    }
-
-    registerInvoke(type, invoker) {
-        this.invokes.set(type, invoker);
-    }
-
-    removeInvoke(type) {
-        this.invokes.delete(type);
-    }
-
-    getInvoke(type = 'adapter') {
-        return this.invokes.get(type);
-    }
-
-    registerParamGenerator(type, generator) {
-        this.paramGenerators.set(type, generator);
-    }
-
-    removeParamGenerator(type) {
-        this.paramGenerators.delete(type);
-    }
-
-    getParamGenerator(type = 'adapter') {
-        return this.paramGenerators.get(type);
     }
 
     notify(title, message) {

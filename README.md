@@ -2,7 +2,7 @@
   <img src="./build/icons/icon.png" alt="Dubbo-Desktop-Manager" width="200">
   <br>Dubbo-Desktop-Manager<br>
 </h1>
- <h4 align="center">一个Dubbo的桌面管理软件</h4>
+ <h4 align="center">一个API桌面管理软件</h4>
 
 <p align="center">
   <a href="../../releases">Windows下载</a>

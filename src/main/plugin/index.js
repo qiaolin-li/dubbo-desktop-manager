@@ -13,6 +13,14 @@ class Plugin {
         return pluginSupplier.search(keyword)
     }
 
+    getDevelopmentPluginList(keyword) {
+        return pluginSupplier.getDevelopmentPluginList(keyword)
+    }
+
+    getInstalledPluginList() {
+        return pluginSupplier.getInstalledPluginList()
+    }
+
     async getReadMeFile(plugin) {
         if(plugin.source && plugin.source === 'local'){
             return fs.readFileSync(plugin.readme, 'utf8').toString();
@@ -22,25 +30,41 @@ class Plugin {
     }
 
     async install(plugin) {
-        const pluginId = plugin.source === 'local' ? plugin.path : `${plugin.id}@${plugin.version}`;
-        const result = await pluginSupplier.install(pluginId)
-
+        const result = await pluginSupplier.install(plugin)
         await this.loader.load(plugin.id);
         return result;
     }
 
-    async uninstall(pluginId) {
+    async uninstall(plugin) {
         try {
-            const pluginInfo = pluginManager.get(pluginId);
-            await pluginSupplier.uninstall(pluginId)
+            const pluginInfo = pluginManager.get(plugin.id);
+            await pluginSupplier.uninstall(plugin)
 
             pluginInfo.uninstall()
-            pluginManager.remove(pluginId)
+            pluginManager.remove(plugin.id)
         } catch (error) {
             throw new Error(`插件卸载失败，错误日志为${error}`)
         }
     }
 
+    async getPluginRendererModules(pluginId) {
+        if(pluginId) { 
+            const plugin = pluginManager.get(pluginId);
+            if(plugin.rendererModule) {
+                return [plugin.rendererModule]
+            }
+        }
+
+        const list = pluginManager.getList();
+
+        const rendenerPaths = [];
+        list.forEach((plugin) => {
+            if(plugin.rendererModule) {
+                rendenerPaths.push(plugin.rendererModule)
+            }
+        })
+        return rendenerPaths;
+    }
 }
 
 

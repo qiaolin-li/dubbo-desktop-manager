@@ -6,33 +6,17 @@ import ElementUI from 'element-ui';
 import 'element-ui/lib/theme-chalk/index.css';
 import Splitpane from '@/renderer/components/split-pane/index.vue'
 
-
-import registryList from '@/renderer/views/connect/index.vue';
-import dubboPage from '@/renderer/views/dubbo/index.vue';
-import managePage from '@/renderer/views/manage.vue';
-import plugins from '@/renderer/views/plugin/index.vue';
-import settings from '@/renderer/views/settings/index.vue';
+import registryList               from '@/renderer/views/datasource/index.vue';
+import serviceManager             from '@/renderer/views/service/index.vue';
+import plugins                    from '@/renderer/views/plugin/index.vue';
+import settings                   from '@/renderer/views/settings/index.vue';
 Vue.component('registryList', registryList);
-Vue.component('dubboPage', dubboPage);
-Vue.component('managePage', managePage);
+Vue.component('serviceManager', serviceManager);
 Vue.component('plugins', plugins);
 Vue.component('settings', settings);
 
-import dubboProviderList from "@/renderer/views/dubbo/dubbo-provider-list.vue";
-import dubboConsumerList from "@/renderer/views/dubbo/dubbo-consumer-list.vue";
-import dubboTelnet from "@/renderer/views/dubbo/dubbo-telnet.vue";
-import dubboInvoke from "@/renderer/views/dubbo/dubbo-invoke.vue";
-import dubboProviderConfiguration from "@/renderer/views/dubbo/dubbo-provider-configuration.vue";
-Vue.component('dubboProviderList', dubboProviderList);
-Vue.component('dubboConsumerList', dubboConsumerList);
-Vue.component('dubboTelnet', dubboTelnet);
-Vue.component('dubboInvoke', dubboInvoke);
-Vue.component('dubboProviderConfiguration', dubboProviderConfiguration);
-
 import infiniteScroll from 'vue-infinite-scroll'
 Vue.use(infiniteScroll)
-
-window.Vue = Vue;
 
 import jsonlint from 'jsonlint' 
 window.jsonlint = jsonlint
@@ -53,20 +37,36 @@ Vue.use(ElementUI);
 Vue.component('split-pane', Splitpane);
 
 Vue.config.productionTip = false
-
-Vue.config.ignoredElements = [
-  'tab-group',
-]
-
+Vue.config.ignoredElements = ['tab-group',]
 Vue.config.devtools = true;
 
 import MavonEditor from 'mavon-editor'
 import 'mavon-editor/dist/css/index.css'
-const markdownIt = MavonEditor.mavonEditor.getMarkdownIt()
-markdownIt.set({ breaks: false });
 Vue.use(MavonEditor)
 
-new Vue({
-  i18n,
-  render: h => h(App)
-}).$mount('#app')
+import { Layout, Pane } from 'vue-split-layout'
+Vue.component('vs-layout', Layout)
+Vue.component('vs-pane', Pane)
+
+import 'vue-split-layout/src/style.css'
+
+
+Map.prototype.computeIfAbsent = function (key, fun) {
+  if(!this.has(key)){
+      this.set(key, fun(key));
+  }
+  return this.get(key);
+}
+
+
+// 加载-基础组件
+import appCore from './core/AppRendener';
+
+
+appCore.init(Vue).then(() => {
+  new Vue({
+    i18n,
+    render: h => h(App)
+  }).$mount('#app')
+});
+

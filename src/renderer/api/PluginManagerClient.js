@@ -4,7 +4,11 @@ import consumer from './Consumer';
 class Plugin {
 
     search(keyword){}
+
+    getDevelopmentPluginList(keyword){}
     
+    getInstalledPluginList(keyword) { }
+
     getReadMeFile(plugin) {}
 
     install(plugin) {}
@@ -12,6 +16,8 @@ class Plugin {
     load(plugins) {}
 
     uninstall(plugin) {}
+
+    getPluginRendererModules(pluginId) {}
 }
 
 

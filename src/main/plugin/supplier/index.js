@@ -6,25 +6,26 @@ import pluginManager            from '@/main/plugin/PluginManager'
 import spawn                    from 'cross-spawn'
 import pluginSearch             from '@/main/plugin/supplier/PluginSearcher.js'
 import npmUtils                 from '@/main/common/utils/NpmUtils';
+import windowHolder             from '@/main/common/holder/WindowHolder.js';
 
 class NPMPluginSupplier {
 
     async search(keyword) {
-        const remotePluginList = await pluginSearch.search(keyword);
-        return await this.localLinkPluginList(remotePluginList);
+        return await pluginSearch.search(keyword);
     }
 
-    async localLinkPluginList(pluginList){
+    async getDevelopmentPluginList(keyword) {
         let rootPath = '';
         try {
             rootPath =lodash.trim(await this.execCommand('root', [ '-g' ], constant.APPLICATION_PLUGINS_DIR));
         } catch(error) {
             // mac下打包后始终会报错，也不知道为什么....，折腾了很久，后面在优化吧，
             // 开发环境还是没有问题，要编写插件，最好还用开发模式把，还可以调试
-            return pluginList;
+            return [];
         }
         
         // 获取root目录下所有子目录
+        const pluginList = [];
         fs.readdirSync(rootPath).forEach((name) => {
             if(!name.startsWith('ddm-plugin-')) {
                 return;
@@ -38,17 +39,15 @@ class NPMPluginSupplier {
             const pkg = JSON.parse(fs.readFileSync(packagePath)) // 读取package.json
             
             name = pkg.name;
-            const plugin = pluginManager.get(name);
-
             let installStatus = 'uninstalled';
+            
+            const plugin = pluginManager.get(name);
             if (plugin) {
                 // 本地插件，可无脑更新
                 installStatus = 'update';
             }
 
-            pluginList = pluginList.filter(p => p.name !== name);
-            
-            pluginList.unshift({
+            pluginList.push({
                 id: name,
                 name: pkg.pluginName || name.replace(`${constant.APPLICATION_PLUGINS_NAME_PREFIX}`, ''),
                 path: path.join(pluginPath),
@@ -64,6 +63,32 @@ class NPMPluginSupplier {
             });
 
         });
+
+        return pluginList;
+    }
+
+    async getInstalledPluginList() {
+        const pluginList = [];
+        pluginManager.getList().forEach((plugin) => {
+            const packagePath = path.join(plugin.pluginDir, 'package.json')
+            const pkg = JSON.parse(fs.readFileSync(packagePath)) // 读取package.json
+            const name = pkg.name;
+            
+            pluginList.push({
+                id: name,
+                name: pkg.pluginName || name.replace(`${constant.APPLICATION_PLUGINS_NAME_PREFIX}`, ''),
+                path: plugin.pluginDir,
+                author: pkg.author,
+                description: pkg.description,
+                logo: 'file://' + path.join(plugin.pluginDir, 'logo.png'),
+                readme: path.join(plugin.pluginDir, 'README.md'),
+                config: {},
+                installVersion:plugin ? plugin.version : '',
+                installStatus: 'installed',
+                version: pkg.version,
+                source: 'local'
+            });
+        })
 
         return pluginList;
     }
@@ -127,35 +152,42 @@ class NPMPluginSupplier {
     async install(plugin) {
         const argv = [...process.argv];
         const env = {...process.env};
+        const write = process.stdout.write;
+        const pluginId = plugin.source === 'local' ? plugin.path : `${plugin.id}@${plugin.version}`;
+  
         try {
-            const command = plugin.source === 'local' ? 'link' : 'install'
-            const params = plugin.source === 'local' ?  [plugin, '--local']  : [plugin]
-         
+            const command = 'install'
+            const params = [pluginId, '--loglevel', 'info']
+            windowHolder.getWindow().webContents.send(`pluginOperationLog`, `插件-【${plugin.id}-${plugin.name}】安装中...\n`);
             const result = await npmUtils.execCommand(command, params, constant.APPLICATION_PLUGINS_DIR);
-         
-            process.argv = argv;
-            process.env = env;
+            windowHolder.getWindow().webContents.send(`pluginOperationLog`, `插件-【${plugin.id}-${plugin.name}】安装完成。\n`);
             return result;
         } catch (error) {
+            windowHolder.getWindow().webContents.send(`pluginOperationLog`, `插件-【${plugin.id}-${plugin.name}】安装失败！\n`);
+            throw new Error(`插件[${plugin.id}-${plugin.name}]安装失败，错误信息：${error}`)
+        } finally {
             process.env = env;
             process.argv = argv;
-            throw new Error(`插件[${plugin}]安装失败，错误信息：${error}`)
+            process.stdout.write = write;
         }
     }
 
     async uninstall(plugin) {
         const argv = [...process.argv];
         const env = {...process.env};
+        const write = process.stdout.write;
         try {
-            const result = await npmUtils.execCommand('uninstall', [ plugin ], constant.APPLICATION_PLUGINS_DIR);
-
-            process.argv = argv;
-            process.env = env;
+            windowHolder.getWindow().webContents.send(`pluginOperationLog`, `插件-【${plugin.id}-${plugin.name}】卸载中...\n`);
+            const result = await npmUtils.execCommand('uninstall', [ plugin.id, '--loglevel', 'info'], constant.APPLICATION_PLUGINS_DIR);
+            windowHolder.getWindow().webContents.send(`pluginOperationLog`, `插件-【${plugin.id}-${plugin.name}】卸载完成。\n`);
             return result;
         } catch (error) {
+            windowHolder.getWindow().webContents.send(`pluginOperationLog`, `插件-【${plugin.id}-${plugin.name}】卸载失败！\n`);
+            throw new Error(`插件[${plugin.id}]安装失败，错误信息：${error}`)
+        } finally {
             process.env = env;
             process.argv = argv;
-            throw new Error(`插件[${plugin}]安装失败，错误信息：${error}`)
+            process.stdout.write = write;
         }
     }
 

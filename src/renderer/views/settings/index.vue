@@ -6,15 +6,6 @@
       <el-option v-for="message in messages" :key="message.code" :label="message.name" :value="message.code"></el-option>
     </el-select>
 
-    <el-divider content-position="left">{{$t('settings.invokerSettings.title')}}</el-divider>
-    {{$t('settings.invokerSettings.invokerType')}}：
-    <el-select v-model="invokerType">
-      <el-option v-for="invokerType in invokerTypes" :key="invokerType.code" :label="invokerType.name" :value="invokerType.code"></el-option>
-    </el-select>
-    <br />
-    <br />
-    <br />
-    {{$t('settings.invokerSettings.invokerTypeTips')}}
     <div style="margin-top: 15px;">
       <el-input placeholder="请选择JAVA_HOME位置" v-model="javaHome" class="input-with-select">
         <template slot="prepend">JAVA_HOME：</template>
@@ -24,8 +15,13 @@
     <br/>
     {{$t('settings.baseSettings.jvmArgs')}}：
     <el-input :placeholder="$t('settings.baseSettings.jvmArgsTips')" v-model="jvmArgs" style="width: 90%"  > </el-input>
+    
+    <div v-for="pluginSettingComponent in pluginSettingComponentList" :key="pluginSettingComponent.id">
+      <el-divider content-position="left">{{ pluginSettingComponent.name }}</el-divider>
+      <component ref="pluginComponent" :is="pluginSettingComponent.componentName" />
+    </div>
+    
     <el-divider content-position="left"></el-divider>
-
     <el-checkbox v-model="developerModel">开发者模式</el-checkbox>
     <el-button @click="saveConfig">{{$t('settings.apply')}}</el-button>
   </div>
@@ -33,8 +29,8 @@
 
 <script>
 
-import i18n from '@/renderer/common/i18n'
-import appConfig from "@/renderer/api/AppConfigClient.js";
+import i18n           from '@/renderer/common/i18n'
+import appConfig      from "@/renderer/api/AppConfigClient.js";
 const remote = require("@electron/remote");
 
 export default {
@@ -55,16 +51,19 @@ export default {
           code: "java",
           name: "Java"
         }
-      ]
+      ],
+      pluginSettingComponentList: []
     }
   },
   async created() {
     this.selectMessage = await appConfig.getProperty("systemLocale");
     this.messages = i18n.messages;
-    this.invokerType = await appConfig.getProperty("invokerType") || "telnet";
     this.javaHome = await appConfig.getProperty("javaHome");
     this.jvmArgs = await appConfig.getProperty("jvmArgs");
     this.developerModel = await appConfig.getProperty('developer-model') || false;
+  },
+  async mounted() {
+    this.pluginSettingComponentList = this.$appRenderer.getPluginSettingComponentList();
   },
   methods: {
     async selectJavaHomePath() {
@@ -83,16 +82,21 @@ export default {
       await appConfig.setProperty("invokerType", this.invokerType);
       await appConfig.setProperty("javaHome", this.javaHome);
       await appConfig.setProperty("jvmArgs", this.jvmArgs);
+
+      this.$refs.pluginComponent.forEach(async (pluginComponent, index) => {
+        const pluginSettingsInfo = this.pluginSettingComponentList[index];
+        const pluginSettings = await pluginComponent.getPluginSettings();
+        await appConfig.setProperty("pluginConfig." + pluginSettingsInfo.id, pluginSettings);
+      });
+
       const developerModel = await appConfig.getProperty('developer-model') || false;
       if(developerModel !== this.developerModel){
         await appConfig.setProperty("developer-model", this.developerModel);
-        const successNotification = new window.Notification("重启通知", {
-                body: "请点击此通知重启应用以生效",
-            });
-            successNotification.onclick = () => {
-                remote.app.relaunch();
-                remote.app.exit(0);
-            };
+        const successNotification = new window.Notification("重启通知", { body: "请点击此通知重启应用以生效"});
+        successNotification.onclick = () => {
+            remote.app.relaunch();
+            remote.app.exit(0);
+        };
       }
     }
   }

@@ -1,6 +1,7 @@
 /* eslint-disable no-unused-vars */
 import consumer from './Consumer';
-
+// 加载-基础组件
+import appCore from '../core/AppRendener';
 
 class DataSourceClient {
 
@@ -8,22 +9,67 @@ class DataSourceClient {
 
     async getFormConfig(dataSourceType){}
 
-    async getServiceList(registryCenterId) {}
+    async getServiceList(dataSourceInfo) {}
 
-    async getProviderList(registryCenterId, serviceName) {}
+    async getProviderList(dataSourceInfo, serviceInfo) {}
     
-    async getConsumerList(registryCenterId, serviceName) {}
+    async getConsumerList(dataSourceInfo, serviceInfo) {}
     
-    async getConfiguration(registryCenterId, providerInfo) {}
+    async getConfiguration(dataSourceInfo, serviceInfo, providerInfo) {}
     
-    async saveConfiguration(registryCenterId, providerInfo, doc) {}
+    async saveConfiguration(dataSourceInfo, serviceInfo, providerInfo, doc) {}
     
-    async disableProvider(registryCenterId, providerInfo) {}
+    async disableProvider(dataSourceInfo, serviceInfo, providerInfo) {}
     
-    async enableProvider(registryCenterId, providerInfo) {}
+    async enableProvider(dataSourceInfo, serviceInfo, providerInfo) {}
 
-    async invokeMethod(registryCenterId, providerInfo, methodInfo, code) {}
+    async invokeMethod(dataSourceInfo, serviceInfo, providerInfo, methodInfo, code, invokerType) {}
 }
 
 
-export default consumer.wrapper(new DataSourceClient(), "dataSourceFacade");
+const dataSourceFacade = Object.create(consumer.wrapper(new DataSourceClient(), "dataSourceFacade"));
+
+const invokeMethod = dataSourceFacade.invokeMethod;
+
+dataSourceFacade.invokeMethod = async function (dataSourceInfo, serviceInfo, providerInfo, methodInfo, code, invokerType) {
+    try {
+        appCore.emit('invokeMethodBefore', {
+            dataSourceFacade: dataSourceFacade,
+            dataSourceInfo: dataSourceInfo,
+            serviceInfo: serviceInfo,
+            providerInfo: providerInfo,
+            methodInfo: methodInfo,
+            invokerType: invokerType,
+            code: code
+        });
+
+        let result = await invokeMethod(dataSourceInfo, serviceInfo, providerInfo, methodInfo, code, invokerType);
+
+        appCore.emit('invokeMethodAfter', {
+            dataSourceFacade: dataSourceFacade,
+            dataSourceInfo: dataSourceInfo,
+            serviceInfo: serviceInfo,
+            providerInfo: providerInfo,
+            methodInfo: methodInfo,
+            code: code,
+            invokerType: invokerType,
+            result: result,
+        });
+
+        return result;
+    } catch (error) {
+        appCore.emit('invokeMethodError', {
+            dataSourceFacade: dataSourceFacade,
+            dataSourceInfo: dataSourceInfo,
+            serviceInfo: serviceInfo,
+            providerInfo: providerInfo,
+            methodInfo: methodInfo,
+            code: code,
+            invokerType: invokerType,
+            error: error,
+        });
+        throw error;
+    }
+}
+
+export default dataSourceFacade;

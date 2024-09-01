@@ -100,8 +100,6 @@ export default {
           return;
         }
 
-        console.log(` resize  ${this.$refs.dragTabPanel0.offsetTop}, ${this.$refs.dragTabPanel1.offsetTop}, ${this.$refs.dragTabPanel2.offsetTop},  ${this.index} ${e.clientY} ${this.$refs.dragTab.offsetTop} ${process.platform === 'win32' ? 30 : 0} ${22 * this.index}，${(this.$refs.dragTab.offsetTop + (process.platform === 'win32' ? 30 : 0) + (22 * this.index))}`);
-
         const deltaY = e.clientY - this.startY;
         if(this.index === 1){
           this.mainPanelHeight1 -= deltaY;

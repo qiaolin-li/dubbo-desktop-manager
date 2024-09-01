@@ -1,5 +1,5 @@
 <template>
-  <terminal ref="terminal" :terminalKey="terminalKey" @sendCommand="handleInput"></terminal>
+  <terminal ref="terminal"  @sendCommand="handleInput"></terminal>
 </template>
 
 <script>
@@ -21,7 +21,6 @@ export default {
   props: {
     ip: String,
     port: [String, Number],
-    terminalKey : String
   },
   mounted() {
 
@@ -47,20 +46,20 @@ export default {
       this.tSocket = tSocket;
       //   tSocket.setTimeout(1000);
       tSocket.on('connect', () => {
-        this.$refs.terminal.writeDataIn(this.$t('dubbo.telnetTerminal.connecting', {
+        this.$refs.terminal.writeDataIn(this.$t('telnetTerminal.connecting', {
           ip: this.ip,
           port: this.port
         }));
       });
       tSocket.on('error', () => {
-        this.$refs.terminal.writeDataIn(this.$t('dubbo.telnetTerminal.connectionTimeout', {
+        this.$refs.terminal.writeDataIn(this.$t('telnetTerminal.connectionTimeout', {
           ip: this.ip,
           port: this.port
         }));
       });
 
       tSocket.on("close", () => {
-        this.$refs.terminal.writeDataIn(this.$t('dubbo.telnetTerminal.connectionClosed', this));
+        this.$refs.terminal.writeDataIn(this.$t('telnetTerminal.connectionClosed', this));
         this.connect();
       });
 
@@ -75,7 +74,4 @@ export default {
 </script>
 
 <style>
-.dubbo-telnet-container {
-  width: 100%;
-}
 </style>

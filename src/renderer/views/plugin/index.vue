@@ -2,54 +2,46 @@
     <div class="plugin-container">
         <split-pane @resize="resize" split="vertical" :min-percent="20" :default-percent="30">
             <template slot="paneL">
-                <div class="plugin-view">
-                    <el-input v-model="searchText" placeholder="搜索npm上的插件，或者点击上方按钮查看优秀插件列表" size="small"  @input="getSearchResult" >
-                      <template #prefix></template>
-                    </el-input>
-                    <div class="plugin-list" v-loading="loading">
-                        <div class="plugin-item element-hover" v-for="item in pluginList" :key="item.name" @click="selectPlugin(item)">
-                            <img class="plugin-item__logo" v-if="item.logoLoadSuccess" :src="item.logo" @error="() => item.logoLoadSuccess = false" />
-                            <img class="plugin-item__logo"  v-else src="../../assets/icon.png"/>
-                            <div class="plugin-item__content" :class="{ disabled: !item.enabled }">
-                                <div class="plugin-item__content_info">
-                                    <div class="plugin-item__name">{{ item.name }}</div>
-                                    <div>
-                                        <span class="config-button ing" v-if="item.installStatus === 'installed' && !item.ing" > 已安装</span>
-                                        <span class="config-button ing" v-if="item.installStatus === 'update' && !item.ing" >更新</span>
-                                        <span class="config-button ing" v-if="item.installStatus === 'update' && item.ing" >更新中</span>
-                                        <span class="config-button ing" v-if="item.installStatus === 'uninstalled' && !item.ing" >安装</span>
-                                        <span class="config-button ing" v-if="item.installStatus === 'uninstalled' && item.ing" >安装中</span>
-                                        <!-- <span class="config-button ing" v-if="item.installStatus === 'disabled'" > 已禁用 </span> -->
-                                    </div>
-                                </div>
-                                <div> 
-                                    <span class="plugin-item__version">{{ item.version }}</span>
-                                    <span>&nbsp;&nbsp;</span>
-                                    <span class="plugin-item__author">{{ item.author }}</span>
-                                </div>    
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                <list @selectPlugin="selectPlugin"></list>
             </template>
             <template slot="paneR">
-                <pluginDetails  class="plugin-content"  :plugin="currentPlugin" @installPlugin="installPlugin" @uninstallPlugin="uninstallPlugin"></pluginDetails>
+                <!-- <div style="height: 100%;">
+                    <split-pane @resize="resize" split="horizontal" :min-percent="50" :default-percent="70">
+                        <template slot="paneL">
+                        
+                        </template>
+                        <template slot="paneR">
+                            <pluginLog></pluginLog>
+                        </template>
+                    </split-pane>
+                </div> --> 
+
+                <vs-layout :edit="false" :resize="state.resize" :splits="state.splits">
+                    <pluginDetails  class="plugin-content"  :plugin="currentPlugin" @installPlugin="installPlugin" @uninstallPlugin="uninstallPlugin"></pluginDetails>
+                    <vs-pane title="日志">
+                        <pluginLog></pluginLog>
+                    </vs-pane>
+                </vs-layout>
             </template>
         </split-pane>
+        
     </div>
 </template>
 <script>
-import appConfig from "@/renderer/api/AppConfigClient.js";
-import pluginManager from "@/renderer/api/PluginManagerClient.js";
+import lodash               from "lodash";
+import pluginDetails        from "./details.vue";
+import pluginLog            from "./log.vue";
+import appConfig            from "@/renderer/api/AppConfigClient.js";
+import pluginManager        from "@/renderer/api/PluginManagerClient.js";
+import list                 from "./list/index.vue";
 const remote = require("@electron/remote");
-import lodash from "lodash";
-import pluginDetails from "./details.vue";
-
 
 export default {
     name: "plugin",
     components: {
         pluginDetails,
+        pluginLog,
+        list
     },
     data() {
         return {
@@ -58,13 +50,27 @@ export default {
             pluginNameList: [],
             loading: false,
             currentPlugin: {},
+            state: {
+                extraStyle: false,
+                edit: true,
+                resize: true,
+                splits:   {
+                    dir: 'vertical',
+                    first: 0,
+                    second: 1,
+                    split: '80%' 
+                },
+                layoutN: 0
+            },
         };
     },
     created() {
-        this.getSearchResult();
+        this.searchPluginListFun = lodash.debounce(async () => this.searchPluginList(), 300)
+        this.searchPluginListFun();
     },
     methods: {
         resize() {},
+        searchPluginListFun(){},
         async installPlugin(plugin) {
             try {
                 plugin.ing = true;
@@ -75,6 +81,7 @@ export default {
                     message: `插件【${plugin.name}-${plugin.version}】安装成功`,
                 });
                 plugin.installStatus = 'installed';
+                this.$bus.$emit("plugin-installed", plugin);
                 this.handleReload();
             } finally {
                 plugin.ing = false;
@@ -83,8 +90,9 @@ export default {
         async uninstallPlugin(plugin) {
             try {
                 plugin.ing = true;
-                await pluginManager.uninstall(plugin.id)
+                await pluginManager.uninstall(plugin)
                 plugin.installStatus = 'uninstalled';
+                this.$bus.$emit("plugin-uninstalled", plugin);
                 this.$message({
                     type: "success",
                     message: `插件【${plugin.name}】卸载成功`,
@@ -102,25 +110,21 @@ export default {
                 remote.app.exit(0);
             };
         },
-        async getSearchResult () {
-            const searchResult = lodash.throttle(async () => {
-                try {
-                    const pluginList = await pluginManager.search(this.searchText);
-                    pluginList.forEach((item) => {
-                        item.logoLoadSuccess = true;
-                        item.ing = false;
-                    })
+        async searchPluginList () {
+            try {
+                const pluginList = await pluginManager.search(this.searchText);
+                pluginList.forEach((item) => {
+                    item.logoLoadSuccess = true;
+                    item.ing = false;
+                })
 
-                    this.pluginList = pluginList;
-                    this.selectPlugin(this.pluginList[0] || {})
-                    this.loading = false;
-                } catch(err) {
-                    console.log(err);
-                    this.loading = false;
-                }
-            }, 1000)
-
-            return searchResult();
+                this.pluginList = pluginList;
+                this.selectPlugin(this.pluginList[0] || {})
+                this.loading = false;
+            } catch(err) {
+                console.log(err);
+                this.loading = false;
+            }
         },
         async selectPlugin(plugin){
             this.currentPlugin = plugin;

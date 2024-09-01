@@ -15,11 +15,6 @@ export default {
     ],
     bottomMenu: [
         {
-            label: 'TEST',
-            icon: "el-icon-goods",
-            componentName: "Test",
-        },
-        {
             label: i18n.t("menu.plugins"),
             icon: "el-icon-goods",
             componentName: "plugins",

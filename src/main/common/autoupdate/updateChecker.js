@@ -1,18 +1,13 @@
 // 更新检查器，来自 pigGo`
-import {
-  dialog,
-  shell
-} from 'electron'
-import axios from 'axios'
-import pkg from '../../../../package.json'
-import {
-  lt
-} from 'semver'
-import appConfig from "@/main/common/config/appConfig.js";
-import i18n from '@/main/common/i18n'
-import logger        from '@/main/common/logger';
+import { dialog, shell }    from 'electron'
+import axios                from 'axios'
+import pkg                  from '../../../../package.json'
+import { lt }               from 'semver'
+import appConfig            from "@/main/common/config/appConfig.js";
+import i18n                 from '@/main/common/i18n'
+import logger               from '@/main/common/logger';
 
-const currentVersion = pkg.version
+
 const repostoryName = "qiaolin-li/dubbo-desktop-manager"
 const releaseUrl = `https://api.github.com/repos/${repostoryName}/releases/latest`
 const releaseUrlBackup = `https://cdn.jsdelivr.net/gh/${repostoryName}/package.json`
@@ -52,6 +47,7 @@ async function backupCheckUpdateUrl() {
 }
 
 function checkUpdate(lastVersion, message) {
+  const currentVersion = pkg.version
   const result = compareVersion2Update(currentVersion, lastVersion)
   if (!result) {
     return false;
@@ -79,7 +75,6 @@ function checkUpdate(lastVersion, message) {
   }).catch(e => {
     logger.error(e)
   });
-
 }
 
 // if true -> update else return false

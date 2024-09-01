@@ -52,10 +52,10 @@ class PluginSearcher {
             return await this.fuzzySearch.search(keyword);
         }
         try {
-            const response = await axios.get(`https://registry.npmmirror.com/-/v1/search?text=${constant.APPLICATION_PLUGINS_NAME_PREFIX}${keyword}&time=${new Date().getTime()}`);
+            const response = await axios.get(`https://registry.npmjs.com/-/v1/search?text=${constant.APPLICATION_PLUGINS_NAME_PREFIX}${keyword}&time=${new Date().getTime()}`);
             return response.data.objects.filter(item => item.package.name.startsWith(constant.APPLICATION_PLUGINS_NAME_PREFIX)).map(item => this.handleResult(item));
         } catch(e){
-            const response = await axios.get(`https://registry.npmjs.com/-/v1/search?text=${constant.APPLICATION_PLUGINS_NAME_PREFIX}${keyword}&time=${new Date().getTime()}`);
+            const response = await axios.get(`https://registry.npmmirror.com/-/v1/search?text=${constant.APPLICATION_PLUGINS_NAME_PREFIX}${keyword}&time=${new Date().getTime()}`);
             return response.data.objects.filter(item => item.package.name.startsWith(constant.APPLICATION_PLUGINS_NAME_PREFIX)).map(item => this.handleResult(item));
         }
     }

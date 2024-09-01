@@ -45,10 +45,16 @@ app.on('activate', () => {
   }
 })
 
+
+if (!app.requestSingleInstanceLock()) {
+  app.quit();
+}
+
 // 这个方法将在Electron完成后被调用 
 // 初始化并准备创建浏览器窗口。 
 // 某些api只能在事件发生后使用。
 app.on('ready', async () => {
+
  
   updateChecker();
 

@@ -1,4 +1,5 @@
 import path                                         from 'path'
+import appConfig                                    from "@/main/common/config/appConfig"
 import Constant                                     from '@/main/common/Constant.js'
 import { BrowserWindow}                             from 'electron'
 import { createProtocol }                           from 'vue-cli-plugin-electron-builder/lib'
@@ -23,8 +24,8 @@ class WindowHolder {
     async createMainWindow() {
         const url = process.env.WEBPACK_DEV_SERVER_URL || 'app://./index.html' ;
         const mainWindowConfig = {
-            width: 1200,
-            height: 800,
+            width: appConfig.getProperty("windowWidth") || 1200,
+            height: appConfig.getProperty("windowHeight") || 800,
             title: "Dubbo-Desktop-Manager",
             frame: false, // Use to linux
             titleBarStyle: 'hidden',
@@ -43,6 +44,15 @@ class WindowHolder {
         }
         this.window  = new BrowserWindow(mainWindowConfig)
         this.createWindow(this.window, url)
+
+        
+        // 监听窗口大小改变
+        this.window.on('resize', () => {
+            const { width, height } = this.window.getBounds();
+            appConfig.setProperty("windowWidth", width);
+            appConfig.setProperty("windowHeight", height);
+        });
+
 
         // Attach listeners
         if(!Constant.IS_MAC){

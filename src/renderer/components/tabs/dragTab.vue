@@ -85,12 +85,12 @@ export default {
     this.fisrtSelectedName = this.fisrtDefaultName;
     this.secondSelectedName = this.secondDefaultName;
     this.$slots.fisrtContent.forEach(x => {
-      if(this.fisrtSelectedName !== x.componentInstance.name){
+      if(x.componentInstance && this.fisrtSelectedName !== x.componentInstance.name){
         x.elm.style.display = 'none';
       }
     });
     this.$slots.fisrtToolBar.forEach(x => {
-      if(this.fisrtSelectedName !== x.componentInstance.name){
+      if(x.componentInstance && this.fisrtSelectedName !== x.componentInstance.name){
         x.elm.style.display = 'none';
       }
     });
@@ -122,11 +122,11 @@ export default {
       this.isResizing = false;
       document.removeEventListener('mousemove', this.resize);
       document.removeEventListener('mouseup', this.stopResize);
-      const fisrtcomponent = (this.$slots.fisrtContent || []).find(x => x.componentInstance.name === this.fisrtSelectedName);
+      const fisrtcomponent = (this.$slots.fisrtContent || []).find(x => x.componentInstance && x.componentInstance.name === this.fisrtSelectedName);
       if(fisrtcomponent) {
         fisrtcomponent.componentInstance.show();
       }
-      const secondcomponent = (this.$slots.secondContent || []).find(x => x.componentInstance.name === this.secondSelectedName);
+      const secondcomponent = (this.$slots.secondContent || []).find(x => x.componentInstance && x.componentInstance.name === this.secondSelectedName);
       if(secondcomponent) {
         secondcomponent.componentInstance.show();
       }
@@ -145,8 +145,8 @@ export default {
           return;
         }
 
-        const oldToolBarComponent = (this.$slots.fisrtToolBar || []).find(x => x.componentInstance.name === this.fisrtSelectedName);
-        const newToolBarComponent = (this.$slots.fisrtToolBar || []).find(x => x.componentInstance.name === name);
+        const oldToolBarComponent = (this.$slots.fisrtToolBar || []).find(x => x.componentInstance && x.componentInstance.name === this.fisrtSelectedName);
+        const newToolBarComponent = (this.$slots.fisrtToolBar || []).find(x => x.componentInstance && x.componentInstance.name === name);
         if(oldToolBarComponent){
           oldToolBarComponent.elm.style.display = 'none'
         }
@@ -155,8 +155,8 @@ export default {
         }
 
 
-        const oldComponent = this.$slots.fisrtContent.find(x => x.componentInstance.name === this.fisrtSelectedName);
-        const newComponent = this.$slots.fisrtContent.find(x => x.componentInstance.name === name);
+        const oldComponent = this.$slots.fisrtContent.find(x => x.componentInstance && x.componentInstance.name === this.fisrtSelectedName);
+        const newComponent = this.$slots.fisrtContent.find(x => x.componentInstance && x.componentInstance.name === name);
         if(oldComponent){
           oldComponent.elm.style.display = 'none'
         }
@@ -171,8 +171,8 @@ export default {
           return;
         }
 
-        const oldToolBarComponent = (this.$slots.secondToolBar || []).find(x => x.componentInstance.name === this.secondSelectedName);
-        const newToolBarComponent = (this.$slots.secondToolBar || []).find(x => x.componentInstance.name === name);
+        const oldToolBarComponent = (this.$slots.secondToolBar || []).find(x => x.componentInstance && x.componentInstance.name === this.secondSelectedName);
+        const newToolBarComponent = (this.$slots.secondToolBar || []).find(x => x.componentInstance && x.componentInstance.name === name);
         if(oldToolBarComponent){
           oldToolBarComponent.elm.style.display = 'none'
         }
@@ -180,8 +180,8 @@ export default {
           newToolBarComponent.elm.style.display = ''
         }
 
-        const oldComponent = this.$slots.secondContent.find(x => x.componentInstance.name === this.secondSelectedName);
-        const newComponent = this.$slots.secondContent.find(x => x.componentInstance.name === name);
+        const oldComponent = this.$slots.secondContent.find(x => x.componentInstance && x.componentInstance.name === this.secondSelectedName);
+        const newComponent = this.$slots.secondContent.find(x => x.componentInstance && x.componentInstance.name === name);
         if(oldComponent){
           oldComponent.elm.style.display = 'none'
         }

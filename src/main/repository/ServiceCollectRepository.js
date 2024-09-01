@@ -7,13 +7,9 @@ let dbOperator = dbUtils("interfaceCollect");
  * 每一个对象对应收藏的一个服务信息
  */
 class ServiceCollect {
-    ServiceCollect({_id, registryCenterId, serviceName, name, group = null, createTime = new Date().getTime()}){
-        this._id = _id, 
-        this.registryCenterId = registryCenterId, 
-        this.name = name;
-        this.group = group;
-        this.serviceName = serviceName;
-        this.createTime = createTime;
+    constructor(obj){
+        Object.assign(this, obj)
+        this.createTime = this.createTime || new Date().getTime();
     }
 }
 

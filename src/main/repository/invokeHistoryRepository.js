@@ -7,16 +7,9 @@ let dbOperator = dbUtils("invokeHistory");
  */
 class InvokeHistory {
 
-    constructor({ _id, registryCenterId, serviceName, uniqueServiceName, address, method, param, result, createTime }) {
-        this._id = _id,
-        this.registryCenterId = registryCenterId;
-        this.serviceName = serviceName;
-        this.uniqueServiceName = uniqueServiceName;
-        this.address = address;
-        this.method = method;
-        this.param = param;
-        this.result = result;
-        this.createTime = createTime || new Date().getTime();
+    constructor(obj) {
+        Object.assign(this, obj)
+        this.createTime = this.createTime || new Date().getTime();
     }
 }
 

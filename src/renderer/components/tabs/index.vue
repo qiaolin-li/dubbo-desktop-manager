@@ -280,7 +280,7 @@ export default {
   background-color: #C8E8FB;
 }
 
-.el-tabs__content {
+.mytab-container .el-tabs__content {
   display: none;
 }
 

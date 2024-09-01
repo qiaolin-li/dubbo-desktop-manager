@@ -1,11 +1,13 @@
-import fs                   from 'fs';
-import path                 from 'path';
-import resolve              from 'resolve'
-import i18n                     from '@/main/common/i18n';   
-import constant             from "@/main/common/Constant.js";
-import appConfig            from "@/main/common/config/appConfig.js";
-import pluginManager        from "@/main/plugin/PluginManager.js";
-import appCore              from '@/main/AppCore.js';
+import fs                           from 'fs';
+import path                         from 'path';
+import resolve                      from 'resolve'
+import i18n                         from '@/main/common/i18n';   
+import constant                     from "@/main/common/Constant.js";
+import appConfig                    from "@/main/common/config/appConfig.js";
+import pluginManager                from "@/main/plugin/PluginManager.js";
+import appCore                      from '@/main/AppCore.js';
+import AppPlugin                    from '@/main/plugin/AppPlugin.js';
+import logger                       from '@/main/common/logger';
 
 // eslint-disable-next-line no-undef
 const requireFunc = typeof __webpack_require__ === 'function' ? __non_webpack_require__ : require
@@ -25,7 +27,7 @@ class PluginLoader {
                 description: 'ddm-plugins',
                 repository: 'https://github.com/qiaolin-li/dubbo-desktop-manager',
             }
-            fs.writeFileSync(packagePath, JSON.stringify(pkg), 'utf8') // 创建这个文件
+            fs.writeFileSync(packagePath, JSON.stringify(pkg), 'utf8') 
         }
 
         const pluginDir = path.join(constant.APPLICATION_PLUGINS_DIR, 'node_modules/')
@@ -56,68 +58,39 @@ class PluginLoader {
             try {
                 this.load(module);
             } catch (error) {
-                appCore.notify('插件[${module}]加载失败', error.message)
+                appCore.notify(`插件[${module}]加载失败`, error.message)
             }
         }
         
     }
 
     async load(module) {
-        const registerInfo = {
-            dataSourceList: [],
-            invokeList: [],
-            paramGeneratorList: [],
-        };
-
-        const appCoreWrapper =  Object.create(appCore);
-        appCoreWrapper.registerDataSource = (type,  dataSource) => {
-            appCore.registerDataSource(type, dataSource)
-            registerInfo.dataSourceList.push(type)
-        }
-        
-        appCoreWrapper.registerInvoke =  (type, invoker) => {
-            appCore.registerInvoke(type, invoker)
-            registerInfo.invokeList.push(type)
-        }
-
-        appCoreWrapper.registerParamGenerator =  (type, generator) => {
-            appCore.registerParamGenerator(type, generator)
-            registerInfo.paramGeneratorList.push(type)
-        }
-
-        appCoreWrapper.registryPluginLocal = (locale, message) => {
-            const localeMessage = i18n.getLocaleMessage(locale);
-            if(!localeMessage.pluginLocale){
-                localeMessage.pluginLocale = {};
-            }
-
-            localeMessage.pluginLocale[module] = message;
-            i18n.setLocaleMessage(locale, localeMessage);
-        }
-        appCoreWrapper.t = (key) => {
-            return i18n.t(`pluginLocale.${module}.${key}`)
-        }
-
         // 调用插件的`register`方法进行注册
+        const pluginDir = path.join(constant.APPLICATION_PLUGINS_DIR, 'node_modules/', module)
+        // 通过插件名获取插件
+        logger.info(`插件加载-开始 pluginId:${module}, pluginPath:${pluginDir}`);
         try {
-            // 通过插件名获取插件
-            const pluginDir = path.join(constant.APPLICATION_PLUGINS_DIR, 'node_modules/', module)
-
+            
             // 读取package.json
             const packageJson = JSON.parse(fs.readFileSync(path.join(pluginDir, 'package.json'))) 
+            const mainJs = packageJson.main ? path.join(pluginDir, packageJson.main) : path.join(pluginDir, 'main.js')
 
-            const mainJs = packageJson.main ? path.join(pluginDir, packageJson.main) : path.join(pluginDir, 'index.js')
-
-            const plugin = this.getPlugin(mainJs)(appCoreWrapper).register() 
-            plugin.version = packageJson.version;
+            const appPlugin = new AppPlugin(pluginDir, module);
+            const plugin = this.getPlugin(mainJs)(appPlugin)
+            logger.info(`加载插件-[${module}]-准备调用注册方法 pluginId:${module}, pluginPath:${pluginDir}`);
+            plugin.register() 
+            logger.info(`加载插件-[${module}]-调用注册方法完毕 pluginId:${module}, pluginPath:${pluginDir}`);
+            
             plugin.id = module;
-            plugin.uninstall = () => {
-                registerInfo.dataSourceList.forEach((type) => appCore.removeDataSource(type));
-                registerInfo.invokeList.forEach((type) => appCore.removeInvoke(type));
-                registerInfo.paramGeneratorList.forEach((type) => appCore.removeParamGenerator(type));
-            }
+            plugin.version = packageJson.version;
+            plugin.pluginDir = pluginDir;
+            const rendenerPath = packageJson.rendererMain ? path.join(pluginDir, packageJson.rendererMain) : path.join(pluginDir, 'renderer.js');
+            plugin.rendererModule = fs.existsSync(rendenerPath) ? rendenerPath : null;
+            plugin.uninstall = appPlugin.uninstall.bind(appPlugin);
+
             pluginManager.register(module, plugin)
         } catch (error) {
+            logger.error(`插件加载-失败 pluginId:${module}, pluginPath:${pluginDir}`, error);
             throw new Error(`插件${module}加载失败，错误原因：${error}`)
         }
     }

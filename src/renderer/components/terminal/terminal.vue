@@ -1,5 +1,5 @@
 <template>
-  <div :id="terminalKey" class="terminal-container"></div>
+  <div ref="terminal" class="terminal-container"></div>
 </template>
 
 <script>
@@ -32,25 +32,29 @@ export default {
     }
   },
   props: {
-    terminalKey: String,
+    themeForeground: {
+      type: String,
+      default: '#e5e5e5',
+    },
+    themeBackground: {
+      type: String,
+      default: '#232322',
+    }
   },
   mounted() {
-    this.$nextTick(() => {
-      this.initTerm();
+    this.initTerm();
 
-      let terminalContainer = document.querySelector(`#${this.terminalKey}`);
-      terminalContainer.onmouseup = (e) => {     //在body里点击触发事件
-        //如果button=1（鼠标左键），button=2（鼠标右键），button=0（鼠标中间键）
-        if (e.button === 2) {
-          this.pasteContentToTerminal()
-          e.stopPropagation();
-        }
+    let terminalContainer = this.$refs.terminal;
+    terminalContainer.onmouseup = (e) => {     //在body里点击触发事件
+      //如果button=1（鼠标左键），button=2（鼠标右键），button=0（鼠标中间键）
+      if (e.button === 2) {
+        this.pasteContentToTerminal()
+        e.stopPropagation();
       }
+    }
 
-      // 绑定快捷键
-      Mousetrap(terminalContainer).bind(['command+v', 'ctrl+v'], () => this.pasteContentToTerminal());
-
-    });
+    // 绑定快捷键
+    Mousetrap(terminalContainer).bind(['command+v', 'ctrl+v'], () => this.pasteContentToTerminal());
 
     // 需要解除对 areatext 的粘贴
     Mousetrap.prototype.stopCallback = (e, element, combo) => {
@@ -72,8 +76,8 @@ export default {
         rendererType: 'canvas',
         fontFamily: "Monaco, Menlo, Consolas, 'Courier New', monospace",
         theme: {
-          foreground: '#e5e5e5',
-          background: '#232322',
+          foreground: this.themeForeground,
+          background: this.themeBackground,
         },
         //cursorStyle: 'underline',
         //scrollSensitivity: 15,
@@ -87,7 +91,7 @@ export default {
       const fitAddon = new FitAddon();
       term.loadAddon(fitAddon)
 
-      let terminalContainer = document.querySelector(`#${this.terminalKey}`);
+      let terminalContainer = this.$refs.terminal;
       term.open(terminalContainer)
       // term.fit()
       fitAddon.fit()
@@ -253,6 +257,11 @@ export default {
 
 <style>
 .terminal-container {
+  width: 100%;
+  height: 100%;
+}
+
+.terminal-container div{
   width: 100%;
   height: 100%;
 }
