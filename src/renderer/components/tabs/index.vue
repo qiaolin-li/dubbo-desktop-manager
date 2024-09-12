@@ -212,6 +212,12 @@ export default {
       }
     },
     componentProps(tab) {
+      if (tab.component) {
+        return {
+          is: tab.component,
+          ...tab.params
+        };
+      }
       if (tab.componentName) {
         return {
           is: tab.componentName,

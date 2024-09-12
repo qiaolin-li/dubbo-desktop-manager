@@ -82,6 +82,14 @@ export default {
     addTab(tabInfo) {
       this.$refs.myTabs.addTab(tabInfo);
     },
+
+    getServiceManager() {
+      return {
+        addTab: (tabInfo) => {
+          this.addTab(tabInfo);
+        },
+      };
+    }
   },
 }
 </script>

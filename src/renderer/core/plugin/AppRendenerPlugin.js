@@ -83,7 +83,7 @@ class AppRendererPluginCore {
         const componentInfo = {
             id: name,
             type: type,
-            label: type,
+            label: options.label || type,
             componentName: name,
             module: this.#module
         }

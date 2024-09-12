@@ -23,11 +23,11 @@
 </template>
 
 <script>
-import myTabList        from '@/renderer/components/tabs/index.vue';
-import addConnect       from "./addDataSource.vue";
-import datasourceList      from "./datasourceList.vue";
-import { ipcRenderer }  from 'electron'
-const remote = require("@electron/remote");
+import myTabList            from '@/renderer/components/tabs/index.vue';
+import addConnect           from "./addDataSource.vue";
+import datasourceList       from "./datasourceList.vue";
+import { ipcRenderer }      from 'electron'
+import remote               from '@electron/remote';
 
 export default {
   components: {
