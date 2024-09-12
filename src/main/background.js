@@ -7,7 +7,6 @@ import template      from '@/main/menuList.js';
 import apiExportor   from '@/main/api/ApiExportor.js';
 import appCore       from '@/main/AppCore.js';
 import appConfig     from "@/main/common/config/appConfig.js";
-import pkg           from '../../package.json'
 
 // Scheme must be registered before the app is ready
 protocol.registerSchemesAsPrivileged([
@@ -21,7 +20,7 @@ app.allowRendererProcessReuse = true;
 Menu.setApplicationMenu(Menu.buildFromTemplate(template));
 app.setAboutPanelOptions({
   applicationName: "DDM",
-  applicationVersion: pkg.version,
+  applicationVersion: Constant.VERSION,
   version:"2022.02.22",
   website :"https://github.com/qiaolin-li/dubbo-desktop-manager",
   copyright:"Copyright © 2021-2099 QIAOLIN. All rights reserved."
@@ -31,7 +30,7 @@ app.setAboutPanelOptions({
 app.on('window-all-closed', () => {
   // On macOS it is common for applications and their menu bar
   // to stay active until the user quits explicitly with Cmd + Q
-  if (process.platform !== 'darwin') {
+  if (!Constant.IS_MAC) {
     app.quit()
   }
 })

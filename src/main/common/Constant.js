@@ -1,4 +1,5 @@
 import path from 'path';
+import pkg from '../../../package.json'
 import os from 'os';
 import fs from 'fs-extra';
 
@@ -32,6 +33,8 @@ function checkAndCreateDir(path) {
 }
 
 export default {
+    VERSION: pkg.version,
+
     IS_DEVELOPMENT,
     USER_HOME_DIR,
 
@@ -50,4 +53,5 @@ export default {
     APPLICATION_TEMP_DIR,
     IS_MAC: process.platform === 'darwin',
     
+    API_HTTP_PORT: IS_DEVELOPMENT ? pkg.port.dev : pkg.port.prod
 }

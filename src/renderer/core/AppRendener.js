@@ -26,7 +26,11 @@ class AppRendenerCore {
     #pluginMenuMap = new Map();
     #pluginSettingComponent = [];
     getPluginSettingComponentList = () => this.#pluginSettingComponent;
-  
+    
+    #pluginDataSourceUpdateComponent = [];
+    getPluginDataSourceUpdateComponentList = () => this.#pluginDataSourceUpdateComponent;
+
+    
     #bus = new Vue();
     on = this.#bus.$on.bind(this.#bus);
     off = this.#bus.$off.bind(this.#bus);
@@ -70,12 +74,24 @@ class AppRendenerCore {
     }
     
     async loadPlugin () {
-        const rendenerPaths = await pluginManagerClient.getPluginRendererModules();
+        const pluginInfos = await pluginManagerClient.getPluginModules();
         
-        rendenerPaths.forEach(async (path) => {
+        pluginInfos.forEach(async (plugin) => {
             try {
-                const module = requireFunc(path);
-                await module.install(new AppRendererPluginCore(this, 'ddm-plugin-dubbo-support'));
+                // 1、创建插件核心对象
+                const appPluginCore = new AppRendererPluginCore(this, plugin.name);
+
+                // 2、加载插件国际化文件
+                if(plugin.i18nPath) {
+                    const i18nModule = requireFunc(plugin.i18nPath)(appPluginCore.geti18nRegistrar());
+                    await i18nModule.install();
+                }
+
+                // 3、加载插件渲染逻辑
+                if(plugin.rendenerPath) {
+                    const module = requireFunc(plugin.rendenerPath)(appPluginCore);
+                    await module.install();
+                }
             } catch (error) {
                 console.error(error);
             }
@@ -145,6 +161,10 @@ class AppRendenerCore {
             }
         });
       }
+
+    addDataSourceUpdateComponent(componentInfo) {
+      this.#pluginDataSourceUpdateComponent.push(componentInfo);
+    }
 
     addPluginSettingComponent(componentInfo) {
       componentInfo.id ??= this.#pluginSettingComponent.length + 1;

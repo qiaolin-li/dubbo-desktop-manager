@@ -92,6 +92,11 @@ export default {
         name: "链接名称",
         type: "类型",
         save: "立即创建",
+
+        validateMessage: {
+            inputName: "请输入链接名称",
+            rangeLimit: "长度在 1 到 32 个字符",
+        },
         
         createSuccess:"新增连接成功!",
         updateSuccess:"修改连接成功!",

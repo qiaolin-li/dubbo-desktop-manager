@@ -17,7 +17,7 @@ class Plugin {
 
     uninstall(plugin) {}
 
-    getPluginRendererModules(pluginId) {}
+    getPluginModules() {}
 }
 
 

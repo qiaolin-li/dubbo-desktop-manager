@@ -17,7 +17,7 @@
     <el-input :placeholder="$t('settings.baseSettings.jvmArgsTips')" v-model="jvmArgs" style="width: 90%"  > </el-input>
     
     <div v-for="pluginSettingComponent in pluginSettingComponentList" :key="pluginSettingComponent.id">
-      <el-divider content-position="left">{{ pluginSettingComponent.name }}</el-divider>
+      <el-divider content-position="left">{{ pluginSettingComponent.label }}</el-divider>
       <component ref="pluginComponent" :is="pluginSettingComponent.componentName" />
     </div>
     

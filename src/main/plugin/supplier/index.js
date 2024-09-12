@@ -15,14 +15,14 @@ class NPMPluginSupplier {
     }
 
     async getDevelopmentPluginList(keyword) {
-        let rootPath = '';
-        try {
-            rootPath =lodash.trim(await this.execCommand('root', [ '-g' ], constant.APPLICATION_PLUGINS_DIR));
-        } catch(error) {
-            // mac下打包后始终会报错，也不知道为什么....，折腾了很久，后面在优化吧，
-            // 开发环境还是没有问题，要编写插件，最好还用开发模式把，还可以调试
-            return [];
-        }
+        let rootPath = 'D:\\projects\\ddm';
+        // try {
+        //     rootPath =lodash.trim(await this.execCommand('root', [ '-g' ], constant.APPLICATION_PLUGINS_DIR));
+        // } catch(error) {
+        //     // mac下打包后始终会报错，也不知道为什么....，折腾了很久，后面在优化吧，
+        //     // 开发环境还是没有问题，要编写插件，最好还用开发模式把，还可以调试
+        //     return [];
+        // }
         
         // 获取root目录下所有子目录
         const pluginList = [];

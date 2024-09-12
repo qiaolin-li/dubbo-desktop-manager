@@ -9,7 +9,10 @@
   },
   "version": "1.1.0",
   "private": true,
-  "port": "10678",
+  "port": {
+    "dev": 34567,
+    "prod": 34568
+  },
   "scripts": {
     "lint": "vue-cli-service lint",
     "build": "vue-cli-service electron:build",

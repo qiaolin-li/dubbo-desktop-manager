@@ -7,13 +7,15 @@ log4js.configure({
         console:{ type:'console' },
         info:{
             type: 'file', 
-            filename: 'logs/all-logs.log'
+            filename: 'logs/all-logs.log',
+            daysToKeep: 3
         },
         error:{
             type: 'dateFile',
             filename:'logs/error.log',
             pattern:'yyyy-MM-dd.log',
-            alwaysIncludePattern:true// 设置文件名称为 filename + pattern
+            alwaysIncludePattern:true,// 设置文件名称为 filename + pattern
+            daysToKeep: 3
         }
     },
     //指定哪些追加器可以输出来

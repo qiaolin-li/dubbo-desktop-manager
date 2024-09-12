@@ -1,5 +1,5 @@
-import pkg from '../../../../package.json'
-import http from 'http';
+import constant      from '@/main/common/Constant';
+import http          from 'http';
 
 /**
  * 主进程和渲染进程通过HTTP协议通信
@@ -17,9 +17,9 @@ class HttpServer {
                 response.write(JSON.stringify(await apiExportor.invokeMethod(moduleName, method,JSON.parse(data))));        
                 response.end();
             })
-        }).listen(pkg.port);
+        }).listen(constant.API_HTTP_PORT);
             
-        console.log(`Server running at http://127.0.0.1:${pkg.port}/`);
+        console.log(`Server running at http://127.0.0.1:${constant.API_HTTP_PORT}/`);
     }
 
 }

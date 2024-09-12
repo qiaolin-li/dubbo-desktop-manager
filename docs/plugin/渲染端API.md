@@ -107,8 +107,6 @@ $t(key,  ....)
 
 
 
-
-
 事件
 
 on(event, callback)

@@ -1,8 +1,5 @@
 const { ipcRenderer } = require('electron')
 const axios = require('axios').default;
-import pkg from "../../../package.json";
-
-const IS_DEVELOPMENT = process.env.NODE_ENV !== 'production'
 
 const COMMUNICATION_CHANEL = "ipc-main-unify";
 const COMMUNICATION_CONSUMER_CHANNEL = `ipc-rendenerer-unify_${Math.random()}`;
@@ -11,7 +8,7 @@ const waitResponsePromiseMap = new Map();
 class Consumer{
 
     constructor(){
-        this.invoker = (IS_DEVELOPMENT || window.appConfig.getProperty('developer-model')) ? new HttpClient() : new IpcClient();
+        this.invoker = (window.constant.IS_DEVELOPMENT || window.appConfig.getProperty('developer-model')) ? new HttpClient() : new IpcClient();
     }
 
     wrapper(target, moduleName) {
@@ -42,7 +39,7 @@ class Consumer{
 
 class HttpClient{
     async invoke(moduleName, method, args){
-        const response = await axios.post(`http://127.0.0.1:${pkg.port}/api/${moduleName}/${method}`, args);
+        const response = await axios.post(`http://127.0.0.1:${window.constant.API_HTTP_PORT}/api/${moduleName}/${method}`, args);
         if (!response.data.success) {
             require('element-ui').Message({
                 type: "error",

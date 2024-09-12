@@ -47,23 +47,19 @@ class Plugin {
         }
     }
 
-    async getPluginRendererModules(pluginId) {
-        if(pluginId) { 
-            const plugin = pluginManager.get(pluginId);
-            if(plugin.rendererModule) {
-                return [plugin.rendererModule]
-            }
-        }
-
+    async getPluginModules() {
         const list = pluginManager.getList();
 
-        const rendenerPaths = [];
+        const plugins = [];
         list.forEach((plugin) => {
-            if(plugin.rendererModule) {
-                rendenerPaths.push(plugin.rendererModule)
-            }
+            plugins.push({
+                id: plugin.id,
+                name: plugin.name,
+                i18nPath: fs.existsSync(plugin.i18nPath) ? plugin.i18nPath : null,
+                rendenerPath: fs.existsSync(plugin.rendenerPath) ? plugin.rendenerPath : null,
+            })
         })
-        return rendenerPaths;
+        return plugins;
     }
 }
 

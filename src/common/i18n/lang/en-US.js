@@ -92,6 +92,11 @@ export default {
         name: "name",
         type: "type",
         save: "save",
+        validateMessage: {
+            inputName: "Please enter a link name",
+            rangeLimit: "The value contains 1 to 32 characters",
+        },
+
         createSuccess:"Adding a connection succeeded!",
         updateSuccess:"Succeeded in modifying the connection!",
         open: "Open Datasource",

@@ -9,6 +9,7 @@ class AppRendererPluginCore {
 
     #module=null;
     #appRendererCore = null;
+    #componentIndex = 0;
 
     constructor(appRendererCore, module) {
         this.#module = module;
@@ -66,21 +67,63 @@ class AppRendererPluginCore {
         }
     }
 
-    registryPluginLocal(locale, message) {
-        const localeMessage = i18n.getLocaleMessage(locale);
-        localeMessage.pluginLocale ??= {};
-        localeMessage.pluginLocale[this.#module] = message;
-        i18n.setLocaleMessage(locale, localeMessage);
+
+
+    /**
+     * 注册一个数据源信息编辑组件
+     * @param { string } type 数据源类型
+     * @param { VueComponent } component Vue组件
+     * @param { object} options 选项，暂时没用
+     */
+    // eslint-disable-next-line no-unused-vars
+    registryDataSourceUpdateComponent(type, component, options) {
+        const name = `${this.#module}-datasource-update-${type.replaceAll(' ', '-')}-${this.#componentIndex++}`
+        this.component(name, component)
+
+        const componentInfo = {
+            id: name,
+            type: type,
+            label: type,
+            componentName: name,
+            module: this.#module
+        }
+        this.#appRendererCore.addDataSourceUpdateComponent(componentInfo);
     }
 
-    addPluginSettingComponent(componentInfo) {
-        componentInfo.id = this.#module;
-        componentInfo.name ??= this.#module;
+
+    /**
+     * 注册一个设置组件，方便用户配置
+     * @param {*} label 设置的标题
+     * @param {*} component vue组件
+     * @param {*} options 选项，暂时没用
+     */
+    // eslint-disable-next-line no-unused-vars
+    registrySettingComponent(label, component, options) {
+
+        const name = `${this.#module}-setting-${label.replaceAll(' ', '-')}-${this.#componentIndex++}`
+        this.component(name, component)
+
+        const componentInfo = {
+            id: name,
+            label: label,
+            componentName: name,
+            module: this.#module
+        }
         this.#appRendererCore.addPluginSettingComponent(componentInfo);
     }
     
     
-    
+    geti18nRegistrar () {
+        const module = this.#module;
+        return {
+            addPluginLocaleMessage(locale, message) {
+                const localeMessage = i18n.getLocaleMessage(locale);
+                localeMessage.pluginLocale ??= {};
+                localeMessage.pluginLocale[module] = message;
+                i18n.setLocaleMessage(locale, localeMessage);
+            }
+        }
+    }
 }
 
 export default AppRendererPluginCore

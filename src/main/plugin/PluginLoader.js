@@ -67,30 +67,34 @@ class PluginLoader {
     async load(module) {
         // 调用插件的`register`方法进行注册
         const pluginDir = path.join(constant.APPLICATION_PLUGINS_DIR, 'node_modules/', module)
-        // 通过插件名获取插件
-        logger.info(`插件加载-开始 pluginId:${module}, pluginPath:${pluginDir}`);
         try {
-            
             // 读取package.json
             const packageJson = JSON.parse(fs.readFileSync(path.join(pluginDir, 'package.json'))) 
-            const mainJs = packageJson.main ? path.join(pluginDir, packageJson.main) : path.join(pluginDir, 'main.js')
-
-            const appPlugin = new AppPlugin(pluginDir, module);
-            const plugin = this.getPlugin(mainJs)(appPlugin)
-            logger.info(`加载插件-[${module}]-准备调用注册方法 pluginId:${module}, pluginPath:${pluginDir}`);
-            plugin.register() 
-            logger.info(`加载插件-[${module}]-调用注册方法完毕 pluginId:${module}, pluginPath:${pluginDir}`);
+            const appPlugin = new AppPlugin(pluginDir, module, packageJson);
+            if(!fs.existsSync(appPlugin.mainPath) && !fs.existsSync(appPlugin.rendenerPath)){
+                return;
+            }
             
-            plugin.id = module;
-            plugin.version = packageJson.version;
-            plugin.pluginDir = pluginDir;
-            const rendenerPath = packageJson.rendererMain ? path.join(pluginDir, packageJson.rendererMain) : path.join(pluginDir, 'renderer.js');
-            plugin.rendererModule = fs.existsSync(rendenerPath) ? rendenerPath : null;
-            plugin.uninstall = appPlugin.uninstall.bind(appPlugin);
-
-            pluginManager.register(module, plugin)
+            // 通过插件名获取插件
+            logger.info(`插件加载-[${module}]-开始 pluginPath:${pluginDir}`);
+            
+            if(fs.existsSync(appPlugin.i18nPath)){
+                logger.info(`加载插件-[${module}]-调用i18n install pluginPath:${pluginDir}`);
+                const i18nModule = this.getPlugin(appPlugin.i18nPath)(appPlugin.geti18nRegistrar())
+                i18nModule.install();
+                logger.info(`加载插件-[${module}]-调用i18n install 完毕 pluginPath:${pluginDir}`);
+            }
+            
+            if(fs.existsSync(appPlugin.mainPath)){
+                logger.info(`加载插件-[${module}]-调用main install  pluginPath:${pluginDir}`);
+                const plugin = this.getPlugin(appPlugin.mainPath)(appPlugin)
+                plugin.install() 
+                logger.info(`加载插件-[${module}]-调用main install 完毕 pluginPath:${pluginDir}`);
+            }
+            
+            pluginManager.register(module, appPlugin)
         } catch (error) {
-            logger.error(`插件加载-失败 pluginId:${module}, pluginPath:${pluginDir}`, error);
+            logger.error(`插件加载-[${module}]-失败 pluginPath:${pluginDir}`, error);
             throw new Error(`插件${module}加载失败，错误原因：${error}`)
         }
     }
@@ -104,7 +108,6 @@ class PluginLoader {
         }
     }
     getPlugin(mainJs) { 
-
         // 2.通过require获取插件并传入ctx
         delete requireFunc.cache[requireFunc.resolve(mainJs)];
         const module = requireFunc(mainJs);
