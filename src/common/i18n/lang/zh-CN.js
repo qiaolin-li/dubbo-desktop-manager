@@ -114,6 +114,9 @@ export default {
         disableProviderError: "禁用提供者失败！原因：{e}",
         enableProviderError: "启用提供者失败！原因：{e}",
     },
+    service: {
+        callTitle: "调用 {address}",
+    },
     collect: {
         collect: "收藏接口",
         open: "打开",

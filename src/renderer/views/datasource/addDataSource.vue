@@ -12,7 +12,7 @@
         <el-input v-model="ruleForm.name"></el-input>
       </el-form-item>
     </el-form>
-    <component v-if="datasourceUpdateComponent" ref="datasourceUpdateComponent" :is="datasourceUpdateComponent.componentName" />
+    <component v-if="datasourceUpdateComponent" ref="datasourceUpdateComponent" :is="datasourceUpdateComponent.component" />
 
     <el-form label-position="right" label-width="120px" ref="form2"  >
       <el-form-item>

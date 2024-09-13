@@ -1,28 +1,34 @@
 <template>
   <div class="settingsContainer">
-    <el-divider content-position="left">{{$t('settings.baseSettings.title')}}</el-divider>
-    {{$t('settings.baseSettings.language')}}：
-    <el-select v-model="selectMessage">
-      <el-option v-for="message in messages" :key="message.code" :label="message.name" :value="message.code"></el-option>
-    </el-select>
 
-    <div style="margin-top: 15px;">
-      <el-input placeholder="请选择JAVA_HOME位置" v-model="javaHome" class="input-with-select">
-        <template slot="prepend">JAVA_HOME：</template>
-        <el-button slot="append" icon="el-icon-search" @click="selectJavaHomePath"></el-button>
-      </el-input>
-    </div>
-    <br/>
-    {{$t('settings.baseSettings.jvmArgs')}}：
-    <el-input :placeholder="$t('settings.baseSettings.jvmArgsTips')" v-model="jvmArgs" style="width: 90%"  > </el-input>
-    
+    <el-form label-position="left" label-width="100px" ref="form"  >
+      <el-form-item :label="$t('settings.baseSettings.language')" >
+        <el-select v-model="selectMessage">
+          <el-option v-for="message in messages" :key="message.code" :label="message.name" :value="message.code"></el-option>
+        </el-select>
+
+      </el-form-item>
+      <el-form-item label="JAVA_HOME：">
+        <el-input placeholder="请选择JAVA_HOME位置" v-model="javaHome" class="input-with-select" > 
+          <el-button slot="append" icon="el-icon-search" @click="selectJavaHomePath"></el-button>
+        </el-input>
+      </el-form-item>
+
+      <el-form-item :label="$t('settings.baseSettings.jvmArgs')">
+        <el-input :placeholder="$t('settings.baseSettings.jvmArgsTips')" v-model="jvmArgs" > </el-input>
+      </el-form-item>
+
+      <el-form-item label="开发者模式">
+        <el-checkbox v-model="developerModel">开发者模式</el-checkbox>
+      </el-form-item>
+    </el-form>
+
     <div v-for="pluginSettingComponent in pluginSettingComponentList" :key="pluginSettingComponent.id">
       <el-divider content-position="left">{{ pluginSettingComponent.label }}</el-divider>
-      <component ref="pluginComponent" :is="pluginSettingComponent.componentName" />
+      <component ref="pluginComponent" :is="pluginSettingComponent.component" />
     </div>
     
     <el-divider content-position="left"></el-divider>
-    <el-checkbox v-model="developerModel">开发者模式</el-checkbox>
     <el-button @click="saveConfig">{{$t('settings.apply')}}</el-button>
   </div>
 </template>
@@ -42,16 +48,6 @@ export default {
       javaHome: "",
       jvmArgs: "",
       developerModel: false,
-      invokerTypes: [
-        {
-          code: "telnet",
-          name: "Telnet"
-        },
-        {
-          code: "java",
-          name: "Java"
-        }
-      ],
       pluginSettingComponentList: []
     }
   },
@@ -106,7 +102,7 @@ export default {
 
 <style>
 .settingsContainer {
-  padding-left: 15px;
+  padding: 15px;
   background-color: white;
   border-radius: 5px;
 }

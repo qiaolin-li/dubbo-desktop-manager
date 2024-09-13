@@ -30,6 +30,8 @@ class AppRendenerCore {
     #pluginDataSourceUpdateComponent = [];
     getPluginDataSourceUpdateComponentList = () => this.#pluginDataSourceUpdateComponent;
 
+    #servicePageMap = new Map();
+    #serviceInvokeMap = new Map();
     
     #bus = new Vue();
     on = this.#bus.$on.bind(this.#bus);
@@ -170,6 +172,22 @@ class AppRendenerCore {
       componentInfo.id ??= this.#pluginSettingComponent.length + 1;
       
       this.#pluginSettingComponent.push(componentInfo);
+    }
+
+    addServicePageComponent(serviceType, component) {
+      this.#servicePageMap.set(serviceType, component);
+    }
+
+    getServicePageComponent(serviceType) {
+      return this.#servicePageMap.get(serviceType);
+    }
+
+    addServiceInvokeComponent(serviceType, component) {
+      this.#serviceInvokeMap.set(serviceType, component);
+    }
+
+    getServiceInvokeComponent(serviceType) {
+      return this.#serviceInvokeMap.get(serviceType);
     }
 }
 

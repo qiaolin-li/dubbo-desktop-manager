@@ -128,7 +128,7 @@ export default {
     },
     handleNodeClick(collectInfo) {
       const title = collectInfo.name || collectInfo.serviceName;
-      const serviceInfo ={
+      const serviceInfo = {
         serviceName: collectInfo.serviceName,
         uniqueServiceName: collectInfo.uniqueServiceName || collectInfo.serviceName,
         serviceType: collectInfo.serviceType || "dubbo"

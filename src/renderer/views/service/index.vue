@@ -73,7 +73,7 @@ export default {
       this.addTab({
         title: title,
         fullTitle: fullTitle,
-        componentName: 'dubboPage',
+        component: this.$appRenderer.getServicePageComponent(serviceInfo.type || "dubbo"),
         params: {
           serviceInfo
         }

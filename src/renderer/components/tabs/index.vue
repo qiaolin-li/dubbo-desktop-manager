@@ -130,7 +130,7 @@ export default {
         fullTitle: tabInfo.fullTitle || tabInfo.title,
         primaryKey: tabInfo.primaryKey || tabInfo.fullTitle || tabInfo.title,
         src: tabInfo.src,
-        componentName: tabInfo.componentName,
+        component: tabInfo.component,
         closable: tabInfo.closable === false ? false : true,
         params: tabInfo.params,
       };
@@ -215,12 +215,6 @@ export default {
       if (tab.component) {
         return {
           is: tab.component,
-          ...tab.params
-        };
-      }
-      if (tab.componentName) {
-        return {
-          is: tab.componentName,
           ...tab.params
         };
       }

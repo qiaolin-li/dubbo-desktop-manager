@@ -61,7 +61,7 @@ export default {
         id: dataSourceInfo._id, 
         label: dataSourceInfo.name,
         icon: iconList[iconIndex % iconList.length],
-        componentName: 'serviceManager', 
+        component: 'serviceManager', 
         closable: true,
         params: {
           dataSourceInfo

@@ -3,7 +3,7 @@ import i18n                     from '@/renderer/common/i18n'
 import appConfig                from "@/renderer/api/AppConfigClient.js";
 import menuConfig               from '@/renderer/config/sidebarMenuList.js';
 import PluginComponent          from './PluginComponent';
-
+import myTabList                from '@/renderer/components/tabs/index.vue';
 
 class AppRendererPluginCore {
 
@@ -11,9 +11,14 @@ class AppRendererPluginCore {
     #appRendererCore = null;
     #componentIndex = 0;
 
+    // 给插件的组件添加一些属性和方法
+    #componentMixins;
+    #registryComponentMap = new Map();
+
     constructor(appRendererCore, module) {
         this.#module = module;
         this.#appRendererCore = appRendererCore;
+        this.#componentMixins = new PluginComponent(this.#module).get();
 
         this.t = i18n.t.bind(i18n);
         this.pluginT = (key, ...args) => i18n.t(`pluginLocale.${module}.${key}`, ...args);
@@ -32,32 +37,67 @@ class AppRendererPluginCore {
         this.getPluginProperties = () => appConfig.getProperties(`pluginConfig.${this.#module}`);
     }
 
-
+    // 暂时不考虑开放，防止全局污染
     component(name, component){
-        let flag = false;
         for(let name1 in Vue.options.components) {
             if(name1.toLowerCase() === name.toLowerCase()) {
                 console.warn(`component name conflict: ${name} and ${name1}`)
             }
         }
-        if(!flag) {
-            if(component.mixins && component.mixins.length > 0) {
-                component.mixins.push(new PluginComponent(this.#module).get())
-            }else {
-                component.mixins = [new PluginComponent(this.#module).get()]
-            }
+        Vue.component(name, this.wrapComponent(component))
+    }
 
-            Vue.component(name, component)
+    wrapComponent(component){
+        if(typeof component !== 'object') {
+            return component
         }
+
+        // 防止重复包装
+        if(component.mixins && component.mixins.find(mixin => mixin === this.#componentMixins)) {
+            return component;
+        }
+
+        if(component.mixins && component.mixins.length > 0) {
+            component.mixins.push(this.#componentMixins)
+        }else {
+            component.mixins = [ this.#componentMixins ]
+        }
+
+        const self = this;
+        const Tab = Vue.extend({
+            name: "my-tab-list",
+            extends: myTabList,
+            methods: {
+                addTab(tabInfo) {
+                    tabInfo.component = self.wrapComponent(tabInfo.component);
+                    return this.$options.extends.methods.addTab.call(this, tabInfo);
+                }
+            }
+        });
+
+        if(component.components) {
+            if(typeof component.components === 'object') {
+                component.components["myTabList"] = Tab;
+            } else if(component.components.length > 0) {
+                component.components.unshift(Tab)
+            } else {
+                component.components = { myTabList: Tab}
+            }
+            
+        } else {
+            component.components = { myTabList: Tab}
+        }
+
+        return component;
     }
 
     addMenu(location = 'top', menu) {
         if(!menu || !menu.label || !menu.icon) {
-            throw new TypeError('label, icon, componentName is required!')
+            throw new TypeError('label, icon, component is required!')
         }
 
-        if(!menu.componentName && !menu.click) {
-            throw new TypeError('componentName or click is required!')
+        if(!menu.component && !menu.click) {
+            throw new TypeError('component or click is required!')
         }
 
         if(location === 'top') {
@@ -77,14 +117,11 @@ class AppRendererPluginCore {
      */
     // eslint-disable-next-line no-unused-vars
     registryDataSourceUpdateComponent(type, component, options) {
-        const name = `${this.#module}-datasource-update-${type.replaceAll(' ', '-')}-${this.#componentIndex++}`
-        this.component(name, component)
-
         const componentInfo = {
-            id: name,
+            id: type,
             type: type,
             label: options.label || type,
-            componentName: name,
+            component: this.wrapComponent(component),
             module: this.#module
         }
         this.#appRendererCore.addDataSourceUpdateComponent(componentInfo);
@@ -99,17 +136,22 @@ class AppRendererPluginCore {
      */
     // eslint-disable-next-line no-unused-vars
     registrySettingComponent(label, component, options) {
-
-        const name = `${this.#module}-setting-${label.replaceAll(' ', '-')}-${this.#componentIndex++}`
-        this.component(name, component)
-
         const componentInfo = {
-            id: name,
+            id: label,
             label: label,
-            componentName: name,
+            component: this.wrapComponent(component),
             module: this.#module
         }
         this.#appRendererCore.addPluginSettingComponent(componentInfo);
+    }
+
+    
+    registryServicePageComponent(serviceType, component, options) {
+        this.#appRendererCore.addServicePageComponent(serviceType, this.wrapComponent(component));
+    }
+    
+    registryServicInvokeComponent(serviceType, component, options) {
+        this.#appRendererCore.addServiceInvokeComponent(serviceType, this.wrapComponent(component));
     }
     
     

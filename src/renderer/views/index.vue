@@ -78,7 +78,7 @@ export default {
     resize() {},
     componentProps(menu) {
       return {
-        is: menu.componentName,
+        is: menu.component,
         ...menu.params,
         mainPanel: this,
         switchCurrentMenu: () => this.switchMenu(menu),
@@ -104,7 +104,7 @@ export default {
         return;
       }
 
-      if (menu.componentName) {
+      if (menu.component) {
         if(!this.menuPageList.find(x => x.id === menu.id)){
           this.menuPageList.push(menu);
         }

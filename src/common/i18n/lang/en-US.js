@@ -113,6 +113,9 @@ export default {
         disableProviderError: "Failed to disable provider! Reason: {e}",
         enableProviderError: "Provider enablement failed! Reason: {e}",
     },
+    service: {
+        callTitle: "call {address}",
+    },
     collect: {
         collect: "collect",
         open: "open",
