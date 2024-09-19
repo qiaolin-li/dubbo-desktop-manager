@@ -10,4 +10,4 @@ class InvokeHistoryManager {
      findAllPage(registryCenterId, keyword, page, size){}
 }
 
-export default consumer.wrapper(new InvokeHistoryManager(), "invokeHistoryRecord");
+export default consumer.wrapper(new InvokeHistoryManager(), "invokeHistoryRepository");

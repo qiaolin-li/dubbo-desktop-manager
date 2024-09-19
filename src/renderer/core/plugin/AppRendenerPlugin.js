@@ -158,6 +158,20 @@ class AppRendererPluginCore {
     geti18nRegistrar () {
         const module = this.#module;
         return {
+            addLocaleMessage(locale, message) {
+                try {
+                    if(i18n.getLocaleMessage(locale)){
+                        throw new Error(`插件【${module}】提供语言包【${locale}】已经存在，当前插件的语言包不会生效`);
+                    }
+                } catch (error){
+                    if(error.message !== 'Unexpected token u in JSON at position 0') {
+                        throw error;
+                    }
+                }
+
+                i18n.setLocaleMessage(locale, message);
+            },
+
             addPluginLocaleMessage(locale, message) {
                 const localeMessage = i18n.getLocaleMessage(locale);
                 localeMessage.pluginLocale ??= {};

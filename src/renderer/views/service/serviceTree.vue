@@ -24,6 +24,9 @@ import treeUtils from "@/renderer/common/utils/TreeUtils";
 const remote = require("@electron/remote");
 import lodash from 'lodash';
 
+
+const clickCountMap = new Map();
+
 export default {
   components: {
   },
@@ -79,7 +82,27 @@ export default {
       return service.serviceName.toLowerCase().indexOf(keyword) !== -1;
     },
     handleNodeClick(serviceInfo) {
-      if (!serviceInfo || serviceInfo.nodeType !== 'service') {
+      if (!serviceInfo ){
+        return;
+      }
+
+  
+      if (serviceInfo.nodeType !== 'service') {
+        setTimeout(() => {
+          clickCountMap.delete(serviceInfo.nodeId);
+        }, 300);
+
+        const oldClickCount = clickCountMap.get(serviceInfo.nodeId) || 1;
+        if(oldClickCount > 1){
+          if(this.defaultExpandIds.find(item => item === serviceInfo.nodeId)) {
+            this.handleNodeCollapse(serviceInfo)
+          } else {
+            this.handleNodeExpand(serviceInfo)
+          }
+        } else {
+          clickCountMap.set(serviceInfo.nodeId, oldClickCount + 1);
+        }
+
         return;
       }
 
@@ -151,23 +174,8 @@ export default {
           item.expanded = false
         }
       });
-      lodash.remove(this.defaultExpandIds, item =>  item === data.nodeId);
-      this.removeChildrenIds(data) // 这里主要针对多级树状结构，当关闭父节点时，递归删除父节点下的所有子节点
+      lodash.remove(this.defaultExpandIds, item =>  item.startsWith(data.nodeId));
     },
-
-    // 删除树子节点
-    removeChildrenIds(data) {
-      if (!data.nodeChildren) {
-        return;
-      }
-      data.nodeChildren.forEach((item) =>{
-        const index = this.defaultExpandIds.indexOf(item.nodeId)
-        if (index > 0) {
-          this.defaultExpandIds.splice(index, 1)
-        }
-        this.removeChildrenIds(item)
-      })
-    }
   },
 };
 </script>

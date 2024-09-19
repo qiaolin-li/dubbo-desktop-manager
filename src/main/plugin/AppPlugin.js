@@ -1,3 +1,4 @@
+import axios                    from 'axios';
 import i18n                     from '@/main/common/i18n';   
 import appConfig                from "@/main/common/config/appConfig"
 import constant                 from "@/main/common/Constant.js";
@@ -25,7 +26,7 @@ class AppPlugin {
         dataSourceListMap.set(this, []);
         
         this.t = i18n.t.bind(i18n);
-        this.axios = appCore.axios;
+        this.axios = axios;
         this.appConfig = appConfig;
         this.constant = constant;
         this.logger = new Logger(`plugin[${module}]`);
@@ -61,6 +62,20 @@ class AppPlugin {
     geti18nRegistrar () {
         const module = this.module;
         return {
+            addLocaleMessage(locale, message) {
+                try {
+                    if(i18n.getLocaleMessage(locale)){
+                        throw new Error(`插件【${module}】提供语言包【${locale}】已经存在，当前插件的语言包不会生效`);
+                    }
+                } catch (error){
+                    if(error.message !== 'Unexpected token u in JSON at position 0') {
+                        throw error;
+                    }
+                }
+
+                i18n.setLocaleMessage(locale, message);
+            },
+
             addPluginLocaleMessage(locale, message) {
                 const localeMessage = i18n.getLocaleMessage(locale);
                 if(!localeMessage.pluginLocale ){
@@ -69,6 +84,7 @@ class AppPlugin {
                 localeMessage.pluginLocale[module] = message;
                 i18n.setLocaleMessage(locale, localeMessage);
             }
+
         }
     }
 }

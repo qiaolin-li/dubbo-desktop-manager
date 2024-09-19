@@ -71,7 +71,7 @@ class PluginLoader {
             // 读取package.json
             const packageJson = JSON.parse(fs.readFileSync(path.join(pluginDir, 'package.json'))) 
             const appPlugin = new AppPlugin(pluginDir, module, packageJson);
-            if(!fs.existsSync(appPlugin.mainPath) && !fs.existsSync(appPlugin.rendenerPath)){
+            if(!fs.existsSync(appPlugin.mainPath) && !fs.existsSync(appPlugin.rendenerPath) && !fs.existsSync(appPlugin.i18nPath)){
                 return;
             }
             

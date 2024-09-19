@@ -4,7 +4,6 @@ import windowHolder  from '@/main/common/holder/WindowHolder.js';
 import Constant      from '@/main/common/Constant.js'
 import logger        from '@/main/common/logger';
 import template      from '@/main/menuList.js';
-import apiExportor   from '@/main/api/ApiExportor.js';
 import appCore       from '@/main/AppCore.js';
 import appConfig     from "@/main/common/config/appConfig.js";
 
@@ -57,7 +56,7 @@ app.on('ready', async () => {
  
   updateChecker();
 
-  apiExportor.exportApi();
+  appCore.init();
   
   if(!appConfig.hasProperty("javaHome")){
     appConfig.setProperty("javaHome", process.env.JAVA_HOME)
