@@ -96,8 +96,8 @@ class AppRendererPluginCore {
             throw new TypeError('label, icon, component is required!')
         }
 
-        if(!menu.component && !menu.click) {
-            throw new TypeError('component or click is required!')
+        if(!menu.component && !menu.click && !menu.src) {
+            throw new TypeError('[component, click, src] At least one must be configured!')
         }
 
         if(location === 'top') {
@@ -106,8 +106,6 @@ class AppRendererPluginCore {
             menuConfig.bottomMenu.unshift(menu)
         }
     }
-
-
 
     /**
      * 注册一个数据源信息编辑组件

@@ -48,6 +48,7 @@ class Node {
                 this.nodeChildren[index] = child;
             }
         }
+        this.nodeChildren = lodash.orderBy(this.nodeChildren, ["nodeChildren.length", "nodeLabel" ], ["desc"])
     }
 
     isExistChild() {

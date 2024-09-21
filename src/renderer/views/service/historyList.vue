@@ -1,18 +1,16 @@
 <template>
   <div class="history-main-container notSelect">
     <div class="history-item-container" v-infinite-scroll="loadMore" infinite-scroll-disabled="busy" infinite-scroll-distance="10">
-      <el-collapse v-model="activeNames">
-        <el-collapse-item v-for="group in groupList" :key="group.label" :title="group.label" :name="group.label">
-          <template slot="title">
-            <span class="collapse-title">{{ group.label }}</span>
-          </template>
-          <ul class="invoke-ui">
-            <li v-for="invokeHistry in group.invokeHisotryList" :key="invokeHistry._id" class="invoke-li" @dblclick="openInvokeTab(invokeHistry)"  @contextmenu.stop="openMenuList($event, invokeHistry)">
-              {{ `${$moment(new Date(invokeHistry.createTime)).format('LTS')}: ${invokeHistry.serviceName.split(".")[invokeHistry.serviceName.split(".").length - 1] }#${invokeHistry.method}` }}
-            </li>
-          </ul>
-        </el-collapse-item>
-      </el-collapse>
+      <el-tree class="notSelect interfaceTree" ref="tree" :data="groupList" :props="defaultProps" node-key="_id" default-expand-all
+          highlight-current  @node-click="openInvokeTab"  
+           @node-contextmenu="openMenuList">
+
+        <div class="custom-tree-icon" slot-scope="{ node, data }">
+          <span>{{ data.label }}</span>
+        </div>
+
+      </el-tree>
+      
     </div>
   </div>
 </template>
@@ -22,16 +20,22 @@ import invokeHisotryRecord from "@/renderer/api/InvokeHistoryClient.js";
 const remote = require("@electron/remote");
 import { ipcRenderer } from 'electron'
 
+
 export default {
-  inject: ['dataSourceId', 'collectService'],
+  inject: ['dataSourceId', 'collectService', 'addTab'],
   data() {
     return {
+      defaultProps: {
+        children: "invokeHisotryList",
+        label: "label",
+      },
       busy: false,
       page: 1,
       size: 50,
       keyword: '',
       activeNames: [],
       groupList: [],
+      collapseIds: [],
     };
   },
   mounted() {
@@ -48,10 +52,11 @@ export default {
       const list = await invokeHisotryRecord.findAllPage(this.dataSourceId, this.keyword, page, size);
       list.map(hisotry => {
         const momentDate = this.$moment(new Date(hisotry.createTime));
-        const label = momentDate.isSame(new Date(), 'day') ? '今天' : momentDate.format('ll');
+        const label = momentDate.isSame(new Date(), 'day') ? momentDate.fromNow() : momentDate.format('L');
         let group = this.groupList.find(x => x.label === label);
         if (!group) {
           group = {
+            _id: `group-${hisotry.createTime}`,
             label,
             invokeHisotryList: [],
           };
@@ -63,7 +68,7 @@ export default {
           }
         }
         if (!group.invokeHisotryList.find(x => x._id === hisotry._id)) {
-          
+          hisotry.label = `${hisotry.serviceName.split(".")[hisotry.serviceName.split(".").length - 1]}#${hisotry.method}`;
           group.invokeHisotryList.push(hisotry);
           if (insertFront) {
             group.invokeHisotryList = group.invokeHisotryList.sort((a, b) => b.createTime - a.createTime);
@@ -119,6 +124,13 @@ export default {
         }
       });
 
+      // 注册插件菜单
+      this.$appRenderer.fillPluginMenu("historyList", menuTemplate, {
+        tab: {
+          addTab: this.addTab
+        }
+      }, invokeHistry);
+
       // 阻止默认行为
       event.preventDefault();
       // // 构建菜单项
@@ -130,6 +142,10 @@ export default {
         window: remote.getCurrentWindow()
       });
     },
+
+    toggleExpand(data) {
+      this.collapseIds = this.collapseIds.includes(data.label) ? this.collapseIds.filter(item => item !== data.label) : [...this.collapseIds, data.label]
+    }
   }
 }
 </script>

@@ -220,8 +220,13 @@ export default {
       }
 
       return {
-        is: 'webview',
+        target: '_blank',
+        rel: 'noopener',
+        is: 'iframe',
         src: tab.src,
+        height: "100%",
+        width: "100%",
+        style: "vertical-align:top",
         webpreferences: 'nodeIntegration=true, contextIsolation=false'
       }
     },

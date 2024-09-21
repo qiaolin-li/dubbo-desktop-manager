@@ -28,6 +28,11 @@ export default {
       this.connect();
     });
   },
+  destroyed() {
+    if (this.tSocket) {
+      this.tSocket.end();
+    }
+  },
   methods: {
     // 在这里处理自定义输入...
     handleInput(command) {

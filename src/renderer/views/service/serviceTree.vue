@@ -6,11 +6,11 @@
 
     <!-- dubbo接口列表  -->
     <el-tree class="notSelect interfaceTree" ref="tree" :data="serviceList" :props="defaultProps" node-key="nodeId" :default-expanded-keys="defaultExpandIds"
-        :highlight-current="true" :accordion="true" :expand-on-click-node="false" @node-click="handleNodeClick" @node-expand="handleNodeExpand"
+        :highlight-current="true" :accordion="true"  @node-click="handleNodeClick" @node-expand="handleNodeExpand"
         @node-collapse="handleNodeCollapse" @node-contextmenu="openContextMenu">
 
       <div class="custom-tree-icon" slot-scope="{ node, data }">
-        <i :class="['', data.nodeType === 'package'  ? 'el-icon-folder' : 'interfaceIcon']"></i>
+        <!-- <i :class="['', data.nodeType === 'package'  ? '' : 'interfaceIcon']"></i> -->
         <span>{{ data.nodeLabel }}</span>
       </div>
 
@@ -25,7 +25,6 @@ const remote = require("@electron/remote");
 import lodash from 'lodash';
 
 
-const clickCountMap = new Map();
 
 export default {
   components: {
@@ -45,7 +44,7 @@ export default {
       },
     };
   },
-  inject: ['openServiceInfoPage', 'dataSourceInfo', 'dataSourceId', 'collectService'],
+  inject: ['openServiceInfoPage', 'dataSourceInfo', 'dataSourceId', 'collectService', 'addTab'],
   mounted(){
     this.optimizationTreeFun = lodash.debounce(() => this.filterServiceList(), 300);
     this.findList();
@@ -85,24 +84,8 @@ export default {
       if (!serviceInfo ){
         return;
       }
-
   
       if (serviceInfo.nodeType !== 'service') {
-        setTimeout(() => {
-          clickCountMap.delete(serviceInfo.nodeId);
-        }, 300);
-
-        const oldClickCount = clickCountMap.get(serviceInfo.nodeId) || 1;
-        if(oldClickCount > 1){
-          if(this.defaultExpandIds.find(item => item === serviceInfo.nodeId)) {
-            this.handleNodeCollapse(serviceInfo)
-          } else {
-            this.handleNodeExpand(serviceInfo)
-          }
-        } else {
-          clickCountMap.set(serviceInfo.nodeId, oldClickCount + 1);
-        }
-
         return;
       }
 
@@ -146,7 +129,11 @@ export default {
       }
 
       // 注册插件菜单
-      this.$appRenderer.fillPluginMenu("serviceTree", menuTemplate, serviceInfo);
+      this.$appRenderer.fillPluginMenu("serviceTree", menuTemplate, {
+        tab: {
+          addTab: this.addTab
+        }
+      }, serviceInfo);
 
       // 阻止默认行为
       event.preventDefault();
@@ -210,5 +197,27 @@ export default {
 .el-input.is-active .el-input__inner, .el-input__inner:focus {
     border-color: rgb(62, 177, 78) !important;
     outline: 0;
+}
+
+/* 未展开 */
+.el-tree .el-icon-caret-right:before{   
+  content: "\e6e0";
+  font-size: 16px;
+  color: #389e0d;
+}
+
+.el-tree .is-leaf::before {
+    content: "S";
+    /* margin-left: 5px; */
+    /* font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif; */
+    font-family: Georgia, serif;
+    color: #389e0d;
+    border: 1px solid #389e0d ;
+    width: 12px;
+    height: 12px;
+    text-align: center;
+    font-size: 12px;
+    border-radius: 50%;
+    display: inline-block;
 }
 </style>

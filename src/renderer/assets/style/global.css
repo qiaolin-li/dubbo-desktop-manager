@@ -88,15 +88,16 @@
 
 
 .interfaceIcon::before {
-    content: "I";
+    content: "S";
     margin-right: 5px;
     /* font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif; */
     font-family: Georgia, serif;
-    background-color: rgb(136, 241, 124);
-    width: 17px;
-    height: 17px;
+    color: #389e0d;
+    border: 1px solid #389e0d ;
+    width: 12px;
+    height: 12px;
     text-align: center;
-    font-size: 17px;
+    font-size: 12px;
     border-radius: 50%;
     display: inline-block;
 }

@@ -1,26 +1,14 @@
 <template>
   <div class="collectContainer">
-    <div v-for="data in collectList" :key="data.name" >
-      <div v-if="data.name"  class="collectGroupContainer"   >
-        <div class="collectGroupContainerHeader notSelect element-hover" @click="toggleExpand(data)">
-          <div>
-            <i class="expanded el-tree-node__expand-icon el-icon-caret-right" v-if="expandIds.includes(data.name)"></i>
-            <i  class="el-tree-node__expand-icon el-icon-caret-right" v-else ></i>
-            <i class="el-icon-folder"></i>
-            <span>{{data.name}}</span>
-          </div>
-        </div>
-        <div v-show="expandIds.includes(data.name)"  class="collectInterfaceContainer element-hover notSelect"  v-for="collect in data.list" :key="collect._id" @contextmenu.stop="openMenuList($event, collect)" @dblclick="handleNodeClick(collect)"  >
-          <i class="interfaceIcon"></i>
-          <span>{{collect.name}}</span>
-        </div>
-      </div>
-      <div v-else class="collectInterfaceContainer element-hover notSelect"  v-for="collect in data.list" :key="collect._id"  @contextmenu.stop="openMenuList($event, collect)" @dblclick="handleNodeClick(collect)">
-        <i class="interfaceIcon"></i>
-        <span>{{collect.name}}</span>
-      </div>
-    </div>
+    <el-tree class="notSelect interfaceTree" ref="tree" :data="collectList" :props="defaultProps" node-key="name" 
+          highlight-current  @node-click="handleNodeClick"  
+          @node-contextmenu="openMenuList">
 
+      <div class="custom-tree-icon" slot-scope="{ data }">
+        <span>{{ data.name }}</span>
+      </div>
+    </el-tree>
+      
     <el-dialog :title="$t('collect.collect')" width="70%" :visible.sync="dialogVisible" :close-on-click-modal="false">
       <el-form label-position="right" label-width="120px" ref="form"  >
         <el-form-item :label="$t('collect.group')"   >
@@ -50,7 +38,11 @@ export default {
   },
   data() {
     return {
-      collectList: {},
+      defaultProps: {
+        children: "list",
+        label: "name",
+      },
+      collectList: [],
       expandIds: [],
 
       dialogVisible: false,
@@ -58,18 +50,21 @@ export default {
       currentCollectInfo: {},
     };
   },
-  inject: ['openServiceInfoPage', 'dataSourceId'],
+  inject: ['openServiceInfoPage', 'dataSourceId', 'addTab'],
   mounted(){
     this.findList();
   },
   methods: {
     async findList() {
-      const collectList = lodash.chain(await interfaceCollectClient.findList(this.dataSourceId))
-        .groupBy('group')
-        .map((value, key) => ({ name: key !== 'null' ? key : null, list: lodash.orderBy(value, ['name'], ['asc']) }))
-        .value();
+      const collectList = await interfaceCollectClient.findList(this.dataSourceId);
 
-      this.collectList = lodash.orderBy(collectList, ['name'], ['asc']);
+      const unGroupList = lodash.orderBy(collectList.filter(x => !x.group), ['name'], ['asc']);
+      const groupList = lodash.chain(collectList.filter(x => x.group))
+                              .groupBy('group')
+                              .map((value, key) => ({ name: key !== 'null' ? key : null, list: lodash.orderBy(value, ['name'], ['asc']) }))
+                              .value();
+
+      this.collectList = [...lodash.orderBy(groupList, ['name'], ['asc']), ...unGroupList];
     },
     async openMenuList(event, collectInfo){
       const menuTemplate = [{
@@ -95,6 +90,13 @@ export default {
         label: this.$t('collect.update'),
         click: async () => this.openCollectDialog(collectInfo)
       });
+
+      // 注册插件菜单
+      this.$appRenderer.fillPluginMenu("collectList", menuTemplate, {
+        tab: {
+          addTab: this.addTab
+        }
+      }, collectInfo);
 
       // // 构建菜单项
       const menu = remote.Menu.buildFromTemplate(menuTemplate);
@@ -127,6 +129,11 @@ export default {
       });
     },
     handleNodeClick(collectInfo) {
+      // 不是叶子节点，不能打开
+      if(collectInfo.list){
+        return;
+      }
+
       const title = collectInfo.name || collectInfo.serviceName;
       const serviceInfo = {
         serviceName: collectInfo.serviceName,
@@ -199,5 +206,21 @@ export default {
 .collectInterfaceContainer span {
   line-height: 25px;
 }
+
+
+/* 未展开 */
+.collectGroupContainerHeader .collapse:before{   
+  content: "\e6e0";
+  font-size: 16px;
+  color: #389e0d;
+}
+
+/* 未展开 */
+.collectGroupContainerHeader .expanded:before{   
+  content: "\e6e0";
+  font-size: 16px;
+  color: #389e0d;
+}
+
 
 </style>

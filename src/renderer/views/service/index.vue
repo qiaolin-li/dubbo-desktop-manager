@@ -10,7 +10,7 @@
           <span class="serviceSizeTool">{{$t('count') }}:{{serviceCount}} </span>
         </template>
         <template slot="fisrtContent">
-          <serviceTree ref="serviceTree"  @interfaceCountChange="count => serviceCount = count"  @collectService="(collectInfo) => $refs.collectItem.openCollectDialog(collectInfo)" />
+          <serviceTree ref="serviceTree"   @interfaceCountChange="count => serviceCount = count"  @collectService="(collectInfo) => $refs.collectItem.openCollectDialog(collectInfo)" />
         </template>
 
         <template slot="secondTitle">{{ $t('menu.myCollection') }}</template>
@@ -63,6 +63,8 @@ export default {
       mainPanel: this,
       dataSourceInfo: this.dataSourceInfo,
       dataSourceId: this.dataSourceInfo._id,
+      
+      addTab: this.addTab,
       openServiceInfoPage: this.openServiceInfoPage,
       collectService:(collectInfo) => this.$refs.collectItem.openCollectDialog(collectInfo)
     }
