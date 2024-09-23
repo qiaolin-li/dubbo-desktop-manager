@@ -28,6 +28,7 @@ class AppRendererPluginCore {
         this.off = this.#appRendererCore.off.bind(this.#appRendererCore);
         this.emit = this.#appRendererCore.emit.bind(this.#appRendererCore);
         this.once = this.#appRendererCore.once.bind(this.#appRendererCore);
+        this.$writeClipboard = this.#appRendererCore.$writeClipboard.bind(this.#appRendererCore);
 
 
         const getConfigKey = (module, key) => `pluginConfig.${module}.${key}`;

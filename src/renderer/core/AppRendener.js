@@ -14,6 +14,8 @@ import pluginManagerClient      from '@/renderer/api/PluginManagerClient';
 import telnetTerminal           from "@/renderer/components/terminal/telnet-terminal.vue";
 import loading                  from "@/renderer/common/utils/MyLoading";
 import AppRendererPluginCore    from '@/renderer/core/plugin/AppRendenerPlugin.js';
+import { Message }              from 'element-ui';
+import i18n                     from '@/renderer/common/i18n'
 
 const remote = require("@electron/remote");
 // eslint-disable-next-line no-undef
@@ -38,6 +40,11 @@ class AppRendenerCore {
     off = this.#bus.$off.bind(this.#bus);
     emit = this.#bus.$emit.bind(this.#bus);
     once = this.#bus.$once.bind(this.#bus);
+
+    $writeClipboard = (text) =>{
+        navigator.clipboard.writeText(text)
+        Message.success(i18n.t('editor.copySuccess'));
+    }
 
     async init(Vue) {
         this.installCommonComponents(Vue);
@@ -66,13 +73,7 @@ class AppRendenerCore {
         Vue.prototype.$appRenderer = this;
         Vue.prototype.$bus = this.#bus
 
-        Vue.prototype.$writeClipboard = function(text) {
-            navigator.clipboard.writeText(text)
-            this.$message({
-                type: "success",
-                message: this.$t('editor.copySuccess'),
-            });
-        }
+        Vue.prototype.$writeClipboard = this.$writeClipboard;
     }
     
     async loadPlugin () {

@@ -1,22 +1,22 @@
 <template>
-    <el-tree class="notSelect interfaceTree" ref="tree" :data="data" :props="props" :node-key="nodeKey" 
-        :default-expanded-keys="defaultExpandIds"
-        highlight-curren :accordion="true" :expand-on-click-node="false" 
-        @node-click="handleNodeClick" @node-expand="$emit('node-expand', $event)"
-        @node-collapse="$emit('node-collapse', $event)" @node-contextmenu="$emit('node-contextmenu', $event)">
+  <el-tree class="notSelect interfaceTree" ref="tree" :data="data" :props="props" :node-key="nodeKey" 
+      :default-expanded-keys="defaultExpandIds"
+      highlight-curren :accordion="true" :expand-on-click-node="false" 
+      @node-click="handleNodeClick" @node-expand="$emit('node-expand', $event)"
+      @node-collapse="$emit('node-collapse', $event)" @node-contextmenu="$emit('node-contextmenu', $event)">
 
-        <div class="custom-tree-icon" slot-scope="{ node, data }">
-            <span>{{ data[props.label] }}</span>
-        </div>
+      <div class="custom-tree-icon" slot-scope="{ node, data }">
+          <span>{{ data[props.label] }}</span>
+      </div>
 
-    </el-tree>
-  </template>
+  </el-tree>
+</template>
   
-  <script>
-  import lodash from 'lodash';
+<script>
+import lodash from 'lodash';
   
   
-  const clickCountMap = new Map();
+const clickCountMap = new Map();
   
   export default {
     components: {

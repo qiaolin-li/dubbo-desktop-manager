@@ -1,8 +1,8 @@
 <template>
   <div class="collectContainer">
-    <el-tree class="notSelect interfaceTree" ref="tree" :data="collectList" :props="defaultProps" node-key="name" 
-          highlight-current  @node-click="handleNodeClick"  
-          @node-contextmenu="openMenuList">
+    <el-tree class="notSelect interfaceTree" ref="tree" :data="collectList" :props="defaultProps" node-key="_id" 
+          highlight-current  :default-expanded-keys="defaultExpandIds" @node-expand="handleNodeExpand" @node-collapse="handleNodeCollapse"
+          @node-click="handleNodeClick"   @node-contextmenu="openMenuList">
 
       <div class="custom-tree-icon" slot-scope="{ data }">
         <span>{{ data.name }}</span>
@@ -38,6 +38,7 @@ export default {
   },
   data() {
     return {
+      defaultExpandIds: [],
       defaultProps: {
         children: "list",
         label: "name",
@@ -61,36 +62,48 @@ export default {
       const unGroupList = lodash.orderBy(collectList.filter(x => !x.group), ['name'], ['asc']);
       const groupList = lodash.chain(collectList.filter(x => x.group))
                               .groupBy('group')
-                              .map((value, key) => ({ name: key !== 'null' ? key : null, list: lodash.orderBy(value, ['name'], ['asc']) }))
+                              .map((value, key) => ({ _id: `group-${key}`, name: key,  list: lodash.orderBy(value, ['name'], ['asc']) }))
                               .value();
 
       this.collectList = [...lodash.orderBy(groupList, ['name'], ['asc']), ...unGroupList];
     },
     async openMenuList(event, collectInfo){
-      const menuTemplate = [{
+      const menuTemplate = [];
+
+      if(collectInfo.list && collectInfo.list.length > 0){
+        if(!this.defaultExpandIds.find(item => item === collectInfo._id)) {
+          menuTemplate.push({
+            label: this.$t('expand'), 
+            click: () => this.handleNodeExpand(collectInfo)
+          });
+        } else {
+          menuTemplate.push({
+            label: this.$t('collapse'), 
+            click: () => this.handleNodeCollapse(collectInfo)
+          });
+        }
+      } else {
+
+        menuTemplate.push({
           label: this.$t('collect.open'),
           click: async () => this.handleNodeClick(collectInfo)
-        },
-        { type: 'separator' },
-        {
-          label: this.$t('collect.copyInterfaceName'),
-          click: async () => this.$writeClipboard(collectInfo.serviceName)
-        },
-        { type: 'separator' },
-        {
+        });
+        menuTemplate.push({ type: 'separator' }),
+
+        menuTemplate.push({
+          label: this.$t('collect.update'),
+          click: async () => this.openCollectDialog(collectInfo)
+        });
+        menuTemplate.push({
           label: this.$t('collect.cancel'),
           click: async () => { 
             await interfaceCollectClient.deletCollect(collectInfo._id)
             this.findList();
           }
-        },
-      ];
+        });
+      }
 
-      menuTemplate.push({
-        label: this.$t('collect.update'),
-        click: async () => this.openCollectDialog(collectInfo)
-      });
-
+      menuTemplate.push({ type: 'separator' });
       // 注册插件菜单
       this.$appRenderer.fillPluginMenu("collectList", menuTemplate, {
         tab: {
@@ -143,9 +156,26 @@ export default {
 
       this.openServiceInfoPage(title, collectInfo.serviceName, serviceInfo)
     },
-    toggleExpand(data) {
-      this.expandIds = this.expandIds.includes(data.name) ? this.expandIds.filter(item => item !== data.name) : [...this.expandIds, data.name]
-    }
+
+    // 树节点展开
+    handleNodeExpand(data) {
+      // 保存当前展开的节点
+      if (!this.defaultExpandIds.find(item => item === data._id)) { 
+        this.defaultExpandIds.push(data._id)
+      }
+    },
+    // 树节点关闭
+    handleNodeCollapse(data) {
+      // 删除当前关闭的节点
+      this.$refs.tree.store._getAllNodes().forEach(item => {
+        if(item.data._id === data._id){
+          item.expanded = false
+        }
+      });
+
+      lodash.remove(this.defaultExpandIds, item =>  item === data._id);
+    },
+
   },
 };
 </script>

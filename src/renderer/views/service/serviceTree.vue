@@ -5,16 +5,18 @@
     </div>
 
     <!-- dubbo接口列表  -->
-    <el-tree class="notSelect interfaceTree" ref="tree" :data="serviceList" :props="defaultProps" node-key="nodeId" :default-expanded-keys="defaultExpandIds"
-        :highlight-current="true" :accordion="true"  @node-click="handleNodeClick" @node-expand="handleNodeExpand"
-        @node-collapse="handleNodeCollapse" @node-contextmenu="openContextMenu">
-
-      <div class="custom-tree-icon" slot-scope="{ node, data }">
-        <!-- <i :class="['', data.nodeType === 'package'  ? '' : 'interfaceIcon']"></i> -->
-        <span>{{ data.nodeLabel }}</span>
-      </div>
-
-    </el-tree>
+    <div  @contextmenu="openContextMenu" style="height: 100%; width: 100%; overflow: auto;">
+      <el-tree class="notSelect interfaceTree" ref="tree" :data="serviceList" :props="defaultProps" node-key="nodeId" :default-expanded-keys="defaultExpandIds"
+          :highlight-current="true" :accordion="true"  @node-click="handleNodeClick" @node-expand="handleNodeExpand"
+          @node-collapse="handleNodeCollapse" @node-contextmenu="openContextMenu">
+  
+        <div class="custom-tree-icon" slot-scope="{ node, data }">
+          <!-- <i :class="['', data.nodeType === 'package'  ? '' : 'interfaceIcon']"></i> -->
+          <span>{{ data.nodeLabel }}</span>
+        </div>
+  
+      </el-tree>
+    </div>
   </div>
 </template>
 
@@ -96,38 +98,43 @@ export default {
       })
     },
     async openContextMenu(event, serviceInfo) {
-      const menuTemplate = [
-        ...(serviceInfo.nodeType === 'service' ? [{
-          label: this.$t('collect.open'), click: () => this.handleNodeClick(serviceInfo)
-        }] : []),
-        ...(serviceInfo.nodeType === 'package' && !this.defaultExpandIds.find(item => item === serviceInfo.nodeId) ? [{
-          label: this.$t('expand'), click: () => this.handleNodeExpand(serviceInfo)
-        }] : []),
-        ...(serviceInfo.nodeType === 'package' && this.defaultExpandIds.find(item => item === serviceInfo.nodeId) ? [{
-          label: this.$t('collapse'), click: () => this.handleNodeCollapse(serviceInfo)
-        }] : []),
-        { type: 'separator' },
-        ...(serviceInfo.nodeType === 'service' ? [{
-          label: this.$t('collect.copyInterfaceName'),
-          click: async () => this.$writeClipboard(serviceInfo.serviceName)
-        }] : []),
-      ];
+      const menuTemplate = [];
 
-      if(serviceInfo.nodeType === 'service' ) {
-        menuTemplate.push({
-          label: this.$t('collect.collect'),
-          click: async () => {
-            const collectInfo = {
-              name: serviceInfo.nodeLabel,
-              serviceName: serviceInfo.serviceName,
-              serviceType: serviceInfo.serviceType || "dubbo",
-              uniqueServiceName: serviceInfo.uniqueServiceName,
+      if(serviceInfo != null) {
+        if(serviceInfo?.nodeType === 'service' ) {
+          menuTemplate.push({
+            label: this.$t('collect.open'), 
+            click: () => this.handleNodeClick(serviceInfo)
+          });
+          menuTemplate.push({ type: 'separator' });
+          menuTemplate.push({
+            label: this.$t('collect.collect'),
+            click: async () => {
+              const collectInfo = {
+                name: serviceInfo.nodeLabel,
+                serviceName: serviceInfo.serviceName,
+                serviceType: serviceInfo.serviceType || "dubbo",
+                uniqueServiceName: serviceInfo.uniqueServiceName,
+              }
+              this.collectService(collectInfo)
+            } 
+          });
+        } else {
+            if(!this.defaultExpandIds.find(item => item === serviceInfo.nodeId)) {
+              menuTemplate.push({
+                label: this.$t('expand'), 
+                click: () => this.handleNodeExpand(serviceInfo)
+              });
+            } else {
+              menuTemplate.push({
+                label: this.$t('collapse'), 
+                click: () => this.handleNodeCollapse(serviceInfo)
+              });
             }
-            this.collectService(collectInfo)
-          } 
-        });
+        }
       }
 
+      menuTemplate.push({ type: 'separator' });
       // 注册插件菜单
       this.$appRenderer.fillPluginMenu("serviceTree", menuTemplate, {
         tab: {

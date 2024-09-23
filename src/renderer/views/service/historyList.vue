@@ -1,12 +1,12 @@
 <template>
   <div class="history-main-container notSelect">
     <div class="history-item-container" v-infinite-scroll="loadMore" infinite-scroll-disabled="busy" infinite-scroll-distance="10">
-      <el-tree class="notSelect interfaceTree" ref="tree" :data="groupList" :props="defaultProps" node-key="_id" default-expand-all
-          highlight-current  @node-click="openInvokeTab"  
-           @node-contextmenu="openMenuList">
+      <el-tree class="notSelect interfaceTree" ref="tree" :data="groupList" :props="defaultProps" node-key="_id" 
+          highlight-current   :default-expanded-keys="defaultExpandIds" @node-expand="handleNodeExpand" @node-collapse="handleNodeCollapse"
+          @node-click="openInvokeTab"   @node-contextmenu="openMenuList">
 
         <div class="custom-tree-icon" slot-scope="{ node, data }">
-          <span>{{ data.label }}</span>
+            <span slot="reference">{{ data.label }}</span>
         </div>
 
       </el-tree>
@@ -19,12 +19,13 @@
 import invokeHisotryRecord from "@/renderer/api/InvokeHistoryClient.js";
 const remote = require("@electron/remote");
 import { ipcRenderer } from 'electron'
-
+const lodash = require('lodash');
 
 export default {
   inject: ['dataSourceId', 'collectService', 'addTab'],
   data() {
     return {
+      defaultExpandIds: [],
       defaultProps: {
         children: "invokeHisotryList",
         label: "label",
@@ -33,7 +34,6 @@ export default {
       page: 1,
       size: 50,
       keyword: '',
-      activeNames: [],
       groupList: [],
       collapseIds: [],
     };
@@ -52,15 +52,15 @@ export default {
       const list = await invokeHisotryRecord.findAllPage(this.dataSourceId, this.keyword, page, size);
       list.map(hisotry => {
         const momentDate = this.$moment(new Date(hisotry.createTime));
-        const label = momentDate.isSame(new Date(), 'day') ? momentDate.fromNow() : momentDate.format('L');
+        const label = momentDate.isSame(new Date(), 'day') ? "Today" : momentDate.format('L');
         let group = this.groupList.find(x => x.label === label);
         if (!group) {
           group = {
-            _id: `group-${hisotry.createTime}`,
+            _id: `group-${label}`,
             label,
             invokeHisotryList: [],
           };
-          this.activeNames.push(label);
+          this.defaultExpandIds.push(group._id);
           if (insertFront) {
             this.groupList = [group, ...this.groupList];
           } else {
@@ -77,6 +77,10 @@ export default {
       });
     },
     openInvokeTab(invokeHistry) {
+      if(invokeHistry.invokeHisotryList && invokeHistry.invokeHisotryList.length > 0){
+        return;
+      }
+      
       const startIndex = invokeHistry.serviceName.lastIndexOf(".") || -1;
       let tabData = {
         title: this.$t('service.callTitle', { address: invokeHistry.serviceName.substring(startIndex + 1) }),
@@ -93,36 +97,41 @@ export default {
     },
     
     async openMenuList(event, invokeHistry){
-      const menuTemplate = [{
+      const menuTemplate = [];
+
+      if(invokeHistry.invokeHisotryList && invokeHistry.invokeHisotryList.length > 0){
+        if(!this.defaultExpandIds.find(item => item === invokeHistry._id)) {
+          menuTemplate.push({
+            label: this.$t('expand'), 
+            click: () => this.handleNodeExpand(invokeHistry)
+          });
+        } else {
+          menuTemplate.push({
+            label: this.$t('collapse'), 
+            click: () => this.handleNodeCollapse(invokeHistry)
+          });
+        }
+      } else {
+        menuTemplate.push({
           label: this.$t('collect.open'),
           click: async () => this.openInvokeTab(invokeHistry)
-        },
-        { type: 'separator' },
-        {
-           label: this.$t('collect.copyInterfaceName'),
+        });
+        menuTemplate.push({ type: 'separator' });
+        
+        menuTemplate.push({
+          label: this.$t('collect.collect'),
           click: async () => {
-            navigator.clipboard.writeText(invokeHistry.serviceName)
-            this.$message({
-              type: "success",
-              message: this.$t('editor.copySuccess'),
-            });
+            const collectInfo = {
+              name: invokeHistry.serviceName.substring(invokeHistry.serviceName.lastIndexOf('.') + 1),
+              serviceName: invokeHistry.serviceName,
+              serviceType: invokeHistry.serviceType || "dubbo",
+              uniqueServiceName: invokeHistry.uniqueServiceName,
+            }
+            this.collectService(collectInfo)
           }
-        },
-        { type: 'separator' },
-      ];
-
-      menuTemplate.push({
-        label: this.$t('collect.collect'),
-        click: async () => {
-          const collectInfo = {
-            name: invokeHistry.serviceName.substring(invokeHistry.serviceName.lastIndexOf('.') + 1),
-            serviceName: invokeHistry.serviceName,
-            serviceType: invokeHistry.serviceType || "dubbo",
-            uniqueServiceName: invokeHistry.uniqueServiceName,
-          }
-          this.collectService(collectInfo)
-        }
-      });
+        });
+      }
+      menuTemplate.push({ type: 'separator' });
 
       // 注册插件菜单
       this.$appRenderer.fillPluginMenu("historyList", menuTemplate, {
@@ -143,9 +152,24 @@ export default {
       });
     },
 
-    toggleExpand(data) {
-      this.collapseIds = this.collapseIds.includes(data.label) ? this.collapseIds.filter(item => item !== data.label) : [...this.collapseIds, data.label]
-    }
+    // 树节点展开
+    handleNodeExpand(data) {
+      // 保存当前展开的节点
+      if (!this.defaultExpandIds.find(item => item === data._id)) { 
+        this.defaultExpandIds.push(data._id)
+      }
+    },
+    // 树节点关闭
+    handleNodeCollapse(data) {
+      // 删除当前关闭的节点
+      this.$refs.tree.store._getAllNodes().forEach(item => {
+        if(item.data._id === data._id){
+          item.expanded = false
+        }
+      });
+
+      lodash.remove(this.defaultExpandIds, item =>  item === data._id);
+    },
   }
 }
 </script>
