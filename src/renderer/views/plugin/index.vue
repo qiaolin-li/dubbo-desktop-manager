@@ -5,18 +5,7 @@
                 <list @selectPlugin="selectPlugin"></list>
             </template>
             <template slot="paneR">
-                <!-- <div style="height: 100%;">
-                    <split-pane @resize="resize" split="horizontal" :min-percent="50" :default-percent="70">
-                        <template slot="paneL">
-                        
-                        </template>
-                        <template slot="paneR">
-                            <pluginLog></pluginLog>
-                        </template>
-                    </split-pane>
-                </div> --> 
-
-                <vs-layout :edit="false" :resize="state.resize" :splits="state.splits">
+                <vs-layout :edit="false" :resize="state.resize" :splits="state.splits" v-if="currentPlugin">
                     <pluginDetails  class="plugin-content"  :plugin="currentPlugin" @installPlugin="installPlugin" @uninstallPlugin="uninstallPlugin"></pluginDetails>
                     <vs-pane title="日志">
                         <pluginLog></pluginLog>
@@ -49,7 +38,7 @@ export default {
             pluginList: [],
             pluginNameList: [],
             loading: false,
-            currentPlugin: {},
+            currentPlugin: null,
             state: {
                 extraStyle: false,
                 edit: true,

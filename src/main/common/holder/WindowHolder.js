@@ -53,6 +53,9 @@ class WindowHolder {
             appConfig.setProperty("windowHeight", height);
         });
 
+        this.window.webContents.on('did-finish-load', () => {
+            console.log('页面加载完成222');
+          });
 
         // Attach listeners
         if(!Constant.IS_MAC){

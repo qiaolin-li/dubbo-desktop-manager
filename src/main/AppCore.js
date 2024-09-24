@@ -1,6 +1,7 @@
 import { Notification }         from 'electron';
 import apiExportor              from '@/main/api/ApiExportor';
 import logger                   from '@/main/common/logger';
+import Plugin                   from '@/main/plugin/index'
 
 class AppCore {
 
@@ -8,10 +9,12 @@ class AppCore {
         this.datasources = new Map();
         this.apiExportor = apiExportor;
         this.registry = apiExportor.registry.bind(apiExportor);
+        this.pluginManager = new Plugin();
     }
 
-    init() {
-        this.exportApi();
+    async init() {
+        await this.pluginManager.init();
+        await this.exportApi();
     }
 
     registerDataSource(type,  dataSource) {

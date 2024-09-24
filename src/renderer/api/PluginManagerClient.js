@@ -1,13 +1,17 @@
 /* eslint-disable no-unused-vars */
 import consumer from './Consumer';
 
-class Plugin {
+class PluginManagerClient {
 
     search(keyword){}
 
+    addDevelopmentPlugin(pluginPath) {}
+
+    removeDevelopmentPlugin(pluginPath) {}
+
     getDevelopmentPluginList(keyword){}
     
-    getInstalledPluginList(keyword) { }
+    getInstalledPluginList() { }
 
     getReadMeFile(plugin) {}
 
@@ -21,4 +25,4 @@ class Plugin {
 }
 
 
-export default consumer.wrapper(new Plugin(), "pluginManager");
+export default consumer.wrapper(new PluginManagerClient(), "pluginManager");

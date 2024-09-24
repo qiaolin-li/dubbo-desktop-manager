@@ -6,6 +6,7 @@
             <div class="plugin-item__content_info">
                 <div class="plugin-item__name">{{ item.name }}</div>
                 <div>
+                    <slot></slot>
                     <span class="config-button ing" v-if="item.installStatus === 'installed' && !item.ing" > 已安装</span>
                     <span class="config-button ing" v-if="item.installStatus === 'update' && !item.ing" >更新</span>
                     <span class="config-button ing" v-if="item.installStatus === 'update' && item.ing" >更新中</span>

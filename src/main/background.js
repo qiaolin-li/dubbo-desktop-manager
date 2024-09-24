@@ -1,11 +1,11 @@
-import { app, shell, protocol, BrowserWindow, Menu, session } from 'electron'
-import updateChecker from '@/main/common/autoupdate/updateChecker.js';
-import windowHolder  from '@/main/common/holder/WindowHolder.js';
-import Constant      from '@/main/common/Constant.js'
-import logger        from '@/main/common/logger';
-import template      from '@/main/menuList.js';
-import appCore       from '@/main/AppCore.js';
-import appConfig     from "@/main/common/config/appConfig.js";
+import { app, shell, protocol, BrowserWindow, Menu, session }   from 'electron'
+import updateChecker                                            from '@/main/common/autoupdate/updateChecker.js';
+import windowHolder                                             from '@/main/common/holder/WindowHolder.js';
+import Constant                                                 from '@/main/common/Constant.js'
+import logger                                                   from '@/main/common/logger';
+import template                                                 from '@/main/menuList.js';
+import appCore                                                  from '@/main/AppCore.js';
+import appConfig                                                from "@/main/common/config/appConfig.js";
 
 // Scheme must be registered before the app is ready
 protocol.registerSchemesAsPrivileged([

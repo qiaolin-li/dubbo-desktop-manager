@@ -111,8 +111,6 @@ export default {
         getProviderListError:"获取提供者列表错误! 原因: {e}",
         getConsumerListError:"获取提消费者列表错误! 原因: {e}",
         invokeMethodError:"调用接口错误! 原因:{e}",
-        disableProviderError: "禁用提供者失败！原因：{e}",
-        enableProviderError: "启用提供者失败！原因：{e}",
     },
     service: {
         callTitle: "调用 {address}",
@@ -129,4 +127,8 @@ export default {
         name: "名称",
         update: "修改",
     },
+    plugin: {
+        addPlugin: "新增插件",
+        confirmDeleteConnect: "此操作将移除插件, 是否继续?",
+    }
 }

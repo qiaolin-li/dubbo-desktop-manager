@@ -6,7 +6,7 @@
         <el-tab-pane label="已安装" name="installed">
             <installed @selectPlugin="(item) => $emit('selectPlugin', item)"></installed>
         </el-tab-pane>
-        <el-tab-pane label="插件开发列表" name="development">
+        <el-tab-pane label="本地插件" name="development">
             <development @selectPlugin="(item) => $emit('selectPlugin', item)"></development>
         </el-tab-pane>
     </el-tabs>

@@ -65,12 +65,13 @@ function checkUpdate(lastVersion, message) {
     buttons: [i18n.t("version.yes"), i18n.t("version.no")],
     message: message,
     checkboxLabel: i18n.t("version.noRemindCurrnetVersion"),
-    checkboxChecked: false
+    checkboxChecked: false,
+    cancelId: 1
   }).then(res => {
     if (res.response === 0) {
       shell.openExternal(downloadUrl)
     }
-    appConfig.setProperty(key, !res.checkboxChecked)
+    appConfig.setProperty(key, res.checkboxChecked)
   }).catch(e => {
     logger.error(e)
   });

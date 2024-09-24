@@ -1,16 +1,66 @@
-import fs                   from 'fs';
-import axios                from 'axios';      
-import PluginLoader         from './PluginLoader.js'
-import pluginSupplier       from './supplier/index.js'
-import pluginManager        from "@/main/plugin/PluginManager.js";
+import fs                           from 'fs';
+import axios                        from 'axios';      
+import PluginLoader                 from './PluginLoader.js'
+import pluginSupplier               from './supplier/index.js'
+import pluginManager                from "@/main/plugin/PluginManager.js";
+import { dialog }                   from 'electron'
+import i18n                         from '@/main/common/i18n';   
+import logger                       from '@/main/common/logger';
+import appConfig                    from "@/main/common/config/appConfig.js";
+import apiExportor                  from '@/main/api/ApiExportor';
 
 class Plugin {
     constructor() {
         this.loader = new PluginLoader()
+        apiExportor.registry("pluginManager", this);
+    }
+
+    async init() {
+        await this.loader.init();
+
+        const pluginId  = "ddm-plugin-dubbo-support";
+        const key = `skip-init-plugin-${pluginId}`;
+      
+        // 跳过当前版本
+        if (appConfig.getProperty(key)) {
+          return;
+        }
+
+        const plugin = pluginManager.get(pluginId);
+        if(!plugin) {
+            dialog.showMessageBox({
+                type: 'info',
+                title: i18n.t("version.title"),
+                buttons: [i18n.t("version.yes"), i18n.t("version.no")],
+                message: "当前没有安装Dubbo服务管理插件，是否现在安装？",
+                checkboxLabel: "我自行去插件市场安装，不再提示！",
+                checkboxChecked: false,
+                cancelId: 1
+            }).then(async res => {
+                if (res.response === 0) {
+                    await this.install({
+                        id: pluginId,
+                        name: "Dubbo服务管理插件"
+                    });
+                    logger.info("插件初始化完成！");
+                }
+                appConfig.setProperty(key, res.checkboxChecked)
+            }).catch(e => {
+                logger.error(e)
+            });
+        }
     }
 
     search(keyword) {
         return pluginSupplier.search(keyword)
+    }
+
+    addDevelopmentPlugin(pluginPath) {
+        return pluginSupplier.addDevelopmentPlugin(pluginPath)
+    }
+
+    removeDevelopmentPlugin(pluginPath) {
+        return pluginSupplier.removeDevelopmentPlugin(pluginPath)
     }
 
     getDevelopmentPluginList(keyword) {
@@ -64,4 +114,4 @@ class Plugin {
 }
 
 
-export default new Plugin();
+export default Plugin;

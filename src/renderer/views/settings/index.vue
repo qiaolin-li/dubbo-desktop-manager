@@ -82,7 +82,7 @@ export default {
       this.$refs.pluginComponent.forEach(async (pluginComponent, index) => {
         const pluginSettingsInfo = this.pluginSettingComponentList[index];
         const pluginSettings = await pluginComponent.getPluginSettings();
-        await appConfig.setProperty("pluginConfig." + pluginSettingsInfo.id, pluginSettings);
+        await appConfig.setProperty("pluginConfig." + pluginSettingsInfo.module, pluginSettings);
       });
 
       const developerModel = await appConfig.getProperty('developer-model') || false;

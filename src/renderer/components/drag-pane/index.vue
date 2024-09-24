@@ -5,7 +5,7 @@
       <div class="panel-header notSelect">
         <div>
           <!-- <i class="el-icon-arrow-right expandButton" v-if="collapsible && collapsed0"></i> -->
-          <i class="el-icon-arrow-down expandButton" v-if="collapsible && !collapsed0" ></i>
+          <!-- <i class="el-icon-arrow-down expandButton" v-if="collapsible && !collapsed0" ></i> -->
           <slot name="fisrtTitle"></slot>
         </div>
         <div>

@@ -48,23 +48,6 @@ class DataSourceFacade {
         }
     }
 
-    async disableProvider(dataSourceInfo, serviceInfo, providerInfo) {
-        try {
-            await this.getRealRegistry(dataSourceInfo).disableProvider(dataSourceInfo, serviceInfo, providerInfo);
-        } catch (error) {
-            console.log(error);
-            throw new Error(i18n.t("connect.disableProviderError", {e: error}));
-        }
-    }
-
-    async enableProvider(dataSourceInfo, serviceInfo, providerInfo) {
-        try {
-            return await this.getRealRegistry(dataSourceInfo).enableProvider(dataSourceInfo, serviceInfo, providerInfo);
-        } catch (error) {
-            console.log(error);
-            throw new Error(i18n.t("connect.enableProviderError", {e: error}));
-        }
-    }
 
     async invokeMethod(dataSourceInfo, serviceInfo, providerInfo, methodInfo, code, invokerType) {
         try {

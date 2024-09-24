@@ -64,8 +64,6 @@ export default {
             deep: false,
             async handler(plugin) {
                 try {
-                   
-
                     let content;
                     if(plugin.source === 'local') {
                         content = await pluginManager.getReadMeFile(plugin);

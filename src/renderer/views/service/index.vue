@@ -2,7 +2,7 @@
   <split-pane @resize="resize" split="vertical" :min-percent="10" :default-percent="20">
     <template slot="paneL">
       <dragPane>
-        <template slot="fisrtTitle">{{dataSourceInfo.name}}</template>
+        <template slot="fisrtTitle">{{ dataSourceInfo.name }}</template>
         <template slot="fisrtToolBar">
           <el-tooltip effect="light" :content="$t('refresh')" placement="right-start">
             <i class="el-icon-refresh iconButton" @click.stop="() => $refs.serviceTree.findList()"></i>

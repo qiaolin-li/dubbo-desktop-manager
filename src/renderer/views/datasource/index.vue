@@ -5,7 +5,7 @@
             <div id="connectDiv">
               <div class="addConnectDialog dragRegion">
                 <span class="btn-plus" @click="openAddConnectDialog()">
-                  <i class="el-icon-plus"></i>{{` ${$t('connect.addConnect')}`}}</span>
+                <i class="el-icon-plus"></i>{{` ${$t('connect.addConnect')}`}}</span>
               </div>
               <el-divider class="my-divider"></el-divider>
               <datasourceList ref="datasourceList" :mainPanel="mainPanel" @editConnect="openAddConnectDialog"></datasourceList>

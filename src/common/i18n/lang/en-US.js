@@ -110,8 +110,6 @@ export default {
         getProviderListError:"Error getting provider list! The reason:{e}",
         getConsumerListError:"Error getting list of fetch consumers! The reason:{e}",
         invokeMethodError:"Call interface error! Reason :{e}",
-        disableProviderError: "Failed to disable provider! Reason: {e}",
-        enableProviderError: "Provider enablement failed! Reason: {e}",
     },
     service: {
         callTitle: "call {address}",
@@ -128,4 +126,8 @@ export default {
         name: "name",
         update: "update",
     },
+    plugin: {
+        addPlugin: "Add Plugin",
+        confirmDeleteConnect: "This action will remove the plug-in. Do you want to continue?",
+    }
 }

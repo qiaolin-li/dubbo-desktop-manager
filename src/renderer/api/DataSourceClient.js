@@ -11,14 +11,6 @@ class DataSourceClient {
     
     async getConsumerList(dataSourceInfo, serviceInfo) {}
     
-    async getConfiguration(dataSourceInfo, serviceInfo, providerInfo) {}
-    
-    async saveConfiguration(dataSourceInfo, serviceInfo, providerInfo, doc) {}
-    
-    async disableProvider(dataSourceInfo, serviceInfo, providerInfo) {}
-    
-    async enableProvider(dataSourceInfo, serviceInfo, providerInfo) {}
-
     async invokeMethod(dataSourceInfo, serviceInfo, providerInfo, methodInfo, code, invokerType) {}
 }
 

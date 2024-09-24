@@ -16,7 +16,6 @@ const requireFunc = typeof __webpack_require__ === 'function' ? __non_webpack_re
 
 class PluginLoader {
     constructor() {
-        this.init()
     }
 
     init() {
@@ -47,6 +46,10 @@ class PluginLoader {
             // 获取插件路径
             return fs.existsSync(this.resolvePlugin(name))
         })
+
+        if(modules.length === 0) {
+            return;
+        }
 
         const pluginConfig = appConfig.getProperty['pluginConfig'] || {};
         for (let i in modules) {

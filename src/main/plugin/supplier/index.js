@@ -1,12 +1,12 @@
 import fs                       from 'fs';
 import path                     from 'path';
-import lodash                   from 'lodash';
 import constant                 from '@/main/common/Constant'
 import pluginManager            from '@/main/plugin/PluginManager'
 import spawn                    from 'cross-spawn'
 import pluginSearch             from '@/main/plugin/supplier/PluginSearcher.js'
 import npmUtils                 from '@/main/common/utils/NpmUtils';
 import windowHolder             from '@/main/common/holder/WindowHolder.js';
+import appConfig                from "@/main/common/config/appConfig"
 
 class NPMPluginSupplier {
 
@@ -14,8 +14,42 @@ class NPMPluginSupplier {
         return await pluginSearch.search(keyword);
     }
 
-    async getDevelopmentPluginList(keyword) {
-        let rootPath = 'D:\\projects\\ddm';
+    async addDevelopmentPlugin(pluginPath) {
+        const packagePath = path.join(pluginPath, 'package.json')
+
+        if (!fs.existsSync(packagePath)) {
+            throw new Error('插件包不存在')
+        }
+        
+        if(!path.basename(pluginPath).startsWith('ddm-plugin-')) {
+            throw new Error('插件包必须以ddm-plugin开头，例如【ddm-plugin-xxxx...】、【ddm-plugin-xxxx-zzzz】')
+        }
+
+        const pkg = JSON.parse(fs.readFileSync(packagePath)) // 读取package.json
+        if(!pkg || !pkg.name || path.basename(pluginPath) !== pkg.name) {
+            throw new Error('插件包目录名与package.json文件内的name必须一致')
+        }
+
+        const localPluginList = appConfig.getProperty('localPluginList') || [];
+
+        if(localPluginList.includes(pluginPath)) {
+            throw new Error('插件已存在, 请勿重复添加')
+        }
+
+        localPluginList.push(pluginPath);
+        appConfig.setProperty('localPluginList', localPluginList);
+    }
+
+    async removeDevelopmentPlugin(pluginPath) {
+        const localPluginList = appConfig.getProperty('localPluginList') || [];
+        const index = localPluginList.indexOf(pluginPath);
+        if(index > -1) {
+            localPluginList.splice(index, 1);
+            appConfig.setProperty('localPluginList', localPluginList);
+        }
+    }
+
+    async getDevelopmentPluginList() {
         // try {
         //     rootPath =lodash.trim(await this.execCommand('root', [ '-g' ], constant.APPLICATION_PLUGINS_DIR));
         // } catch(error) {
@@ -26,19 +60,15 @@ class NPMPluginSupplier {
         
         // 获取root目录下所有子目录
         const pluginList = [];
-        fs.readdirSync(rootPath).forEach((name) => {
+        const localPluginList = appConfig.getProperty('localPluginList') || [];
+        localPluginList.forEach((pluginPath) => {
+            const packagePath = path.join(pluginPath, 'package.json')
+            const pkg = JSON.parse(fs.readFileSync(packagePath)) // 读取package.json
+            const name = pkg.name;
             if(!name.startsWith('ddm-plugin-')) {
                 return;
             }
-            // const parts = line.split(' -> ');
-            // const name = parts[0].split(' ')[1].split('@')[0];
-
-            const pluginPath = rootPath + '/' + name;
-
-            const packagePath = path.join(pluginPath, 'package.json')
-            const pkg = JSON.parse(fs.readFileSync(packagePath)) // 读取package.json
             
-            name = pkg.name;
             let installStatus = 'uninstalled';
             
             const plugin = pluginManager.get(name);
@@ -153,7 +183,7 @@ class NPMPluginSupplier {
         const argv = [...process.argv];
         const env = {...process.env};
         const write = process.stdout.write;
-        const pluginId = plugin.source === 'local' ? plugin.path : `${plugin.id}@${plugin.version}`;
+        const pluginId = plugin.source === 'local' ? plugin.path : `${plugin.id}` + (plugin.version ?  '@' + plugin.version : '');
   
         try {
             const command = 'install'

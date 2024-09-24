@@ -41,7 +41,6 @@ export default {
                 })
 
                 this.pluginList = pluginList;
-                this.$emit('selectPlugin', this.pluginList[0] || {})
                 this.loading = false;
             } catch(err) {
                 console.log(err);

@@ -11,6 +11,12 @@ class Consumer{
         this.invoker = (window.constant.IS_DEVELOPMENT || window.appConfig.getProperty('developer-model')) ? new HttpClient() : new IpcClient();
     }
 
+    /**
+     * 包装对象，转发调用方法到main进程
+     * @param {*} target 
+     * @param {*} moduleName 
+     * @returns target
+     */
     wrapper(target, moduleName) {
         moduleName = moduleName || target.name;
     
