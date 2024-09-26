@@ -21,6 +21,10 @@ class WindowHolder {
         return this.window;
     }
 
+    send(channel, ...args){
+        this.getWindow().webContents.send(channel, ...args);
+    }
+
     async createMainWindow() {
         const url = process.env.WEBPACK_DEV_SERVER_URL || 'app://./index.html' ;
         const mainWindowConfig = {
@@ -55,7 +59,7 @@ class WindowHolder {
 
         this.window.webContents.on('did-finish-load', () => {
             console.log('页面加载完成222');
-          });
+        });
 
         // Attach listeners
         if(!Constant.IS_MAC){

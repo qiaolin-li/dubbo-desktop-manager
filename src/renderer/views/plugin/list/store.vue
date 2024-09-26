@@ -1,6 +1,6 @@
 <template>
     <div class="plugin-view">
-        <el-input v-model="searchText" placeholder="搜索npm上的插件，或者点击上方按钮查看优秀插件列表" size="small"  @input="searchPluginListFun" >
+        <el-input v-model="searchText" placeholder="搜索npm上的插件" size="small"  @input="searchPluginListFun" >
             <template #prefix></template>
         </el-input>
         <div class="plugin-list" v-loading="loading">
@@ -11,9 +11,8 @@
   
 <script>
 import lodash               from "lodash";
-import pluginManager        from "@/renderer/api/PluginManagerClient.js";
-
-import pluginItem from './pluginItem.vue';
+import pluginProvider       from "@/renderer/api/plugin/PluginProvider";
+import pluginItem           from './pluginItem.vue';
 
 export default {
     components: {
@@ -40,7 +39,7 @@ export default {
     methods: {
         async searchPluginList () {
             try {
-                const pluginList = await pluginManager.search(this.searchText);
+                const pluginList = await pluginProvider.search(this.searchText);
                 pluginList.forEach((item) => {
                     item.logoLoadSuccess = true;
                     item.ing = false;

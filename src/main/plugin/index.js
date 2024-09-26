@@ -1,22 +1,22 @@
 import fs                           from 'fs';
 import axios                        from 'axios';      
-import PluginLoader                 from './PluginLoader.js'
-import pluginSupplier               from './supplier/index.js'
-import pluginManager                from "@/main/plugin/PluginManager.js";
 import { dialog }                   from 'electron'
 import i18n                         from '@/main/common/i18n';   
 import logger                       from '@/main/common/logger';
-import appConfig                    from "@/main/common/config/appConfig.js";
 import apiExportor                  from '@/main/api/ApiExportor';
+import appConfig                    from "@/main/common/config/appConfig.js";
+import pluginLoader                 from '@/main/plugin//PluginLoader.js'
+import pluginManager                from "@/main/plugin/PluginManager.js";
+import pluginInstaller              from "@/main/plugin/PluginInstaller.js";
+import localPluginManager           from "@/main/plugin/LocalPluginManager.js";
 
 class Plugin {
     constructor() {
-        this.loader = new PluginLoader()
         apiExportor.registry("pluginManager", this);
     }
 
     async init() {
-        await this.loader.init();
+        await pluginLoader.init();
 
         const pluginId  = "ddm-plugin-dubbo-support";
         const key = `skip-init-plugin-${pluginId}`;
@@ -51,44 +51,38 @@ class Plugin {
         }
     }
 
-    search(keyword) {
-        return pluginSupplier.search(keyword)
-    }
 
     addDevelopmentPlugin(pluginPath) {
-        return pluginSupplier.addDevelopmentPlugin(pluginPath)
+        return localPluginManager.addDevelopmentPlugin(pluginPath)
     }
 
     removeDevelopmentPlugin(pluginPath) {
-        return pluginSupplier.removeDevelopmentPlugin(pluginPath)
+        return localPluginManager.removeDevelopmentPlugin(pluginPath)
     }
 
     getDevelopmentPluginList(keyword) {
-        return pluginSupplier.getDevelopmentPluginList(keyword)
+        return localPluginManager.getDevelopmentPluginList(keyword)
     }
 
     getInstalledPluginList() {
-        return pluginSupplier.getInstalledPluginList()
+        return pluginInstaller.getInstalledPluginList()
     }
 
-    async getReadMeFile(plugin) {
-        if(plugin.source && plugin.source === 'local'){
-            return fs.readFileSync(plugin.readme, 'utf8').toString();
-        }
-        const response = await axios.get(`https://cdn.jsdelivr.net/npm/${plugin.id}@${plugin.version}/README.md`);
-        return response.data;
+    
+    getInstalledPluginInfoList(){
+        return pluginManager.getList();
     }
 
     async install(plugin) {
-        const result = await pluginSupplier.install(plugin)
-        await this.loader.load(plugin.id);
+        const result = await pluginInstaller.install(plugin)
+        await pluginLoader.load(plugin.id);
         return result;
     }
 
     async uninstall(plugin) {
         try {
             const pluginInfo = pluginManager.get(plugin.id);
-            await pluginSupplier.uninstall(plugin)
+            await pluginInstaller.uninstall(plugin)
 
             pluginInfo.uninstall()
             pluginManager.remove(plugin.id)

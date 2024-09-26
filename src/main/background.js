@@ -103,6 +103,12 @@ if (Constant.IS_DEVELOPMENT) {
   }
 }
 
+
 process.on('uncaughtException', function (error) {
   logger.error(`发生了异常`, error);
 })
+
+process.on('unhandledRejection', (reason, promise) => {
+  logger.error(`Promise 出现异常`, reason);
+});
+

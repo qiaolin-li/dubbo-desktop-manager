@@ -1,14 +1,14 @@
 <template>
     <div class="plugin-container">
-        <split-pane @resize="resize" split="vertical" :min-percent="20" :default-percent="30">
+        <split-pane @resize="resize" split="vertical" :min-percent="20" :default-percent="25">
             <template slot="paneL">
                 <list @selectPlugin="selectPlugin"></list>
             </template>
             <template slot="paneR">
                 <vs-layout :edit="false" :resize="state.resize" :splits="state.splits" v-if="currentPlugin">
                     <pluginDetails  class="plugin-content"  :plugin="currentPlugin" @installPlugin="installPlugin" @uninstallPlugin="uninstallPlugin"></pluginDetails>
-                    <vs-pane title="日志">
-                        <pluginLog></pluginLog>
+                    <vs-pane title="日志" >
+                        <pluginLog ref="pluginLog"></pluginLog>
                     </vs-pane>
                 </vs-layout>
             </template>
@@ -17,7 +17,6 @@
     </div>
 </template>
 <script>
-import lodash               from "lodash";
 import pluginDetails        from "./details.vue";
 import pluginLog            from "./log.vue";
 import appConfig            from "@/renderer/api/AppConfigClient.js";
@@ -34,10 +33,6 @@ export default {
     },
     data() {
         return {
-            searchText: "",
-            pluginList: [],
-            pluginNameList: [],
-            loading: false,
             currentPlugin: null,
             state: {
                 extraStyle: false,
@@ -53,13 +48,8 @@ export default {
             },
         };
     },
-    created() {
-        this.searchPluginListFun = lodash.debounce(async () => this.searchPluginList(), 300)
-        this.searchPluginListFun();
-    },
     methods: {
         resize() {},
-        searchPluginListFun(){},
         async installPlugin(plugin) {
             try {
                 plugin.ing = true;
@@ -98,22 +88,6 @@ export default {
                 remote.app.relaunch();
                 remote.app.exit(0);
             };
-        },
-        async searchPluginList () {
-            try {
-                const pluginList = await pluginManager.search(this.searchText);
-                pluginList.forEach((item) => {
-                    item.logoLoadSuccess = true;
-                    item.ing = false;
-                })
-
-                this.pluginList = pluginList;
-                this.selectPlugin(this.pluginList[0] || {})
-                this.loading = false;
-            } catch(err) {
-                console.log(err);
-                this.loading = false;
-            }
         },
         async selectPlugin(plugin){
             this.currentPlugin = plugin;
@@ -173,7 +147,11 @@ export default {
     padding: 2px;
     cursor: pointer;
     height: 60px;
-    border-top: 1px solid pink;
+    /* border-top: 1px solid pink; */
+}
+
+.plugin-item:not(:first-child) {
+  border-top: 1px solid #ccc;
 }
 
 .plugin-item__logo {

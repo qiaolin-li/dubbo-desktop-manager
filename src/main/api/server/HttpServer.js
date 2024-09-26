@@ -1,4 +1,5 @@
 import constant      from '@/main/common/Constant';
+import logger        from '@/main/common/logger';
 import http          from 'http';
 
 /**
@@ -19,7 +20,7 @@ class HttpServer {
             })
         }).listen(constant.API_HTTP_PORT);
             
-        console.log(`Server running at http://127.0.0.1:${constant.API_HTTP_PORT}/`);
+        logger.info(`Server running at http://127.0.0.1:${constant.API_HTTP_PORT}/`);
     }
 
 }

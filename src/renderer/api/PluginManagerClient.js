@@ -3,17 +3,15 @@ import consumer from './Consumer';
 
 class PluginManagerClient {
 
-    search(keyword){}
-
     addDevelopmentPlugin(pluginPath) {}
 
     removeDevelopmentPlugin(pluginPath) {}
 
-    getDevelopmentPluginList(keyword){}
+    getDevelopmentPluginList(){}
     
     getInstalledPluginList() { }
 
-    getReadMeFile(plugin) {}
+    getInstalledPluginInfoList(){}
 
     install(plugin) {}
 

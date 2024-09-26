@@ -41,14 +41,19 @@
       <component v-for="menuPage in menuPageList" :key="menuPage.id" v-bind="componentProps(menuPage)" v-show="currentMenu.id == menuPage.id" />
     </el-main>
 
+    <plugin-discovery />
   </el-container>
 </template>
 
 <script>
 import menuConfig from '@/renderer/config/sidebarMenuList.js';
+import pluginDiscovery from './plugin/pluginDiscovery.vue';
 const remote = require("@electron/remote");
 
 export default {
+  components: {
+    pluginDiscovery
+  },
   data() {
     return {
       currentMenu: {},

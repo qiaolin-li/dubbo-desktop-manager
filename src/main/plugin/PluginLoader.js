@@ -15,8 +15,6 @@ const requireFunc = typeof __webpack_require__ === 'function' ? __non_webpack_re
 
 
 class PluginLoader {
-    constructor() {
-    }
 
     init() {
         const packagePath = path.join(constant.APPLICATION_PLUGINS_DIR, 'package.json')
@@ -110,14 +108,14 @@ class PluginLoader {
             return path.join(constant.APPLICATION_PLUGINS_DIR, 'node_modules', name)
         }
     }
+    
     getPlugin(mainJs) { 
-        // 2.通过require获取插件并传入ctx
+        // 1.移除require缓存，不然永远都是旧插件
         delete requireFunc.cache[requireFunc.resolve(mainJs)];
-        const module = requireFunc(mainJs);
 
-
-        return module;
+        // 2、require插件
+        return requireFunc(mainJs);
     }
 }
 
-export default PluginLoader;
+export default new PluginLoader();

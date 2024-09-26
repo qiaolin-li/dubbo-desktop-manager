@@ -19,18 +19,6 @@ class NpmUtils {
             process.argv.push(modules[i]);
         }
 
-
-        // process.stdin.on('data', (data) => {
-        //     console.log(data);
-        //     // windowHolder.getWindow().webContents.send(`pluginOperationLog`, data);
-        // });
-    
-        // process.stdout.on('data', (data) => {
-        //     console.log(data);
-        //     // windowHolder.getWindow().webContents.send(`pluginOperationLog`, data);
-        // });
-
-        // const Npm = require( 'npm/lib/npm.js')
         const Npm = requireFunc(`${constant.APPLICATION_NPM_PATH_PREFIX}/lib/npm.js`)
 
         class MyNpm extends Npm {

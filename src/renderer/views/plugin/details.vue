@@ -4,9 +4,9 @@
             <div class="plugin-name">{{ plugin.name }}</div>
             <div class="plugin-info">
                 <el-row>
-                    <el-button size="mini"  v-if="plugin.installStatus === 'uninstalled'" @click="!plugin.ing && $emit('installPlugin', plugin)">{{ plugin.ing ? "安装中" : "安装" }}</el-button>
+                    <el-button size="mini"  v-if="plugin.installStatus === 'uninstalled' || !allowUninstall" @click="!plugin.ing && $emit('installPlugin', plugin)">{{ plugin.ing ? "安装中" : "安装" }}</el-button>
                     <el-button size="mini"  v-if="plugin.installStatus === 'update'"   @click="!plugin.ing && $emit('installPlugin', plugin)"  >{{ plugin.ing ? "更新中" : "更新到 "+ plugin.version }}</el-button>
-                    <el-button size="mini"  v-if="(plugin.installStatus === 'installed' || plugin.installStatus === 'update')" @click="!plugin.ing && $emit('uninstallPlugin', plugin)" >{{ plugin.ing ? "卸载中" : "卸载" }}</el-button>
+                    <el-button size="mini"  v-if="(plugin.installStatus === 'installed'  || plugin.installStatus === 'update') &&  allowUninstall" @click="!plugin.ing && $emit('uninstallPlugin', plugin)" >{{ plugin.ing ? "卸载中" : "卸载" }}</el-button>
                 </el-row>
                 <el-link type="primary" class="plugin-home" @click="openHomepage(plugin.homepage)">插件主页</el-link>
             </div>
@@ -16,15 +16,18 @@
 </template>
 
 <script>
-import pluginManager from "@/renderer/api/PluginManagerClient.js";
-const remote = require("@electron/remote");
-import axios from "axios";
-import markdownItReplaceLink from 'markdown-it-replace-link'
+const remote =                  require("@electron/remote");
+import axios                    from "axios";
+import markdownItReplaceLink    from 'markdown-it-replace-link'
 
 export default {
     name: "pluginDetails",
     props: {
         plugin: Object,
+        allowUninstall: {
+            type: Boolean,
+            default: true
+        },
     },
     data() {
         return {
@@ -58,28 +61,34 @@ export default {
                 return 'https://cdn.jsdelivr.net/npm/ddm-plugin-demo/' + link;
             }
         })
+
+        this.changePlugin();
     },
     watch: {
         plugin: {
             deep: false,
-            async handler(plugin) {
-                try {
-                    let content;
-                    if(plugin.source === 'local') {
-                        content = await pluginManager.getReadMeFile(plugin);
-                    } else {
-                        const response = await axios.get(`https://cdn.jsdelivr.net/npm/${plugin.id}@${plugin.version}/README.md`);
-                        content = response.data;
-                    }
-
-                    this.value = content;
-                } catch(err) {
-                    this.value = plugin.description;
-                }
+            async handler() {
+                this.changePlugin();
             },
         }
     },
     methods: {
+        async changePlugin(){
+            try {
+                let content;
+                if(this.plugin.source === 'local') {
+                    const response = await axios.get(this.plugin.readme);
+                    content = response.data;
+                } else {
+                    const response = await axios.get(`https://cdn.jsdelivr.net/npm/${this.plugin.id}@${this.plugin.version}/README.md`);
+                    content = response.data;
+                }
+
+                this.value = content;
+            } catch(err) {
+                this.value = this.plugin.description;
+            }
+        },
         openHomepage(url) {
             if (url) remote.shell.openExternal(url);
         },

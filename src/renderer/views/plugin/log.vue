@@ -25,6 +25,11 @@ export default {
       })
     })
   },
+  methods: {
+    fit() {
+      this.$refs.terminal.fit();
+    }
+  },
   destroyed() {
     ipcRenderer.removeAllListeners('pluginOperationLog')
   }
