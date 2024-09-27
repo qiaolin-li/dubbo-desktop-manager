@@ -1,7 +1,7 @@
 import axios                from 'axios'
 
 
-const configUrl = "http://127.0.0.1:9876/aaa"
+const configUrl = "https://cdn.jsdelivr.net/npm/ddm-plugin-config/config.json"
 
 class RemoteConfig {
     constructor() {

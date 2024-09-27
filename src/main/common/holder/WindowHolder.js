@@ -39,13 +39,14 @@ class WindowHolder {
                 contextIsolation: false,
                 webSecurity: false,
                 webviewTag: true,
+                preload: path.join(__dirname, 'preload.js')
             }
         }
 
         if(!Constant.IS_MAC){
             mainWindowConfig.webPreferences.sandbox = false;
-            mainWindowConfig.webPreferences.preload = path.join(__dirname, 'preload.js');
         }
+
         this.window  = new BrowserWindow(mainWindowConfig)
         this.createWindow(this.window, url)
 
