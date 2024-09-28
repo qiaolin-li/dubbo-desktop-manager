@@ -40,6 +40,7 @@ export default {
         async searchPluginList () {
             try {
                 const pluginList = await pluginProvider.search(this.searchText);
+                
                 pluginList.forEach((item) => {
                     item.logoLoadSuccess = true;
                     item.ing = false;

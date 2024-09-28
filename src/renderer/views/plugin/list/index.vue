@@ -37,7 +37,22 @@ export default {
 </script>
 
 <style>
+.plugin-list-container{
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
 .plugin-list-container .el-tabs__header{
     margin: 0px 0px 0px 5px ;
 }
+.plugin-list-container .el-tabs__content{
+    height: 100%;
+}
+
+.plugin-list-container .el-tab-pane{
+    height: 100%;
+}
+
+
 </style>

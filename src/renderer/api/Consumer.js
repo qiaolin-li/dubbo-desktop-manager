@@ -27,12 +27,13 @@ class Consumer{
         
         const invoker = this.invoker;
         const handler = {
+            // eslint-disable-next-line no-unused-vars
             get(target, method, proxy) {
-                let result = target[method];
+                // let result = target[method];
     
-                if (typeof result != "function") {
-                    return result;
-                }
+                // if (typeof result != "function") {
+                //     return result;
+                // }
 
                 return async function () {
                     return await invoker.invoke(moduleName, method, [...arguments])

@@ -124,12 +124,12 @@ class AppRendenerCore {
 
 
     fillPluginMenu(module, menuTemplate, ...args) {
-        const pluginMenuList = this.#pluginMenuMap.get(module) || [];
-        if (!pluginMenuList || pluginMenuList.length <= 0) {
+        const pluginActionList = this.#pluginMenuMap.get(module) || [];
+        if (!pluginActionList?.length) {
             return;
         }
 
-        pluginMenuList.forEach((item) => {
+        pluginActionList.forEach((item) => {
             const {group, relativeMenu, anchor, test} = item;
 
             if(test && !test(...args)){

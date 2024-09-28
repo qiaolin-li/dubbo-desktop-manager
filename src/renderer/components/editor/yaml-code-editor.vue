@@ -162,7 +162,9 @@ export default {
             try {
               var parsed = JSON.parse(toParse);
               count = Object.keys(parsed).length;
-            } catch (e) { }
+            } catch (e) { 
+              // ignore
+            }
 
             return count ? `\u21A4${count}\u21A6` : "\u2194";
           },
@@ -178,6 +180,7 @@ export default {
     }
   },
   methods: {
+    // eslint-disable-next-line no-unused-vars
     inputChange(content) {
       // this.$nextTick(() => {
       //  this.$refs.cm.codemirror.setValue((JSON.stringify(JSON.parse(content), null, 2)))
@@ -204,6 +207,7 @@ export default {
 
     this.$refs.cm.codemirror.on("gutterClick", function (cm, n) {
       var info = cm.lineInfo(n);
+      // eslint-disable-next-line no-unused-vars
       let marks = info.gutterMarkers;
       cm.setGutterMarker(n, "breakpoints", makeMarker());
     });

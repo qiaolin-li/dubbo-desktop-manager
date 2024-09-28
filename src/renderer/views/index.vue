@@ -38,6 +38,7 @@
     </el-aside>
 
     <el-main>
+      <!-- eslint-disable-next-line vue/require-component-is -->
       <component v-for="menuPage in menuPageList" :key="menuPage.id" v-bind="componentProps(menuPage)" v-show="currentMenu.id == menuPage.id" />
     </el-main>
 

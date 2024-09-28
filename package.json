@@ -61,7 +61,6 @@
     "vue-i18n": "6.0.0",
     "vue-infinite-scroll": "^2.0.2",
     "vue-split-layout": "^0.0.16",
-    "vue-splitpane": "^1.0.6",
     "xlsx": "^0.18.5",
     "xlsx-style": "^0.8.13",
     "xterm": "^4.17.0",

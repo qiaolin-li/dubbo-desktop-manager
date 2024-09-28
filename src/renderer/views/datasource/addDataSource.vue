@@ -24,12 +24,8 @@
 
 <script>
 import dataSourceRepository from "@/renderer/api/DataSourceRepositoryClient.js";
-import dynamicForm from "@/renderer/components/dynamicForm.vue";
 
 export default {
-  components: {
-    dynamicForm
-  },
   data() {
     return {
       currentType: "",

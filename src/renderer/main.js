@@ -50,8 +50,6 @@ Vue.component('vs-pane', Pane)
 
 import 'vue-split-layout/src/style.css'
 
-import p_splitPane from 'vue-splitpane'
-Vue.component('p-split-pane', p_splitPane);
 
 
 Map.prototype.computeIfAbsent = function (key, fun) {

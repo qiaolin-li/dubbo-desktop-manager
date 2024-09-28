@@ -8,6 +8,7 @@
       </el-tabs>
     </div>
     <div class="mytab-container-view" v-show="tabList.length > 0">
+      <!-- eslint-disable-next-line vue/require-component-is -->
       <component v-bind="componentProps(tab)" v-for="tab in tabList" :key="tab.id" v-show="currentTabId == tab.id" />
     </div>
     <welcome v-if="tabList.length == 0" />

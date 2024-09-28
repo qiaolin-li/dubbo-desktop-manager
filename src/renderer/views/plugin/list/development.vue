@@ -79,6 +79,7 @@ export default {
         async getPluginList () {
             try {
                 const pluginList = await pluginManager.getDevelopmentPluginList();
+            
                 pluginList.forEach((item) => {
                     item.logoLoadSuccess = true;
                     item.ing = false;
@@ -105,6 +106,12 @@ export default {
 <style>
 .plugin-toolbar {
     margin: 6px 10px;
+}
+
+.plugin-view {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
 }
 </style>
   

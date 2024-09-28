@@ -144,11 +144,24 @@ class AppRendererPluginCore {
         this.#appRendererCore.addPluginSettingComponent(componentInfo);
     }
 
-    
+    /**
+     * 注册服务管理组件
+     * @param {*} serviceType 服务类型
+     * @param {*} component 组件
+     * @param {*} options 配置选项
+     */
+    // eslint-disable-next-line no-unused-vars
     registryServicePageComponent(serviceType, component, options) {
         this.#appRendererCore.addServicePageComponent(serviceType, this.wrapComponent(component));
     }
     
+    /**
+     * 注册服务调用组件
+     * @param {*} serviceType  服务类型
+     * @param {*} component  组件
+     * @param {*} options  配置选项
+     */
+    // eslint-disable-next-line no-unused-vars
     registryServicInvokeComponent(serviceType, component, options) {
         this.#appRendererCore.addServiceInvokeComponent(serviceType, this.wrapComponent(component));
     }
@@ -158,15 +171,15 @@ class AppRendererPluginCore {
         const module = this.#module;
         return {
             addLocaleMessage(locale, message) {
-                try {
-                    if(i18n.getLocaleMessage(locale)){
-                        throw new Error(`插件【${module}】提供语言包【${locale}】已经存在，当前插件的语言包不会生效`);
-                    }
-                } catch (error){
-                    if(error.message !== 'Unexpected token u in JSON at position 0') {
-                        throw error;
-                    }
-                }
+                // try {
+                //     if(i18n.getLocaleMessage(locale)){
+                //         throw new Error(`插件【${module}】提供语言包【${locale}】已经存在，当前插件的语言包不会生效`);
+                //     }
+                // } catch (error){
+                //     if(error.message !== 'Unexpected token u in JSON at position 0') {
+                //         throw error;
+                //     }
+                // }
 
                 i18n.setLocaleMessage(locale, message);
             },

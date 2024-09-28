@@ -1,10 +1,10 @@
 import fs                           from 'fs';
-import axios                        from 'axios';      
 import { dialog }                   from 'electron'
 import i18n                         from '@/main/common/i18n';   
 import logger                       from '@/main/common/logger';
 import apiExportor                  from '@/main/api/ApiExportor';
 import appConfig                    from "@/main/common/config/appConfig.js";
+import windowHolder                 from '@/main/common/holder/WindowHolder.js';
 import pluginLoader                 from '@/main/plugin//PluginLoader.js'
 import pluginManager                from "@/main/plugin/PluginManager.js";
 import pluginInstaller              from "@/main/plugin/PluginInstaller.js";
@@ -73,6 +73,18 @@ class Plugin {
         return pluginManager.getList();
     }
 
+    
+    discover(module, type) {
+        logger.info(`给用户推荐插件[${module}][${type}, 开始`);
+        // 通知渲染进程，弹起插件安装框
+        windowHolder.send(`plugin-discovery`, {
+            module, 
+            type
+        });
+
+        logger.info(`给用户推荐插件[${module}][${type}, 结束`);
+    }
+
     async install(plugin) {
         const result = await pluginInstaller.install(plugin)
         await pluginLoader.load(plugin.id);
@@ -108,4 +120,4 @@ class Plugin {
 }
 
 
-export default Plugin;
+export default new Plugin();

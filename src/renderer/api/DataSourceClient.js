@@ -7,10 +7,6 @@ class DataSourceClient {
 
     async getServiceList(dataSourceInfo) {}
 
-    async getProviderList(dataSourceInfo, serviceInfo) {}
-    
-    async getConsumerList(dataSourceInfo, serviceInfo) {}
-    
     async invokeMethod(dataSourceInfo, serviceInfo, providerInfo, methodInfo, code, invokerType) {}
 }
 

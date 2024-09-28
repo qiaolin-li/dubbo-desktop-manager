@@ -54,14 +54,18 @@ export default {
         }
     },
     created() {
-        ipcRenderer.on('plugin-discovery', async (sender, pluginConfig) =>  {
+        ipcRenderer.on('plugin-discovery', async (sender, {module, type}) =>  {
+            const pluginConfig = await pluginProvider.getRecommendPluginList(module, type);
+            if(!pluginConfig?.plugins?.length) {
+                return;
+            }
 
             this.$notify.info({
-                title: '推荐插件安装',
+                title: '推荐插件安装提示',
                 message: `${pluginConfig.title}, 点击当前消息进行安装`,
                 position: 'bottom-right',
                 onClick: async () => {
-                    const pluginList = await pluginProvider.getList(pluginConfig.plugins);
+                    const pluginList = pluginConfig.plugins;
                     if(pluginList.length === 0) {
                         return;
                     }

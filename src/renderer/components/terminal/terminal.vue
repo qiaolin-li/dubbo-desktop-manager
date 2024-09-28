@@ -57,6 +57,7 @@ export default {
     Mousetrap(terminalContainer).bind(['command+v', 'ctrl+v'], () => this.pasteContentToTerminal());
 
     // 需要解除对 areatext 的粘贴
+    // eslint-disable-next-line no-unused-vars
     Mousetrap.prototype.stopCallback = (e, element, combo) => {
 
       // if the element has the class "mousetrap" then no need to stop

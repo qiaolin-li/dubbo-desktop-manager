@@ -3,7 +3,7 @@ import appCore                  from '@/main/AppCore.js';
 import windowHolder             from '@/main/common/holder/WindowHolder.js';
 import pluginManager            from "@/main/plugin/PluginManager.js";
 import invokeHisotryRecord      from "@/main/repository/InvokeHistoryRepository.js";
-import pluginDiscovery          from '../plugin/PluginDiscovery';
+import pluginFacade             from '@/main/plugin/index.js';
 
 class DataSourceFacade {
 
@@ -27,22 +27,6 @@ class DataSourceFacade {
             return await this.getRealRegistry(dataSourceInfo).getServiceList(dataSourceInfo);
         } catch (error) {
             throw new Error(i18n.t("connect.getServiceListError", { e: error}));
-        }
-    }
-
-    async getProviderList(dataSourceInfo, serviceInfo) {
-        try {
-            return await this.getRealRegistry(dataSourceInfo).getProviderList(dataSourceInfo, serviceInfo);
-        } catch (error) {
-            throw new Error(i18n.t("connect.getProviderListError", { e: error }));
-        }
-    }
-
-    async getConsumerList(dataSourceInfo, serviceInfo) {
-        try {
-            return await this.getRealRegistry(dataSourceInfo).getConsumerList(dataSourceInfo, serviceInfo);
-        } catch (error) {
-            throw new Error(i18n.t("connect.getConsumerListError", {e: error}));
         }
     }
 
@@ -97,7 +81,7 @@ class DataSourceFacade {
         let registry = appCore.getDataSource(dataSourceInfo.type);
 
         if (!registry) {
-            pluginDiscovery.discover('dataSource', dataSourceInfo.type);
+            pluginFacade.discover('dataSource', dataSourceInfo.type);
             throw new Error(`注册中心类型不支持 [${dataSourceInfo.type}]`);
         }
         return registry;
