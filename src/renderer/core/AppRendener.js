@@ -214,6 +214,10 @@ class AppRendenerCore {
         // 打开 Dialog
         instance.show();
     }
+
+    notify({ title, body }) {
+        new Notification(title, { body: body });
+    }
 }
 
 export default new AppRendenerCore(Vue);

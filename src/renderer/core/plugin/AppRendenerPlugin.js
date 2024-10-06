@@ -4,7 +4,6 @@ import appConfig                from "@/renderer/api/AppConfigClient.js";
 import menuConfig               from '@/renderer/config/sidebarMenuList.js';
 import PluginComponent          from './PluginComponent';
 import myTabList                from '@/renderer/components/tabs/index.vue';
-import simpleDialog             from '@/renderer/components/simpleDialog.vue';
 
 class AppRendererPluginCore {
 
@@ -201,6 +200,10 @@ class AppRendererPluginCore {
     openDialog(dialogInfo) {
         dialogInfo.component = this.wrapComponent(dialogInfo.component);
         this.#appRendererCore.openDialog(dialogInfo);
+    }
+
+    notify(data) {
+        this.#appRendererCore.notify(data);
     }
 }
 
