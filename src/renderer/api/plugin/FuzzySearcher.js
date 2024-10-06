@@ -34,6 +34,7 @@ class FuzzySearcher {
             installVersion: plugin.version ?? '',
             installStatus: installStatus,
             version: item.version,
+            star: pluginConfig.isRecommendPlugin(item.name),    // 是否为推荐的优秀插件，
         }
     }
 

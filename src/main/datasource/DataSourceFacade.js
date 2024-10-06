@@ -41,7 +41,7 @@ class DataSourceFacade {
             });
 
             // 保存调用记录
-            let invokeHistory = {
+            const invokeHistory = {
                 registryCenterId: dataSourceInfo._id,
                 serviceName: providerInfo.serviceName,
                 uniqueServiceName: providerInfo.uniqueServiceName,
@@ -51,7 +51,7 @@ class DataSourceFacade {
                 result: JSON.stringify(result.data),
             };
             await invokeHisotryRecord.save(invokeHistory);
-            windowHolder.getWindow().webContents.send(`newInvokeHisotryRecordEvent-${dataSourceInfo._id}`);
+            windowHolder.send(`newInvokeHisotryRecordEvent-${dataSourceInfo._id}`);
 
             return result;
         } catch (error) {
@@ -78,7 +78,7 @@ class DataSourceFacade {
 
 
     getRealRegistry(dataSourceInfo) {
-        let registry = appCore.getDataSource(dataSourceInfo.type);
+        const registry = appCore.getDataSource(dataSourceInfo.type);
 
         if (!registry) {
             pluginFacade.discover('dataSource', dataSourceInfo.type);

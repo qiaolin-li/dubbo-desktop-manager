@@ -25,6 +25,9 @@ class WindowHolder {
         this.getWindow().webContents.send(channel, ...args);
     }
 
+    /**
+     * 创建主窗口
+     */
     async createMainWindow() {
         const url = process.env.WEBPACK_DEV_SERVER_URL || 'app://./index.html' ;
         const mainWindowConfig = {

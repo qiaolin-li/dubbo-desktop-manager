@@ -1,29 +1,32 @@
 <template>
-    <el-dialog :title="title ? title : '插件安装' " width="90%" top="5vh" :visible.sync="dialogVisible" :close-on-click-modal="false">
-        <div class="plugin-discovery-container">
-            <split-pane @resize="resize" split="vertical" :min-percent="20" :default-percent="30">
-                <template slot="paneL">
-                    <pluginItem  v-for="item in pluginList" :key="item.name" :item="item" @selectPlugin="(item) => currentPlugin = item"></pluginItem>
-                </template>
-                <template slot="paneR">
-                    <vs-layout :edit="false" :resize="state.resize" :splits="state.splits" v-show="currentPlugin">
-                        <pluginDetails v-if="currentPlugin" class="plugin-content"  :plugin="currentPlugin" :allowUninstall="false" @installPlugin="installPlugin"></pluginDetails>
-                        <vs-pane title="日志">
+    <div class="plugin-discovery-container">
+        <split-pane @resize="resize" split="vertical" :min-percent="20" :default-percent="30">
+            <template slot="paneL">
+                <pluginItem  v-for="item in pluginList" :key="item.name" :item="item" @selectPlugin="(item) => currentPlugin = item"></pluginItem>
+            </template>
+            <template slot="paneR">
+                <dragTab :fisrtTabProps="fisrtTabProps" fisrtDefaultName="default" :secondTabProps="secondTabProps" secondDefaultName="default" :collapsible="false" :fisrtTabVisible="false">
+                    <template slot="fisrtContent">
+                        <dragTabItem name="default" >
+                            <pluginDetails v-if="currentPlugin" class="plugin-content"  :plugin="currentPlugin" :allowUninstall="false" @installPlugin="installPlugin"></pluginDetails>
+                        </dragTabItem>
+                    </template>
+
+                    <template slot="secondContent">
+                        <dragTabItem name="default"  >
                             <pluginLog ref="pluginLog"></pluginLog>
-                        </vs-pane>
-                    </vs-layout>
-                </template>
-            </split-pane>
-        </div>
-    </el-dialog>
+                        </dragTabItem>
+                    </template>
+                </dragTab>
+            </template>
+        </split-pane>
+    </div>
 </template>
 
 <script>
 
-import { ipcRenderer }      from 'electron'
 import pluginLog            from "@/renderer/views/plugin/log.vue";
 import pluginDetails        from "@/renderer/views/plugin/details.vue";
-import pluginProvider       from '@/renderer/api/plugin/PluginProvider';
 import pluginManager        from "@/renderer/api/PluginManagerClient.js";
 import pluginItem           from '@/renderer/views/plugin/list/pluginItem.vue';
 
@@ -35,56 +38,25 @@ export default {
     },
     data() {
         return {
-            state: {
-                extraStyle: false,
-                edit: true,
-                resize: true,
-                splits:   {
-                    dir: 'vertical',
-                    first: 0,
-                    second: 1,
-                    split: '80%' 
-                },
-                layoutN: 0
-            },
+            fisrtTabProps: [{
+                name: "default",
+                titel: "",
+            }],
+            secondTabProps: [{
+                name: "default",
+                titel: "日志",
+            }],
             title: '推荐插件安装',
-            dialogVisible: false,
-            pluginList: [],
             currentPlugin: null
         }
     },
-    created() {
-        ipcRenderer.on('plugin-discovery', async (sender, {module, type}) =>  {
-            const pluginConfig = await pluginProvider.getRecommendPluginList(module, type);
-            if(!pluginConfig?.plugins?.length) {
-                return;
-            }
-
-            this.$notify.info({
-                title: '推荐插件安装提示',
-                message: `${pluginConfig.title}, 点击当前消息进行安装`,
-                position: 'bottom-right',
-                onClick: async () => {
-                    const pluginList = pluginConfig.plugins;
-                    if(pluginList.length === 0) {
-                        return;
-                    }
-
-                    pluginList.forEach((item) => {
-                        item.logoLoadSuccess = true;
-                        item.ing = false;
-                    });
-
-                    this.pluginList = pluginList;
-                    this.currentPlugin = pluginList[0];
-                    this.dialogVisible = true;
-                }
-            });
-            
-        });
+    props: {
+        pluginList: Array,
     },
-    destroyed() {
-        ipcRenderer.removeAllListeners('plugin-discovery');
+    mounted() {
+        
+        this.currentPlugin = this.pluginList[0];
+        this.fisrtTabProps[0].titel = this.pluginList[0].name
     },
     methods: {
         resize() {},

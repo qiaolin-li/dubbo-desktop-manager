@@ -60,7 +60,6 @@
     "vue-codemirror": "^4.0.6",
     "vue-i18n": "6.0.0",
     "vue-infinite-scroll": "^2.0.2",
-    "vue-split-layout": "^0.0.16",
     "xlsx": "^0.18.5",
     "xlsx-style": "^0.8.13",
     "xterm": "^4.17.0",
@@ -78,6 +77,9 @@
     "patch-package": "^6.4.7",
     "vue-cli-plugin-electron-builder": "~2.1.1",
     "vue-template-compiler": "^2.6.11"
+  },
+  "initPlugins": {
+    "ddm-plugin-dubbo-support": "1.0.0"
   },
   "resolutions": {
     "**/commander": "11.1.0"

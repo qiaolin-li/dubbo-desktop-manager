@@ -5,12 +5,19 @@
                 <list @selectPlugin="selectPlugin"></list>
             </template>
             <template slot="paneR">
-                <vs-layout :edit="false" :resize="state.resize" :splits="state.splits" v-if="currentPlugin">
-                    <pluginDetails  class="plugin-content"  :plugin="currentPlugin" @installPlugin="installPlugin" @uninstallPlugin="uninstallPlugin"></pluginDetails>
-                    <vs-pane title="日志" >
-                        <pluginLog ref="pluginLog"></pluginLog>
-                    </vs-pane>
-                </vs-layout>
+                <dragTab :fisrtTabProps="fisrtTabProps" fisrtDefaultName="default" :secondTabProps="secondTabProps" secondDefaultName="default" :collapsible="false" :fisrtTabVisible="false">
+                    <template slot="fisrtContent">
+                        <dragTabItem name="default" >
+                            <pluginDetails  class="plugin-content" v-if="currentPlugin" :plugin="currentPlugin" @installPlugin="installPlugin" @uninstallPlugin="uninstallPlugin"></pluginDetails>
+                        </dragTabItem>
+                    </template>
+
+                    <template slot="secondContent">
+                        <dragTabItem name="default"  >
+                            <pluginLog ref="pluginLog"></pluginLog>
+                        </dragTabItem>
+                    </template>
+                </dragTab>
             </template>
         </split-pane>
         
@@ -34,18 +41,14 @@ export default {
     data() {
         return {
             currentPlugin: null,
-            state: {
-                extraStyle: false,
-                edit: true,
-                resize: true,
-                splits:   {
-                    dir: 'vertical',
-                    first: 0,
-                    second: 1,
-                    split: '80%' 
-                },
-                layoutN: 0
-            },
+            fisrtTabProps: [{
+                name: "default",
+                titel: "",
+            }],
+            secondTabProps: [{
+                name: "default",
+                titel: "日志",
+            }],
         };
     },
     methods: {

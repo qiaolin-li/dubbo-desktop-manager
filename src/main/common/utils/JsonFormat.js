@@ -1,6 +1,6 @@
 import jsonBigInt from 'json-bigint';
 
-let JSONString = jsonBigInt(({"storeAsString": true}));
+const JSONString = jsonBigInt(({"storeAsString": true}));
 
 const formaterArray = [];
 const formatJsonString = data => JSON.stringify(JSONString.parse(data), null, 2);

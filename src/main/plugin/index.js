@@ -1,4 +1,5 @@
 import fs                           from 'fs';
+import { lt }                       from 'semver'
 import { dialog }                   from 'electron'
 import i18n                         from '@/main/common/i18n';   
 import logger                       from '@/main/common/logger';
@@ -9,6 +10,7 @@ import pluginLoader                 from '@/main/plugin//PluginLoader.js'
 import pluginManager                from "@/main/plugin/PluginManager.js";
 import pluginInstaller              from "@/main/plugin/PluginInstaller.js";
 import localPluginManager           from "@/main/plugin/LocalPluginManager.js";
+import Constant                     from '@/main//common/Constant.js';
 
 class Plugin {
     constructor() {
@@ -17,38 +19,61 @@ class Plugin {
 
     async init() {
         await pluginLoader.init();
-
-        const pluginId  = "ddm-plugin-dubbo-support";
-        const key = `skip-init-plugin-${pluginId}`;
-      
-        // 跳过当前版本
-        if (appConfig.getProperty(key)) {
-          return;
-        }
-
-        const plugin = pluginManager.get(pluginId);
-        if(!plugin) {
-            dialog.showMessageBox({
-                type: 'info',
-                title: i18n.t("version.title"),
-                buttons: [i18n.t("version.yes"), i18n.t("version.no")],
-                message: "当前没有安装Dubbo服务管理插件，是否现在安装？",
-                checkboxLabel: "我自行去插件市场安装，不再提示！",
-                checkboxChecked: false,
-                cancelId: 1
-            }).then(async res => {
-                if (res.response === 0) {
+        
+        let init = false;
+        for (const pluginId in Constant.initPlugins) {
+            const initVersion = Constant.initPlugins[pluginId];
+            const plugin = pluginManager.get(pluginId);
+            
+            if(!plugin || !lt(plugin.version, initVersion)){
+                try {
                     await this.install({
                         id: pluginId,
                         name: "Dubbo服务管理插件"
                     });
-                    logger.info("插件初始化完成！");
+                } catch (error) {
+                    logger.error("初始化插件失败，错误信息：", error);
                 }
-                appConfig.setProperty(key, res.checkboxChecked)
-            }).catch(e => {
-                logger.error(e)
-            });
+                    
+                init = true;
+            }
         }
+
+        if(init) {
+                logger.info("插件初始化完成！");
+        }
+    
+        // const pluginId  = "ddm-plugin-dubbo-support";
+        // const key = `skip-init-plugin-${pluginId}`;
+      
+        // // 跳过当前版本
+        // if (appConfig.getProperty(key)) {
+        //   return;
+        // }
+        // 还是使用上面的无脑安装吧，避免用户没有安装插件
+        // const plugin = pluginManager.get(pluginId);
+        // if(!plugin) {
+        //     dialog.showMessageBox({
+        //         type: 'info',
+        //         title: i18n.t("version.title"),
+        //         buttons: [i18n.t("version.yes"), i18n.t("version.no")],
+        //         message: "当前没有安装Dubbo服务管理插件，是否现在安装？",
+        //         checkboxLabel: "我自行去插件市场安装，不再提示！",
+        //         checkboxChecked: false,
+        //         cancelId: 1
+        //     }).then(async res => {
+        //         if (res.response === 0) {
+        //             await this.install({
+        //                 id: pluginId,
+        //                 name: "Dubbo服务管理插件"
+        //             });
+        //             logger.info("插件初始化完成！");
+        //         }
+        //         appConfig.setProperty(key, res.checkboxChecked)
+        //     }).catch(e => {
+        //         logger.error(e)
+        //     });
+        // }
     }
 
 

@@ -31,31 +31,39 @@
  /* 
     element-ui dialog的内容内边距
 */
- .el-dialog .el-dialog__body {
-     padding-top: 0px;
-     padding-left: 10px;
-     padding-right: 10px;
-     padding-bottom: 10px;
- }
+.el-dialog {
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+}
 
- .element-hover:hover {
-     background: #d5ebe1;
- }
+.el-dialog {
+    transition: all 0.3s ease-in-out;
+}
 
- .selectedBackground {
-     background: #d5ebe1;
+.el-dialog .el-dialog__body {
+    padding-top: 10px;
+    padding-left: 10px;
+    padding-right: 10px;
+    padding-bottom: 10px;
+}
 
- }
+.element-hover:hover {
+    background: #d5ebe1;
+}
 
- .iconButton {
-     margin-right: 3px;
-     padding: 3px 3px;
- }
+.selectedBackground {
+    background: #d5ebe1;
 
- .iconButton:hover {
-     background-color: #3fb24f;
-     border-radius: 50%;
- }
+}
+
+.iconButton {
+    margin-right: 3px;
+    padding: 3px 3px;
+}
+
+.iconButton:hover {
+    background-color: #3fb24f;
+    border-radius: 50%;
+}
 
 
 

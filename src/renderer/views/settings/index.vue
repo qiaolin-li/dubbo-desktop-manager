@@ -8,6 +8,14 @@
         </el-select>
 
       </el-form-item>
+      <el-form-item label="npm Registry" >
+        <el-input placeholder="https://registry.npmjs.com/" v-model="npmRegistry" class="input-with-select"  >
+          <el-popconfirm slot="append" title="使用淘宝镜像？" @confirm="npmRegistry = 'https://registry.npmmirror.com/'">
+            <el-button slot="reference"  icon="el-icon-star-off" ></el-button>
+          </el-popconfirm>
+        </el-input>
+        
+      </el-form-item>
       <el-form-item label="JAVA_HOME：">
         <el-input placeholder="请选择JAVA_HOME位置" v-model="javaHome" class="input-with-select" > 
           <el-button slot="append" icon="el-icon-search" @click="selectJavaHomePath"></el-button>
@@ -44,7 +52,7 @@ export default {
     return {
       selectMessage: "",
       messages: [],
-      invokerType: "telnet",
+      npmRegistry: "",
       javaHome: "",
       jvmArgs: "",
       developerModel: false,
@@ -52,8 +60,10 @@ export default {
     }
   },
   async created() {
-    this.selectMessage = await appConfig.getProperty("systemLocale");
     this.messages = i18n.messages;
+
+    this.selectMessage = await appConfig.getProperty("systemLocale");
+    this.npmRegistry = await appConfig.getProperty("npmRegistry") || "https://registry.npmjs.com/";
     this.javaHome = await appConfig.getProperty("javaHome");
     this.jvmArgs = await appConfig.getProperty("jvmArgs");
     this.developerModel = await appConfig.getProperty('developer-model') || false;
@@ -75,7 +85,7 @@ export default {
     async saveConfig() {
       i18n.locale = this.selectMessage;
       await appConfig.setProperty("systemLocale", this.selectMessage);
-      await appConfig.setProperty("invokerType", this.invokerType);
+      await appConfig.setProperty("npmRegistry", this.npmRegistry);
       await appConfig.setProperty("javaHome", this.javaHome);
       await appConfig.setProperty("jvmArgs", this.jvmArgs);
 

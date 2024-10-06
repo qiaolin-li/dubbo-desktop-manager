@@ -1,6 +1,7 @@
-import fs                       from 'fs';
 import constant                 from '@/main/common/Constant'
 import windowHolder             from '@/main/common/holder/WindowHolder.js';
+import appConfig                from "@/main/common/config/appConfig.js";
+
 
 // eslint-disable-next-line no-undef
 const requireFunc = typeof __webpack_require__ === 'function' ? __non_webpack_require__ : require
@@ -32,14 +33,14 @@ class NpmUtils {
             output(...msg) {
                 this.message += msg
                 if(this.message.lastIndexOf('\n') == this.message.length - 1){
-                    windowHolder.getWindow().webContents.send(`pluginOperationLog`, this.message);
+                    windowHolder.send(`pluginOperationLog`, this.message);
                     this.message = '';
                 }
             }
             outputError(...msg) {
                 this.message += msg
                 if(this.message.lastIndexOf('\n') == this.message.length - 1){
-                    windowHolder.getWindow().webContents.send(`pluginOperationLog`, this.message);
+                    windowHolder.send(`pluginOperationLog`, this.message);
                     this.message = '';
                 }
             }
@@ -58,8 +59,9 @@ class NpmUtils {
         }
     
         await npm.load()
-        npm.config.set('registry', 'https://registry.npmmirror.com/')
-        let cmd = npm.argv.shift()
+        const npmRegistry = await appConfig.getProperty("npmRegistry") || "https://registry.npmjs.com/";
+        npm.config.set('registry', npmRegistry)
+        const cmd = npm.argv.shift()
         await npm.exec(cmd, npm.argv)
 
         return npm.message;

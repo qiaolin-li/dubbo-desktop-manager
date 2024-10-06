@@ -18,7 +18,7 @@ app.allowRendererProcessReuse = true;
 
 Menu.setApplicationMenu(Menu.buildFromTemplate(template));
 app.setAboutPanelOptions({
-  applicationName: "DDM",
+  applicationName: "Dubbo Desktop Manager",
   applicationVersion: Constant.VERSION,
   version:"2022.02.22",
   website :"https://github.com/qiaolin-li/dubbo-desktop-manager",
@@ -48,19 +48,20 @@ if (!app.requestSingleInstanceLock()) {
   app.quit();
 }
 
+updateChecker.checkVersion();
+
+  
+appCore.init();
+
+if(!appConfig.hasProperty("javaHome")){
+  appConfig.setProperty("javaHome", process.env.JAVA_HOME)
+}
+
+
 // 这个方法将在Electron完成后被调用 
 // 初始化并准备创建浏览器窗口。 
 // 某些api只能在事件发生后使用。
 app.on('ready', async () => {
-
- 
-  updateChecker();
-
-  appCore.init();
-  
-  if(!appConfig.hasProperty("javaHome")){
-    appConfig.setProperty("javaHome", process.env.JAVA_HOME)
-  }
 
   windowHolder.createMainWindow()
   windowHolder.instanllDevTools()
@@ -103,12 +104,10 @@ if (Constant.IS_DEVELOPMENT) {
   }
 }
 
-
 process.on('uncaughtException', function (error) {
   logger.error(`发生了异常`, error);
 })
 
 process.on('unhandledRejection', (reason, promise) => {
-  logger.error(`Promise 出现异常`, reason);
+  logger.error(`Promise 出现异常`, reason, promise);
 });
-

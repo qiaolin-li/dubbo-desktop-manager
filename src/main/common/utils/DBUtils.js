@@ -81,8 +81,8 @@ function findOne(queryData) {
 function find(queryParam = {}, sortParam = {}, pageParam = {}) {
     // 查询
     return new Promise((resovle, reject) => {
-        let { page = 1, size = 10 } = pageParam;
-        let skipOffset = (page - 1) * size;
+        const { page = 1, size = 10 } = pageParam;
+        const skipOffset = (page - 1) * size;
         this.db.find(queryParam).sort(sortParam).skip(skipOffset).limit(size).exec((err, docs) => {
             if (err) {
                 reject(err);

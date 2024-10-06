@@ -16,6 +16,8 @@ import loading                  from "@/renderer/common/utils/MyLoading";
 import AppRendererPluginCore    from '@/renderer/core/plugin/AppRendenerPlugin.js';
 import { Message }              from 'element-ui';
 import i18n                     from '@/renderer/common/i18n'
+import simpleDialog             from '@/renderer/components/simpleDialog.vue';
+
 
 const remote = require("@electron/remote");
 // eslint-disable-next-line no-undef
@@ -189,6 +191,28 @@ class AppRendenerCore {
 
     getServiceInvokeComponent(serviceType) {
       return this.#serviceInvokeMap.get(serviceType);
+    }
+
+
+    openDialog(dialogInfo) {
+        const DialogConstructor = Vue.extend(simpleDialog);
+        const instance = new DialogConstructor({
+            propsData: {
+                ...dialogInfo
+            }
+        })
+
+        // 创建一个新的元素来挂载对话框
+        const dialogContainer = document.createElement('div');
+
+        // 将对话框挂载到新创建的元素上
+        instance.$mount(dialogContainer);
+
+        // 将新创建的元素添加到 body
+        document.body.appendChild(instance.$el);
+
+        // 打开 Dialog
+        instance.show();
     }
 }
 

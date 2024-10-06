@@ -44,14 +44,6 @@ import MavonEditor from 'mavon-editor'
 import 'mavon-editor/dist/css/index.css'
 Vue.use(MavonEditor)
 
-import { Layout, Pane } from 'vue-split-layout'
-Vue.component('vs-layout', Layout)
-Vue.component('vs-pane', Pane)
-
-import 'vue-split-layout/src/style.css'
-
-
-
 Map.prototype.computeIfAbsent = function (key, fun) {
   if(!this.has(key)){
       this.set(key, fun(key));

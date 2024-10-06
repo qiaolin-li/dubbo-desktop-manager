@@ -30,9 +30,11 @@ function checkAndCreateDir(path) {
     if (!fs.pathExistsSync(path)) {
         fs.mkdirpSync(path)
     }
+
+    return path;
 }
 
-export default {
+export default Object.freeze({
     VERSION: pkg.version,
 
     IS_DEVELOPMENT,
@@ -53,5 +55,8 @@ export default {
     APPLICATION_TEMP_DIR,
     IS_MAC: process.platform === 'darwin',
     
-    API_HTTP_PORT: IS_DEVELOPMENT ? pkg.port.dev : pkg.port.prod
-}
+    API_HTTP_PORT: IS_DEVELOPMENT ? pkg.port.dev : pkg.port.prod,
+    
+    // 初始化插件列表，主要是为了降低应用的大小 + 容易升级降级
+    initPlugins: pkg.initPlugins || {}
+});
