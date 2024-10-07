@@ -11,14 +11,14 @@ class FuzzySearcher {
     async search(keyword){
         const response = await axios.get(`https://www.npmjs.com/search/suggestions?q=${window.constant.APPLICATION_PLUGINS_NAME_PREFIX},${keyword}&time`+ new Date().getTime());
         
-        const installedPluginInfoList = await pluginManagerClient.getInstalledPluginInfoList();
+        const installedPluginInfoList = await pluginManagerClient.getInstalledPluginList();
         return await response.data
                     .filter(item => item.name.startsWith(window.constant.APPLICATION_PLUGINS_NAME_PREFIX) && pluginConfig.isNotBlackListPlugin(item.name))
                     .map(item => this.handleResult(item, installedPluginInfoList));
     }
 
     handleResult(item, installedPluginInfoList) {
-        const plugin = installedPluginInfoList.find(plugin => plugin.name === item.name);
+        const plugin = installedPluginInfoList.find(plugin => plugin.id === item.name);
         let installStatus = 'uninstalled';
         if (plugin) {
             installStatus = plugin.version === item.version ? 'installed' : 'update';

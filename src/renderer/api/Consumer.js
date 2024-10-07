@@ -1,10 +1,6 @@
 const { ipcRenderer } = require('electron')
 const axios = require('axios').default;
 
-const COMMUNICATION_CHANEL = "ipc-main-unify";
-const COMMUNICATION_CONSUMER_CHANNEL = `ipc-rendenerer-unify_${Math.random()}`;
-const waitResponsePromiseMap = new Map();
-
 class Consumer{
 
     constructor(){
@@ -59,6 +55,10 @@ class HttpClient{
 
 }
 
+
+const COMMUNICATION_CHANEL = "ipc-main-unify";
+const COMMUNICATION_CONSUMER_CHANNEL = `ipc-rendenerer-unify_${Math.random()}`;
+
 class IpcClient{
 
     constructor(){
@@ -70,37 +70,38 @@ class IpcClient{
     }
 
     invoke(moduleName, method, args){
-          const requestId = `${COMMUNICATION_CONSUMER_CHANNEL}-${moduleName}-${method}-${Math.random()}`;
-          // 将参数包装
-          let invocation = {
-              moduleName,
-              method,
-              requestId : requestId,
-              args,
-              replyChannel: COMMUNICATION_CONSUMER_CHANNEL,
-          }
-          
-        // 和主进程进行通讯
-        ipcRenderer.send(COMMUNICATION_CHANEL, invocation);
-            
+        const requestId = `${COMMUNICATION_CONSUMER_CHANNEL}-${moduleName}-${method}-${Math.random()}`;
+        // 将参数包装
+        let invocation = {
+            moduleName,
+            method,
+            requestId : requestId,
+            args,
+            replyChannel: COMMUNICATION_CONSUMER_CHANNEL,
+        }
+        
         let data = new Promise((resolve, reject) => {
             this.waitResponsePromiseMap.set(requestId, {
                 resolve, 
                 reject
             });
         });
+
+        // 和主进程进行通讯
+        ipcRenderer.send(COMMUNICATION_CHANEL, invocation);
+            
         return data;
     }
 
     handlerResponse(response){
         let waitResponsePromise = this.waitResponsePromiseMap.get(response.requestId);
-
-        if(!waitResponsePromise){
-            console.warn("消费者监听器收到未能处理的消息" + JSON.stringify(response));
-            return;
-        }
-
+        
         try {
+            if(!waitResponsePromise){
+                console.warn("消费者监听器收到未能处理的消息" + JSON.stringify(response));
+                return;
+            }
+            
             if (!response.success) {
                 require('element-ui').Message({
                     type: "error",
@@ -112,7 +113,7 @@ class IpcClient{
             // 调用方法的结果
             return waitResponsePromise.resolve(response.data);
         } finally {
-            waitResponsePromiseMap.delete(response.requestId);
+            this.waitResponsePromiseMap.delete(response.requestId);
         }
       
     }

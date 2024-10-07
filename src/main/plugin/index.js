@@ -25,10 +25,11 @@ class Plugin {
             const initVersion = Constant.initPlugins[pluginId];
             const plugin = pluginManager.get(pluginId);
             
-            if(!plugin || !lt(plugin.version, initVersion)){
+            if(!plugin || lt(plugin.version, initVersion)){
                 try {
                     await this.install({
                         id: pluginId,
+                        version: initVersion,
                         name: "Dubbo服务管理插件"
                     });
                 } catch (error) {
@@ -92,12 +93,6 @@ class Plugin {
     getInstalledPluginList() {
         return pluginInstaller.getInstalledPluginList()
     }
-
-    
-    getInstalledPluginInfoList(){
-        return pluginManager.getList();
-    }
-
     
     discover(module, type) {
         logger.info(`给用户推荐插件[${module}][${type}, 开始`);

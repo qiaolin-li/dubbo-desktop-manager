@@ -79,7 +79,7 @@
     "vue-template-compiler": "^2.6.11"
   },
   "initPlugins": {
-    "ddm-plugin-dubbo-support": "1.0.0"
+    "ddm-plugin-dubbo-support": "0.0.5"
   },
   "resolutions": {
     "**/commander": "11.1.0"

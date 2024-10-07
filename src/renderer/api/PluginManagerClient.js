@@ -11,8 +11,6 @@ class PluginManagerClient {
     
     getInstalledPluginList() { }
 
-    getInstalledPluginInfoList(){}
-
     install(plugin) {}
 
     load(plugins) {}

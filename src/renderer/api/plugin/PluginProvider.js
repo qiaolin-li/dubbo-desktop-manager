@@ -25,7 +25,7 @@ class PluginSearcher {
             return await this.fuzzySearch.search(keyword);
         }
 
-        const installedPluginInfoList = await pluginManagerClient.getInstalledPluginInfoList();
+        const installedPluginInfoList = await pluginManagerClient.getInstalledPluginList();
         const npmRegistry = await appConfig.getProperty("npmRegistry") || "https://registry.npmjs.com/";
 
         try {
@@ -78,7 +78,7 @@ class PluginSearcher {
         const packageInfo = item.package;
         const name = packageInfo.name;
 
-        const plugin = installedPluginInfoList.find(plugin => plugin.name === name);
+        const plugin = installedPluginInfoList.find(plugin => plugin.id === name);
 
         let installStatus = 'uninstalled';
         if (plugin) {
@@ -113,13 +113,13 @@ class PluginSearcher {
             return;
         }
 
-        const installedPluginInfoList = await pluginManagerClient.getInstalledPluginInfoList();
+        const installedPluginInfoList = await pluginManagerClient.getInstalledPluginList();
 
         const pluginList = [];
         for (let i = 0; i < recommendPluginInfo.plugins.length; i++) {
             const pluginName = recommendPluginInfo.plugins[i];
             
-            if(installedPluginInfoList.find(plugin => plugin.name === pluginName) ) {
+            if(installedPluginInfoList.find(plugin => plugin.id === pluginName) ) {
                return;
             }
 
