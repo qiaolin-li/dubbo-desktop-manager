@@ -5,23 +5,7 @@ import appCore from '../core/AppRendener';
 
 class DataSourceClient {
 
-    async getDataSourceList() {}
-
-    async getFormConfig(dataSourceType){}
-
     async getServiceList(dataSourceInfo) {}
-
-    async getProviderList(dataSourceInfo, serviceInfo) {}
-    
-    async getConsumerList(dataSourceInfo, serviceInfo) {}
-    
-    async getConfiguration(dataSourceInfo, serviceInfo, providerInfo) {}
-    
-    async saveConfiguration(dataSourceInfo, serviceInfo, providerInfo, doc) {}
-    
-    async disableProvider(dataSourceInfo, serviceInfo, providerInfo) {}
-    
-    async enableProvider(dataSourceInfo, serviceInfo, providerInfo) {}
 
     async invokeMethod(dataSourceInfo, serviceInfo, providerInfo, methodInfo, code, invokerType) {}
 }

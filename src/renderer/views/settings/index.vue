@@ -1,28 +1,42 @@
 <template>
   <div class="settingsContainer">
-    <el-divider content-position="left">{{$t('settings.baseSettings.title')}}</el-divider>
-    {{$t('settings.baseSettings.language')}}：
-    <el-select v-model="selectMessage">
-      <el-option v-for="message in messages" :key="message.code" :label="message.name" :value="message.code"></el-option>
-    </el-select>
 
-    <div style="margin-top: 15px;">
-      <el-input placeholder="请选择JAVA_HOME位置" v-model="javaHome" class="input-with-select">
-        <template slot="prepend">JAVA_HOME：</template>
-        <el-button slot="append" icon="el-icon-search" @click="selectJavaHomePath"></el-button>
-      </el-input>
-    </div>
-    <br/>
-    {{$t('settings.baseSettings.jvmArgs')}}：
-    <el-input :placeholder="$t('settings.baseSettings.jvmArgsTips')" v-model="jvmArgs" style="width: 90%"  > </el-input>
-    
+    <el-form label-position="left" label-width="100px" ref="form"  >
+      <el-form-item :label="$t('settings.baseSettings.language')" >
+        <el-select v-model="selectMessage">
+          <el-option v-for="message in messages" :key="message.code" :label="message.name" :value="message.code"></el-option>
+        </el-select>
+
+      </el-form-item>
+      <el-form-item label="npm Registry" >
+        <el-input placeholder="https://registry.npmjs.com/" v-model="npmRegistry" class="input-with-select"  >
+          <el-popconfirm slot="append" title="使用淘宝镜像？" @confirm="npmRegistry = 'https://registry.npmmirror.com/'">
+            <el-button slot="reference"  icon="el-icon-star-off" ></el-button>
+          </el-popconfirm>
+        </el-input>
+        
+      </el-form-item>
+      <el-form-item label="JAVA_HOME：">
+        <el-input placeholder="请选择JAVA_HOME位置" v-model="javaHome" class="input-with-select" > 
+          <el-button slot="append" icon="el-icon-search" @click="selectJavaHomePath"></el-button>
+        </el-input>
+      </el-form-item>
+
+      <el-form-item :label="$t('settings.baseSettings.jvmArgs')">
+        <el-input :placeholder="$t('settings.baseSettings.jvmArgsTips')" v-model="jvmArgs" > </el-input>
+      </el-form-item>
+
+      <el-form-item label="开发者模式">
+        <el-checkbox v-model="developerModel">开发者模式</el-checkbox>
+      </el-form-item>
+    </el-form>
+
     <div v-for="pluginSettingComponent in pluginSettingComponentList" :key="pluginSettingComponent.id">
-      <el-divider content-position="left">{{ pluginSettingComponent.name }}</el-divider>
-      <component ref="pluginComponent" :is="pluginSettingComponent.componentName" />
+      <el-divider content-position="left">{{ pluginSettingComponent.label }}</el-divider>
+      <component ref="pluginComponent" :is="pluginSettingComponent.component" />
     </div>
     
     <el-divider content-position="left"></el-divider>
-    <el-checkbox v-model="developerModel">开发者模式</el-checkbox>
     <el-button @click="saveConfig">{{$t('settings.apply')}}</el-button>
   </div>
 </template>
@@ -38,26 +52,18 @@ export default {
     return {
       selectMessage: "",
       messages: [],
-      invokerType: "telnet",
+      npmRegistry: "",
       javaHome: "",
       jvmArgs: "",
       developerModel: false,
-      invokerTypes: [
-        {
-          code: "telnet",
-          name: "Telnet"
-        },
-        {
-          code: "java",
-          name: "Java"
-        }
-      ],
       pluginSettingComponentList: []
     }
   },
   async created() {
-    this.selectMessage = await appConfig.getProperty("systemLocale");
     this.messages = i18n.messages;
+
+    this.selectMessage = await appConfig.getProperty("systemLocale");
+    this.npmRegistry = await appConfig.getProperty("npmRegistry") || "https://registry.npmjs.com/";
     this.javaHome = await appConfig.getProperty("javaHome");
     this.jvmArgs = await appConfig.getProperty("jvmArgs");
     this.developerModel = await appConfig.getProperty('developer-model') || false;
@@ -79,14 +85,14 @@ export default {
     async saveConfig() {
       i18n.locale = this.selectMessage;
       await appConfig.setProperty("systemLocale", this.selectMessage);
-      await appConfig.setProperty("invokerType", this.invokerType);
+      await appConfig.setProperty("npmRegistry", this.npmRegistry);
       await appConfig.setProperty("javaHome", this.javaHome);
       await appConfig.setProperty("jvmArgs", this.jvmArgs);
 
       this.$refs.pluginComponent.forEach(async (pluginComponent, index) => {
         const pluginSettingsInfo = this.pluginSettingComponentList[index];
         const pluginSettings = await pluginComponent.getPluginSettings();
-        await appConfig.setProperty("pluginConfig." + pluginSettingsInfo.id, pluginSettings);
+        await appConfig.setProperty("pluginConfig." + pluginSettingsInfo.module, pluginSettings);
       });
 
       const developerModel = await appConfig.getProperty('developer-model') || false;
@@ -106,7 +112,7 @@ export default {
 
 <style>
 .settingsContainer {
-  padding-left: 15px;
+  padding: 15px;
   background-color: white;
   border-radius: 5px;
 }

@@ -1,13 +1,11 @@
-import { app, shell, protocol, BrowserWindow, Menu, session } from 'electron'
-import updateChecker from '@/main/common/autoupdate/updateChecker.js';
-import windowHolder  from '@/main/common/holder/WindowHolder.js';
-import Constant      from '@/main/common/Constant.js'
-import logger        from '@/main/common/logger';
-import template      from '@/main/menuList.js';
-import apiExportor   from '@/main/api/ApiExportor.js';
-import appCore       from '@/main/AppCore.js';
-import appConfig     from "@/main/common/config/appConfig.js";
-import pkg           from '../../package.json'
+import { app, shell, protocol, BrowserWindow, Menu, session }   from 'electron'
+import updateChecker                                            from '@/main/common/autoupdate/updateChecker.js';
+import windowHolder                                             from '@/main/common/holder/WindowHolder.js';
+import Constant                                                 from '@/main/common/Constant.js'
+import logger                                                   from '@/main/common/logger';
+import template                                                 from '@/main/menuList.js';
+import appCore                                                  from '@/main/AppCore.js';
+import appConfig                                                from "@/main/common/config/appConfig.js";
 
 // Scheme must be registered before the app is ready
 protocol.registerSchemesAsPrivileged([
@@ -20,8 +18,8 @@ app.allowRendererProcessReuse = true;
 
 Menu.setApplicationMenu(Menu.buildFromTemplate(template));
 app.setAboutPanelOptions({
-  applicationName: "DDM",
-  applicationVersion: pkg.version,
+  applicationName: "Dubbo Desktop Manager",
+  applicationVersion: Constant.VERSION,
   version:"2022.02.22",
   website :"https://github.com/qiaolin-li/dubbo-desktop-manager",
   copyright:"Copyright © 2021-2099 QIAOLIN. All rights reserved."
@@ -31,7 +29,7 @@ app.setAboutPanelOptions({
 app.on('window-all-closed', () => {
   // On macOS it is common for applications and their menu bar
   // to stay active until the user quits explicitly with Cmd + Q
-  if (process.platform !== 'darwin') {
+  if (!Constant.IS_MAC) {
     app.quit()
   }
 })
@@ -50,20 +48,21 @@ if (!app.requestSingleInstanceLock()) {
   app.quit();
 }
 
+
 // 这个方法将在Electron完成后被调用 
 // 初始化并准备创建浏览器窗口。 
 // 某些api只能在事件发生后使用。
 app.on('ready', async () => {
 
- 
-  updateChecker();
+  updateChecker.checkVersion();
 
-  apiExportor.exportApi();
+  
+  appCore.init();
   
   if(!appConfig.hasProperty("javaHome")){
     appConfig.setProperty("javaHome", process.env.JAVA_HOME)
   }
-
+  
   windowHolder.createMainWindow()
   windowHolder.instanllDevTools()
 
@@ -108,3 +107,7 @@ if (Constant.IS_DEVELOPMENT) {
 process.on('uncaughtException', function (error) {
   logger.error(`发生了异常`, error);
 })
+
+process.on('unhandledRejection', (reason, promise) => {
+  logger.error(`Promise 出现异常`, reason, promise);
+});

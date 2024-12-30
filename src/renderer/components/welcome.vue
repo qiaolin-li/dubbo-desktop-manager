@@ -16,13 +16,12 @@
 </template>
 
 <script>
-import pkg from "../../../package.json";
 const { shell } = require('electron');
 
 export default {
   data() {
     return {
-      version: pkg.version,
+      version: window.constant.VERSION,
     };
   },
   methods: {

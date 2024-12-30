@@ -21,6 +21,13 @@ class WindowHolder {
         return this.window;
     }
 
+    send(channel, ...args){
+        this.getWindow().webContents.send(channel, ...args);
+    }
+
+    /**
+     * 创建主窗口
+     */
     async createMainWindow() {
         const url = process.env.WEBPACK_DEV_SERVER_URL || 'app://./index.html' ;
         const mainWindowConfig = {
@@ -35,13 +42,14 @@ class WindowHolder {
                 contextIsolation: false,
                 webSecurity: false,
                 webviewTag: true,
+                preload: path.join(__dirname, 'preload.js')
             }
         }
 
         if(!Constant.IS_MAC){
             mainWindowConfig.webPreferences.sandbox = false;
-            mainWindowConfig.webPreferences.preload = path.join(__dirname, 'preload.js');
         }
+
         this.window  = new BrowserWindow(mainWindowConfig)
         this.createWindow(this.window, url)
 
@@ -53,6 +61,9 @@ class WindowHolder {
             appConfig.setProperty("windowHeight", height);
         });
 
+        this.window.webContents.on('did-finish-load', () => {
+            console.log('页面加载完成222');
+        });
 
         // Attach listeners
         if(!Constant.IS_MAC){

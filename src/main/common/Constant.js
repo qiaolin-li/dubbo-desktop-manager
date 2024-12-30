@@ -1,6 +1,7 @@
-import path from 'path';
-import os from 'os';
-import fs from 'fs-extra';
+import path                     from 'path';
+import pkg                      from '../../../package.json'
+import os                       from 'os';
+import fs                       from 'fs-extra';
 
 const IS_DEVELOPMENT = process.env.NODE_ENV !== 'production'
 
@@ -29,9 +30,13 @@ function checkAndCreateDir(path) {
     if (!fs.pathExistsSync(path)) {
         fs.mkdirpSync(path)
     }
+
+    return path;
 }
 
-export default {
+export default Object.freeze({
+    VERSION: pkg.version,
+
     IS_DEVELOPMENT,
     USER_HOME_DIR,
 
@@ -49,5 +54,9 @@ export default {
 
     APPLICATION_TEMP_DIR,
     IS_MAC: process.platform === 'darwin',
+
+    API_HTTP_PORT: IS_DEVELOPMENT ? pkg.port.dev : pkg.port.prod,
     
-}
+    // 初始化插件列表，主要是为了降低应用的大小 + 容易升级降级
+    initPlugins: pkg.initPlugins || {}
+});

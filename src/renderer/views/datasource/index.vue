@@ -5,7 +5,7 @@
             <div id="connectDiv">
               <div class="addConnectDialog dragRegion">
                 <span class="btn-plus" @click="openAddConnectDialog()">
-                  <i class="el-icon-plus"></i>{{` ${$t('connect.addConnect')}`}}</span>
+                <i class="el-icon-plus"></i>{{` ${$t('connect.addConnect')}`}}</span>
               </div>
               <el-divider class="my-divider"></el-divider>
               <datasourceList ref="datasourceList" :mainPanel="mainPanel" @editConnect="openAddConnectDialog"></datasourceList>
@@ -23,11 +23,11 @@
 </template>
 
 <script>
-import myTabList        from '@/renderer/components/tabs/index.vue';
-import addConnect       from "./addDataSource.vue";
-import datasourceList      from "./datasourceList.vue";
-import { ipcRenderer }  from 'electron'
-const remote = require("@electron/remote");
+import myTabList            from '@/renderer/components/tabs/index.vue';
+import addConnect           from "./addDataSource.vue";
+import datasourceList       from "./datasourceList.vue";
+import { ipcRenderer }      from 'electron'
+import remote               from '@electron/remote';
 
 export default {
   components: {

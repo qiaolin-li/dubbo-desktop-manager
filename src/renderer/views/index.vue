@@ -38,6 +38,7 @@
     </el-aside>
 
     <el-main>
+      <!-- eslint-disable-next-line vue/require-component-is -->
       <component v-for="menuPage in menuPageList" :key="menuPage.id" v-bind="componentProps(menuPage)" v-show="currentMenu.id == menuPage.id" />
     </el-main>
 
@@ -77,12 +78,25 @@ export default {
   methods: {
     resize() {},
     componentProps(menu) {
+      if (menu.component) {
+        return {
+          is: menu.component,
+          ...menu.params,
+          mainPanel: this,
+          switchCurrentMenu: () => this.switchMenu(menu),
+        };
+      }
+      
       return {
-        is: menu.componentName,
-        ...menu.params,
-        mainPanel: this,
-        switchCurrentMenu: () => this.switchMenu(menu),
-      };
+        target: '_blank',
+        rel: 'noopener',
+        is: 'iframe',
+        src: menu.src,
+        height: "100%",
+        width: "100%",
+        style: "vertical-align:top",
+        webpreferences: 'nodeIntegration=true, contextIsolation=false'
+      }
     },
     addMenu(menu, location){
       location = location || 'top';
@@ -104,7 +118,7 @@ export default {
         return;
       }
 
-      if (menu.componentName) {
+      if (menu.component || menu.src) {
         if(!this.menuPageList.find(x => x.id === menu.id)){
           this.menuPageList.push(menu);
         }

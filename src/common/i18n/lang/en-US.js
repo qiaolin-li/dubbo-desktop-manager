@@ -71,16 +71,6 @@ export default {
         copySuccess : "Copy success",
         collectSuccess : "Successful collection"
     },
-    dynamicForm: {
-        validateMessage: {
-            timeOutNotNull: "The timeout period cannot be empty",
-            inputNumber: " Please enter the first group now",
-            inputNumberRange: "Must be greater than 10ms",
-            inputName: "Please enter a link name",
-            rangeLimit: "The value contains 1 to 32 characters",
-            inputConnectionAddress: "Please enter the link address",
-        },
-    },
     telnetTerminal: {
         connecting: "connecting {ip} {port}",
         connectionTimeout: "Connection timed out, please check the network! {ip} {port} ",
@@ -92,6 +82,11 @@ export default {
         name: "name",
         type: "type",
         save: "save",
+        validateMessage: {
+            inputName: "Please enter a link name",
+            rangeLimit: "The value contains 1 to 32 characters",
+        },
+
         createSuccess:"Adding a connection succeeded!",
         updateSuccess:"Succeeded in modifying the connection!",
         open: "Open Datasource",
@@ -102,11 +97,10 @@ export default {
       
         getFromDataError: "Get data source form error! Reason: {e}",
         getServiceListError:"Error getting service list! The reason:{e}",
-        getProviderListError:"Error getting provider list! The reason:{e}",
-        getConsumerListError:"Error getting list of fetch consumers! The reason:{e}",
         invokeMethodError:"Call interface error! Reason :{e}",
-        disableProviderError: "Failed to disable provider! Reason: {e}",
-        enableProviderError: "Provider enablement failed! Reason: {e}",
+    },
+    service: {
+        callTitle: "call {address}",
     },
     collect: {
         collect: "collect",
@@ -120,4 +114,8 @@ export default {
         name: "name",
         update: "update",
     },
+    plugin: {
+        addPlugin: "Add Plugin",
+        confirmDeleteConnect: "This action will remove the plug-in. Do you want to continue?",
+    }
 }

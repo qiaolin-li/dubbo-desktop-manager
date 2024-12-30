@@ -1,6 +1,6 @@
 <template>
   <div class="container">
-    <div  v-for="dataSourceInfo in dataSourceInfoList" :key="dataSourceInfo.name">
+    <div  v-for="dataSourceInfo in dataSourceInfoList" :key="dataSourceInfo._id">
       <!-- zk 连接 -->
       <div class="connectContainer element-hover notSelect"  @dblclick="openConnect(dataSourceInfo)" @contextmenu.stop="openMenuList($event, dataSourceInfo)">
         <!-- zk 连接名称 -->
@@ -15,7 +15,7 @@
             <i class="el-icon-edit iconButton" @click.stop="() => $emit('editConnect', dataSourceInfo._id)"></i>
           </el-tooltip>
           <el-tooltip effect="light" :content="$t('base.delete')" placement="right-start">
-            <i class="el-icon-delete iconButton" @click.stop="deleteConnect($event,dataSourceInfo._id)"></i>
+            <i class="el-icon-delete iconButton" @click.stop="deleteConnect(dataSourceInfo._id)"></i>
           </el-tooltip>
         </div>
       </div>
@@ -61,7 +61,7 @@ export default {
         id: dataSourceInfo._id, 
         label: dataSourceInfo.name,
         icon: iconList[iconIndex % iconList.length],
-        componentName: 'serviceManager', 
+        component: 'serviceManager', 
         closable: true,
         params: {
           dataSourceInfo

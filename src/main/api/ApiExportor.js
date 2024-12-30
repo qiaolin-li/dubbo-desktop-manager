@@ -25,18 +25,6 @@ class ApiExportor {
         this.server.startListener(this);
     }
 
-    exportApi() {
-        //第一个参数表示相对的文件目录，第二个参数表示是否包括子目录中的文件，第三个参数表示引入的文件匹配的正则表达式。
-        const context = require.context('@/main/', true, /remoteApi\.js$/);
-        context.keys().forEach((key) => {
-            let modules = context(key).default || [];
-            modules.forEach(module => {
-                this.registry(module.target, module.name);
-                logger.info(`API Exportor module: ${module.name}`);
-            });
-        })
-    }
-
     async invokeMethod(moduleName, method, args){
         try{
             let obj = ALREADY_REGISTERED_MODULES.get(moduleName);
@@ -54,14 +42,13 @@ class ApiExportor {
         }
     }
     
-    registry(target, moduleName) {
-        moduleName = moduleName || target.name;
-    
+    registry(moduleName, target) {
         // 模块名不能为空
         if (!moduleName) {
             throw new Error("模块必须拥有一个模块名，请在对象中配置name值");
         }
     
+        logger.info(`API Exportor module: ${moduleName}`);
         // 缓存模块
         ALREADY_REGISTERED_MODULES.set(moduleName, target);
     }

@@ -8,7 +8,7 @@ Vue.use(VueI18n)
 
 let locale =  appConfig.getProperty("systemLocale");
 if(!locale && process.type != "renderer"){
-    let osLocale = locale = sync();
+    const osLocale = locale = sync();
     appConfig.setProperty("systemLocale", osLocale);
 }
 

@@ -1,6 +1,7 @@
-import fs                       from 'fs';
 import constant                 from '@/main/common/Constant'
 import windowHolder             from '@/main/common/holder/WindowHolder.js';
+import appConfig                from "@/main/common/config/appConfig.js";
+
 
 // eslint-disable-next-line no-undef
 const requireFunc = typeof __webpack_require__ === 'function' ? __non_webpack_require__ : require
@@ -19,18 +20,6 @@ class NpmUtils {
             process.argv.push(modules[i]);
         }
 
-
-        // process.stdin.on('data', (data) => {
-        //     console.log(data);
-        //     // windowHolder.getWindow().webContents.send(`pluginOperationLog`, data);
-        // });
-    
-        // process.stdout.on('data', (data) => {
-        //     console.log(data);
-        //     // windowHolder.getWindow().webContents.send(`pluginOperationLog`, data);
-        // });
-
-        // const Npm = require( 'npm/lib/npm.js')
         const Npm = requireFunc(`${constant.APPLICATION_NPM_PATH_PREFIX}/lib/npm.js`)
 
         class MyNpm extends Npm {
@@ -44,14 +33,14 @@ class NpmUtils {
             output(...msg) {
                 this.message += msg
                 if(this.message.lastIndexOf('\n') == this.message.length - 1){
-                    windowHolder.getWindow().webContents.send(`pluginOperationLog`, this.message);
+                    windowHolder.send(`pluginOperationLog`, this.message);
                     this.message = '';
                 }
             }
             outputError(...msg) {
                 this.message += msg
                 if(this.message.lastIndexOf('\n') == this.message.length - 1){
-                    windowHolder.getWindow().webContents.send(`pluginOperationLog`, this.message);
+                    windowHolder.send(`pluginOperationLog`, this.message);
                     this.message = '';
                 }
             }
@@ -70,8 +59,9 @@ class NpmUtils {
         }
     
         await npm.load()
-        npm.config.set('registry', 'https://registry.npmmirror.com/')
-        let cmd = npm.argv.shift()
+        const npmRegistry = await appConfig.getProperty("npmRegistry") || "https://registry.npmjs.com/";
+        npm.config.set('registry', npmRegistry)
+        const cmd = npm.argv.shift()
         await npm.exec(cmd, npm.argv)
 
         return npm.message;

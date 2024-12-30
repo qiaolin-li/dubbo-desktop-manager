@@ -1,6 +1,6 @@
 
 
-
+# 渲染端API
 
 注册Vue组件
 
@@ -8,7 +8,94 @@ component(name, component)
 
 
 
-配置：
+### 数据源信息编辑组件
+
+```js
+/**
+ * 注册一个数据源信息编辑组件
+ * @param { string } type 数据源类型
+ * @param { VueComponent } component Vue组件
+ * @param { object} options 选项，
+ *	options = {
+ *		label: ""     // 展示的标题
+ *	}
+ */
+registryDataSourceUpdateComponent(type, component, options);
+
+
+// 注册一个数据源信息编辑组件
+import Zookeeper                  from "@/renderer/views/edit/Zookeeper.vue";
+appRenderer.registryDataSourceUpdateComponent("zookeeper", Zookeeper, { label: "Zookeeper" });
+
+
+```
+
+
+
+### 服务管理页面
+
+```js
+/**
+ * 注册服务管理组件
+ * @param {*} serviceType 服务类型
+ * @param {*} component 组件
+ * @param {*} options 配置选项
+ */
+registryServicePageComponent(serviceType, component, options) {
+        
+// 注册服务管理组件
+import dubboPage                  from '@/renderer/views/dubbo/index.vue';
+appRenderer.registryServicePageComponent('dubbo', dubboPage);
+```
+
+
+
+### 服务调用页面
+
+```js
+/**
+ * 注册服务调用组件
+ * @param {*} serviceType  服务类型
+ * @param {*} component  组件
+ * @param {*} options  配置选项
+ */
+registryServicInvokeComponent(serviceType, component, options) {
+    
+// 注册服务调用组件，方便直接打开调用页面    
+import dubboInvoke                from "@/renderer/views/dubbo/dubbo-invoke.vue";
+appRenderer.registryServicInvokeComponent('dubbo', dubboInvoke);
+```
+
+
+
+
+
+###  插件配置组件
+
+```js
+/**
+ * 注册一个设置组件，方便用户配置
+ * @param {*} label 设置的标题
+ * @param {*} component vue组件
+ * @param {*} options 选项
+ *	options = {
+ *		label: ""     // 展示的标题
+ *	}
+ */
+registrySettingComponent(label, component, options) {
+
+// 注册组件配置页面
+import settings                   from '@/renderer/views/settings/index.vue';
+appRenderer.registrySettingComponent("Dubbo Settings", settings, {});
+```
+
+
+
+
+
+
+
+## 配置
 
 操作插件配置API
 
@@ -28,21 +115,7 @@ $getPluginConfigs()
 
 
 
-如果你想让用户可以设置参数，你可以使用 `addPluginSettingComponent(componentInfo)` 方法来设置面板
-
-```javascript
-# 向ddm平台注册一个设置组件，当用户打开设置页面时会将其渲染
-appRendererCore.addPluginSettingComponent({
-    name: "Dubbo Settings",
-    componentName: 'dubbo-settings',
-});
-```
-
-
-
-
-
-菜单：
+## 菜单
 
 增加左侧边栏菜单
 
@@ -61,11 +134,13 @@ menu =  {
 
 
 
+
+
+## 动作
+
 普通菜单：
 
 普通菜单是为了插件扩展现有能力开放的，他可以嵌入现有能力，如扩展服务列表菜单、服务收藏菜单、历史调用记录菜单等...
-
-
 
 TODO 这里需要补上图说明
 
@@ -85,31 +160,7 @@ menuConfig 字段如下：
 
 
 
-i18n国际化
-
-registryPluginLocal  (locale, message) 
-
-插件可以注册自己的语言包，支持多语言，注册的key默认会加上 `pluginLocale.${pluginId}.`前缀，防止和系统语言包冲突
-
-
-
- $pluginT(key,  ....) 
-
-插件可以使用该方法获取自己设置的语言包
-
- 
-
-$t(key,  ....)
-
-如果插件需要获取系统的语言包，那么需要使用t方法
-
-
-
-
-
-
-
-事件
+## 事件
 
 on(event, callback)
 

@@ -1,41 +1,39 @@
 <template>
   <div>
-    <el-tabs v-model="currentType" v-if="isCreate" @tab-click="init" >
-      <el-tab-pane v-for="item in options" :key="item.type" :label="item.label" :name="item.type" />
+    <el-tabs v-model="currentType" v-if="isCreate" @tab-click="datasourceUpdateComponent = dataSourceUpdateComponentList.find(o => o.type === currentType)" >
+      <el-tab-pane v-for="item in dataSourceUpdateComponentList" :key="item.type" :label="item.label" :name="item.type" />
     </el-tabs>
   
-    <dynamicForm ref="dynamicForm" :ruleForm="ruleForm" :formConfig="formConfig">
-      <template v-slot:top>
-        <el-form-item :label="$t('connect.type')" prop="type"  v-if="!isCreate" >
-          <el-input v-model="(options.find(o => o.type === ruleForm.type) || {}).label" disabled></el-input>
-        </el-form-item>
-        <el-form-item :label="$t('connect.name')" prop="name">
-          <el-input v-model="ruleForm.name"></el-input>
-        </el-form-item>
-      </template>
+    <el-form label-position="right" label-width="120px" :model="ruleForm" ref="form"  >
+      <el-form-item :label="$t('connect.type')" prop="type"  v-if="!isCreate" >
+        <el-input v-model="(dataSourceUpdateComponentList.find(o => o.type === ruleForm.type) || {}).label" disabled></el-input>
+      </el-form-item>
+      <el-form-item :label="$t('connect.name')" prop="name" :rules="nameRule">
+        <el-input v-model="ruleForm.name"></el-input>
+      </el-form-item>
+    </el-form>
+    <component v-if="datasourceUpdateComponent" ref="datasourceUpdateComponent" :is="datasourceUpdateComponent.component" />
+
+    <el-form label-position="right" label-width="120px" ref="form2"  >
       <el-form-item>
         <el-button type="primary" @click="saveDataSourceInfo">{{$t('connect.save')}}</el-button>
       </el-form-item>
-    </dynamicForm>
+    </el-form>
   </div>
 </template>
 
 <script>
 import dataSourceRepository from "@/renderer/api/DataSourceRepositoryClient.js";
-import dynamicForm from "@/renderer/components/dynamicForm.vue";
-import dataSource from "@/renderer/api/DataSourceClient.js";
 
 export default {
-  components: {
-    dynamicForm
-  },
   data() {
     return {
-      currentType: "zookeeper",
+      currentType: "",
       isCreate : true,
       ruleForm: {},
-      formConfig: [],
-      options: [],
+      dataSourceUpdateComponentList: [],
+      datasourceUpdateComponent: null,
+
     };
   },
   props: {
@@ -48,47 +46,65 @@ export default {
       },
     }
   },
+  computed: {
+    nameRule(){
+      return [
+        { required: true, message: this.$t('connect.validateMessage.inputName'), trigger: "blur" },
+        {
+          min: 1,
+          max: 32,
+          message: this.$t('connect.validateMessage.rangeLimit'),
+          trigger: "blur",
+        },
+      ];
+    } 
+  },
   async mounted() {
-    this.options = await dataSource.getDataSourceList();
-    this.currentType = this.options[0].type;
+    this.dataSourceUpdateComponentList = this.$appRenderer.getPluginDataSourceUpdateComponentList();
+    this.datasourceUpdateComponent = this.dataSourceUpdateComponentList[0];
+    this.currentType = this.dataSourceUpdateComponentList[0].type;
     this.init();
   },
   methods: {
     async init() {
-      
-      let ruleForm ;
-      let formConfig;
-      if (this.id) {
-        ruleForm = await dataSourceRepository.findById(this.id);
-        formConfig = await dataSource.getFormConfig(ruleForm.type);
-      } else {
-        // 生成默认值
-        formConfig = await dataSource.getFormConfig(this.currentType);
-        ruleForm = {
-          name: "",
-          type: this.currentType
-        };
-        for(let i = 0; i < formConfig.properties.length; i++) {
-          const item = formConfig.properties[i];
-          ruleForm[item.name] = item.default || '';
-          if(item.type === 'selectAndInput'){
-            ruleForm[item.selectName] = item.defaultSelect || '';
-          }
-        }
-      }
-      
       this.isCreate = this.id ? false : true;
-      this.ruleForm = ruleForm;
-      this.formConfig = formConfig.properties;
+
+      if (this.id) {
+        this.ruleForm = await dataSourceRepository.findById(this.id);
+        this.currentType = this.ruleForm.type;
+        this.datasourceUpdateComponent = this.dataSourceUpdateComponentList.find(o => o.type === this.currentType)
+      }  
+
+      this.$nextTick(() => {
+        this.$refs.datasourceUpdateComponent.init({...this.ruleForm});
+      })
     },
     saveDataSourceInfo() {
-      this.$refs.dynamicForm.submit(async () => {
-          await dataSourceRepository.save(this.ruleForm);
-          this.$message({
-            type: "success",
-            message: this.isCreate ? this.$t('connect.createSuccess') : this.$t('connect.updateSuccess'),
-          });
-          this.$emit("saveSuccess", this.ruleForm);
+      this.$refs.form.validate(async (valid) => {
+        if (!valid) {
+          return false;
+        }
+
+        const properties = await this.$refs.datasourceUpdateComponent.getDataSourceInfo();
+        if(!properties ||  typeof properties !== 'object'){
+          return false;
+        }
+
+        const dataSourceInfo = {
+          ...properties,
+          _id: this.ruleForm._id,
+          name: this.ruleForm.name,
+          type: this.isCreate ? this.datasourceUpdateComponent.type :this.ruleForm.type,
+        }
+
+        await dataSourceRepository.save(dataSourceInfo);
+
+        this.$message({
+          type: "success",
+          message: this.isCreate ? this.$t('connect.createSuccess') : this.$t('connect.updateSuccess'),
+        });
+
+        this.$emit("saveSuccess", dataSourceInfo);
       });
     }
   },

@@ -71,16 +71,6 @@ export default {
         copySuccess : "复制成功",
         collectSuccess : "收藏成功"
     },
-    dynamicForm: {
-        validateMessage: {
-            timeOutNotNull: "超时时间不能为空",
-            inputNumber: "请输入数字",
-            inputNumberRange: "必须大于10ms",
-            inputName: "请输入链接名称",
-            rangeLimit: "长度在 1 到 32 个字符",
-            inputConnectionAddress: "请输入链接地址",
-        },
-    },
     telnetTerminal: {
         connecting: "正在连接 {ip} {port}",
         connectionTimeout: "连接超时，请检查网络! {ip} {port} ",
@@ -92,6 +82,11 @@ export default {
         name: "链接名称",
         type: "类型",
         save: "立即创建",
+
+        validateMessage: {
+            inputName: "请输入链接名称",
+            rangeLimit: "长度在 1 到 32 个字符",
+        },
         
         createSuccess:"新增连接成功!",
         updateSuccess:"修改连接成功!",
@@ -103,11 +98,10 @@ export default {
 
         getFromDataError: "获取数据源表单错误! 原因: {e}",
         getServiceListError:"获取服务列表错误! 原因: {e}",
-        getProviderListError:"获取提供者列表错误! 原因: {e}",
-        getConsumerListError:"获取提消费者列表错误! 原因: {e}",
         invokeMethodError:"调用接口错误! 原因:{e}",
-        disableProviderError: "禁用提供者失败！原因：{e}",
-        enableProviderError: "启用提供者失败！原因：{e}",
+    },
+    service: {
+        callTitle: "调用 {address}",
     },
     collect: {
         collect: "收藏接口",
@@ -121,4 +115,8 @@ export default {
         name: "名称",
         update: "修改",
     },
+    plugin: {
+        addPlugin: "新增插件",
+        confirmDeleteConnect: "此操作将移除插件, 是否继续?",
+    }
 }

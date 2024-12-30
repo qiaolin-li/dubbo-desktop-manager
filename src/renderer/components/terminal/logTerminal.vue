@@ -6,7 +6,7 @@
 import { Terminal } from "xterm";
 import { FitAddon } from "xterm-addon-fit";
 import "xterm/css/xterm.css";
-
+import lodash from 'lodash';
 
 export default {
   name: "log-terminal",
@@ -67,6 +67,14 @@ export default {
       window.addEventListener('resize', () => {
         fitAddon.fit()
       });
+
+      const debounceFit = lodash.debounce(() => fitAddon.fit() , 500);
+      const ro = new ResizeObserver(() => {
+        debounceFit();
+      });
+
+      // 观察一个或多个元素
+      ro.observe(terminalContainer);
 
       term.focus()
       term.prompt = () => {

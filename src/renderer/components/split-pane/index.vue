@@ -51,7 +51,8 @@
       }
     },
     watch: {
-      defaultPercent(newValue,oldValue){
+      // eslint-disable-next-line no-unused-vars
+      defaultPercent(newValue, oldValue){
         this.percent = newValue
       }
     },

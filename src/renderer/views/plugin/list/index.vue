@@ -6,7 +6,7 @@
         <el-tab-pane label="已安装" name="installed">
             <installed @selectPlugin="(item) => $emit('selectPlugin', item)"></installed>
         </el-tab-pane>
-        <el-tab-pane label="插件开发列表" name="development">
+        <el-tab-pane label="本地插件" name="development">
             <development @selectPlugin="(item) => $emit('selectPlugin', item)"></development>
         </el-tab-pane>
     </el-tabs>
@@ -37,7 +37,22 @@ export default {
 </script>
 
 <style>
+.plugin-list-container{
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
 .plugin-list-container .el-tabs__header{
     margin: 0px 0px 0px 5px ;
 }
+.plugin-list-container .el-tabs__content{
+    height: 100%;
+}
+
+.plugin-list-container .el-tab-pane{
+    height: 100%;
+}
+
+
 </style>

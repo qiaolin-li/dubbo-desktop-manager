@@ -14,6 +14,10 @@ import pluginManagerClient      from '@/renderer/api/PluginManagerClient';
 import telnetTerminal           from "@/renderer/components/terminal/telnet-terminal.vue";
 import loading                  from "@/renderer/common/utils/MyLoading";
 import AppRendererPluginCore    from '@/renderer/core/plugin/AppRendenerPlugin.js';
+import { Message }              from 'element-ui';
+import i18n                     from '@/renderer/common/i18n'
+import simpleDialog             from '@/renderer/components/simpleDialog.vue';
+
 
 const remote = require("@electron/remote");
 // eslint-disable-next-line no-undef
@@ -26,12 +30,23 @@ class AppRendenerCore {
     #pluginMenuMap = new Map();
     #pluginSettingComponent = [];
     getPluginSettingComponentList = () => this.#pluginSettingComponent;
-  
+    
+    #pluginDataSourceUpdateComponent = [];
+    getPluginDataSourceUpdateComponentList = () => this.#pluginDataSourceUpdateComponent;
+
+    #servicePageMap = new Map();
+    #serviceInvokeMap = new Map();
+    
     #bus = new Vue();
     on = this.#bus.$on.bind(this.#bus);
     off = this.#bus.$off.bind(this.#bus);
     emit = this.#bus.$emit.bind(this.#bus);
     once = this.#bus.$once.bind(this.#bus);
+
+    $writeClipboard = (text) =>{
+        navigator.clipboard.writeText(text)
+        Message.success(i18n.t('editor.copySuccess'));
+    }
 
     async init(Vue) {
         this.installCommonComponents(Vue);
@@ -60,22 +75,28 @@ class AppRendenerCore {
         Vue.prototype.$appRenderer = this;
         Vue.prototype.$bus = this.#bus
 
-        Vue.prototype.$writeClipboard = function(text) {
-            navigator.clipboard.writeText(text)
-            this.$message({
-                type: "success",
-                message: this.$t('editor.copySuccess'),
-            });
-        }
+        Vue.prototype.$writeClipboard = this.$writeClipboard;
     }
     
     async loadPlugin () {
-        const rendenerPaths = await pluginManagerClient.getPluginRendererModules();
+        const pluginInfos = await pluginManagerClient.getPluginModules();
         
-        rendenerPaths.forEach(async (path) => {
+        pluginInfos.forEach(async (plugin) => {
             try {
-                const module = requireFunc(path);
-                await module.install(new AppRendererPluginCore(this, 'ddm-plugin-dubbo-support'));
+                // 1、创建插件核心对象
+                const appPluginCore = new AppRendererPluginCore(this, plugin.name);
+
+                // 2、加载插件国际化文件
+                if(plugin.i18nPath) {
+                    const i18nModule = requireFunc(plugin.i18nPath)(appPluginCore.geti18nRegistrar());
+                    await i18nModule.install();
+                }
+
+                // 3、加载插件渲染逻辑
+                if(plugin.rendenerPath) {
+                    const module = requireFunc(plugin.rendenerPath)(appPluginCore);
+                    await module.install();
+                }
             } catch (error) {
                 console.error(error);
             }
@@ -105,12 +126,12 @@ class AppRendenerCore {
 
 
     fillPluginMenu(module, menuTemplate, ...args) {
-        const pluginMenuList = this.#pluginMenuMap.get(module) || [];
-        if (!pluginMenuList || pluginMenuList.length <= 0) {
+        const pluginActionList = this.#pluginMenuMap.get(module) || [];
+        if (!pluginActionList?.length) {
             return;
         }
 
-        pluginMenuList.forEach((item) => {
+        pluginActionList.forEach((item) => {
             const {group, relativeMenu, anchor, test} = item;
 
             if(test && !test(...args)){
@@ -146,10 +167,56 @@ class AppRendenerCore {
         });
       }
 
+    addDataSourceUpdateComponent(componentInfo) {
+      this.#pluginDataSourceUpdateComponent.push(componentInfo);
+    }
+
     addPluginSettingComponent(componentInfo) {
       componentInfo.id ??= this.#pluginSettingComponent.length + 1;
       
       this.#pluginSettingComponent.push(componentInfo);
+    }
+
+    addServicePageComponent(serviceType, component) {
+      this.#servicePageMap.set(serviceType, component);
+    }
+
+    getServicePageComponent(serviceType) {
+      return this.#servicePageMap.get(serviceType);
+    }
+
+    addServiceInvokeComponent(serviceType, component) {
+      this.#serviceInvokeMap.set(serviceType, component);
+    }
+
+    getServiceInvokeComponent(serviceType) {
+      return this.#serviceInvokeMap.get(serviceType);
+    }
+
+
+    openDialog(dialogInfo) {
+        const DialogConstructor = Vue.extend(simpleDialog);
+        const instance = new DialogConstructor({
+            propsData: {
+                ...dialogInfo
+            }
+        })
+
+        // 创建一个新的元素来挂载对话框
+        const dialogContainer = document.createElement('div');
+
+        // 将对话框挂载到新创建的元素上
+        instance.$mount(dialogContainer);
+
+        // 将新创建的元素添加到 body
+        document.body.appendChild(instance.$el);
+
+        // 打开 Dialog
+        instance.show();
+    }
+
+    notify({ title, body }) {
+        new Notification(title, { body: body });
     }
 }
 

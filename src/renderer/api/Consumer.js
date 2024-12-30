@@ -1,19 +1,18 @@
 const { ipcRenderer } = require('electron')
 const axios = require('axios').default;
-import pkg from "../../../package.json";
-
-const IS_DEVELOPMENT = process.env.NODE_ENV !== 'production'
-
-const COMMUNICATION_CHANEL = "ipc-main-unify";
-const COMMUNICATION_CONSUMER_CHANNEL = `ipc-rendenerer-unify_${Math.random()}`;
-const waitResponsePromiseMap = new Map();
 
 class Consumer{
 
     constructor(){
-        this.invoker = (IS_DEVELOPMENT || window.appConfig.getProperty('developer-model')) ? new HttpClient() : new IpcClient();
+        this.invoker = (window.constant.IS_DEVELOPMENT || window.appConfig.getProperty('developer-model')) ? new HttpClient() : new IpcClient();
     }
 
+    /**
+     * 包装对象，转发调用方法到main进程
+     * @param {*} target 
+     * @param {*} moduleName 
+     * @returns target
+     */
     wrapper(target, moduleName) {
         moduleName = moduleName || target.name;
     
@@ -24,12 +23,13 @@ class Consumer{
         
         const invoker = this.invoker;
         const handler = {
+            // eslint-disable-next-line no-unused-vars
             get(target, method, proxy) {
-                let result = target[method];
+                // let result = target[method];
     
-                if (typeof result != "function") {
-                    return result;
-                }
+                // if (typeof result != "function") {
+                //     return result;
+                // }
 
                 return async function () {
                     return await invoker.invoke(moduleName, method, [...arguments])
@@ -42,7 +42,7 @@ class Consumer{
 
 class HttpClient{
     async invoke(moduleName, method, args){
-        const response = await axios.post(`http://127.0.0.1:${pkg.port}/api/${moduleName}/${method}`, args);
+        const response = await axios.post(`http://127.0.0.1:${window.constant.API_HTTP_PORT}/api/${moduleName}/${method}`, args);
         if (!response.data.success) {
             require('element-ui').Message({
                 type: "error",
@@ -55,6 +55,10 @@ class HttpClient{
 
 }
 
+
+const COMMUNICATION_CHANEL = "ipc-main-unify";
+const COMMUNICATION_CONSUMER_CHANNEL = `ipc-rendenerer-unify_${Math.random()}`;
+
 class IpcClient{
 
     constructor(){
@@ -66,37 +70,38 @@ class IpcClient{
     }
 
     invoke(moduleName, method, args){
-          const requestId = `${COMMUNICATION_CONSUMER_CHANNEL}-${moduleName}-${method}-${Math.random()}`;
-          // 将参数包装
-          let invocation = {
-              moduleName,
-              method,
-              requestId : requestId,
-              args,
-              replyChannel: COMMUNICATION_CONSUMER_CHANNEL,
-          }
-          
-        // 和主进程进行通讯
-        ipcRenderer.send(COMMUNICATION_CHANEL, invocation);
-            
+        const requestId = `${COMMUNICATION_CONSUMER_CHANNEL}-${moduleName}-${method}-${Math.random()}`;
+        // 将参数包装
+        let invocation = {
+            moduleName,
+            method,
+            requestId : requestId,
+            args,
+            replyChannel: COMMUNICATION_CONSUMER_CHANNEL,
+        }
+        
         let data = new Promise((resolve, reject) => {
             this.waitResponsePromiseMap.set(requestId, {
                 resolve, 
                 reject
             });
         });
+
+        // 和主进程进行通讯
+        ipcRenderer.send(COMMUNICATION_CHANEL, invocation);
+            
         return data;
     }
 
     handlerResponse(response){
         let waitResponsePromise = this.waitResponsePromiseMap.get(response.requestId);
-
-        if(!waitResponsePromise){
-            console.warn("消费者监听器收到未能处理的消息" + JSON.stringify(response));
-            return;
-        }
-
+        
         try {
+            if(!waitResponsePromise){
+                console.warn("消费者监听器收到未能处理的消息" + JSON.stringify(response));
+                return;
+            }
+            
             if (!response.success) {
                 require('element-ui').Message({
                     type: "error",
@@ -108,7 +113,7 @@ class IpcClient{
             // 调用方法的结果
             return waitResponsePromise.resolve(response.data);
         } finally {
-            waitResponsePromiseMap.delete(response.requestId);
+            this.waitResponsePromiseMap.delete(response.requestId);
         }
       
     }

@@ -1,7 +1,7 @@
 <template>
   <div ref="dragTab" class="drag-tab-panel-container">
     <div class="drag-tab-sub-panel" :style="{ flex: collapsed0 ? `0 0 22px` : '' }" >
-      <div class="drag-tab-panel-header notSelect" @click="collapsible && togglePanel(0)">
+      <div class="drag-tab-panel-header notSelect" @click="collapsible && togglePanel(0)" v-if="fisrtTabVisible">
         <div>
           <i class="el-icon-arrow-right expandButton" v-if="collapsible && collapsed0"></i>
           <i class="el-icon-arrow-down expandButton" v-if="collapsible && !collapsed0" ></i>
@@ -77,8 +77,13 @@ export default {
     secondDefaultName: {
       type: String,
       required: true,
-    }
+    },
+    fisrtTabVisible: {
+      type: Boolean,
+      default: true,
+    },
   },
+
   mounted() {
     this.collapsed1 = this.collapsible;
     
@@ -89,7 +94,7 @@ export default {
         x.elm.style.display = 'none';
       }
     });
-    this.$slots.fisrtToolBar.forEach(x => {
+    (this.$slots.fisrtToolBar || []).forEach(x => {
       if(x.componentInstance && this.fisrtSelectedName !== x.componentInstance.name){
         x.elm.style.display = 'none';
       }

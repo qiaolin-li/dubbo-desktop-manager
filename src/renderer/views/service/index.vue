@@ -2,7 +2,7 @@
   <split-pane @resize="resize" split="vertical" :min-percent="10" :default-percent="20">
     <template slot="paneL">
       <dragPane>
-        <template slot="fisrtTitle">{{dataSourceInfo.name}}</template>
+        <template slot="fisrtTitle">{{ dataSourceInfo.name }}</template>
         <template slot="fisrtToolBar">
           <el-tooltip effect="light" :content="$t('refresh')" placement="right-start">
             <i class="el-icon-refresh iconButton" @click.stop="() => $refs.serviceTree.findList()"></i>
@@ -10,7 +10,7 @@
           <span class="serviceSizeTool">{{$t('count') }}:{{serviceCount}} </span>
         </template>
         <template slot="fisrtContent">
-          <serviceTree ref="serviceTree"  @interfaceCountChange="count => serviceCount = count"  @collectService="(collectInfo) => $refs.collectItem.openCollectDialog(collectInfo)" />
+          <serviceTree ref="serviceTree"   @interfaceCountChange="count => serviceCount = count"  @collectService="(collectInfo) => $refs.collectItem.openCollectDialog(collectInfo)" />
         </template>
 
         <template slot="secondTitle">{{ $t('menu.myCollection') }}</template>
@@ -63,6 +63,8 @@ export default {
       mainPanel: this,
       dataSourceInfo: this.dataSourceInfo,
       dataSourceId: this.dataSourceInfo._id,
+      
+      addTab: this.addTab,
       openServiceInfoPage: this.openServiceInfoPage,
       collectService:(collectInfo) => this.$refs.collectItem.openCollectDialog(collectInfo)
     }
@@ -73,7 +75,7 @@ export default {
       this.addTab({
         title: title,
         fullTitle: fullTitle,
-        componentName: 'dubboPage',
+        component: this.$appRenderer.getServicePageComponent(serviceInfo.type || "dubbo"),
         params: {
           serviceInfo
         }
@@ -82,6 +84,14 @@ export default {
     addTab(tabInfo) {
       this.$refs.myTabs.addTab(tabInfo);
     },
+
+    getServiceManager() {
+      return {
+        addTab: (tabInfo) => {
+          this.addTab(tabInfo);
+        },
+      };
+    }
   },
 }
 </script>

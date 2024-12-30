@@ -1,6 +1,6 @@
-import lowdb from "lowdb"
-import FileSync from "lowdb/adapters/FileSync.js"
-import constant from "@/main/common/Constant.js";
+import lowdb                from "lowdb"
+import FileSync             from "lowdb/adapters/FileSync.js"
+import constant             from "@/main/common/Constant.js";
 
 
 class AppConfig {

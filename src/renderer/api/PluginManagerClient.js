@@ -1,15 +1,15 @@
 /* eslint-disable no-unused-vars */
 import consumer from './Consumer';
 
-class Plugin {
+class PluginManagerClient {
 
-    search(keyword){}
+    addDevelopmentPlugin(pluginPath) {}
 
-    getDevelopmentPluginList(keyword){}
+    removeDevelopmentPlugin(pluginPath) {}
+
+    getDevelopmentPluginList(){}
     
-    getInstalledPluginList(keyword) { }
-
-    getReadMeFile(plugin) {}
+    getInstalledPluginList() { }
 
     install(plugin) {}
 
@@ -17,8 +17,8 @@ class Plugin {
 
     uninstall(plugin) {}
 
-    getPluginRendererModules(pluginId) {}
+    getPluginModules() {}
 }
 
 
-export default consumer.wrapper(new Plugin(), "pluginManager");
+export default consumer.wrapper(new PluginManagerClient(), "pluginManager");

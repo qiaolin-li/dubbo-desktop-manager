@@ -8,6 +8,7 @@
       </el-tabs>
     </div>
     <div class="mytab-container-view" v-show="tabList.length > 0">
+      <!-- eslint-disable-next-line vue/require-component-is -->
       <component v-bind="componentProps(tab)" v-for="tab in tabList" :key="tab.id" v-show="currentTabId == tab.id" />
     </div>
     <welcome v-if="tabList.length == 0" />
@@ -130,7 +131,7 @@ export default {
         fullTitle: tabInfo.fullTitle || tabInfo.title,
         primaryKey: tabInfo.primaryKey || tabInfo.fullTitle || tabInfo.title,
         src: tabInfo.src,
-        componentName: tabInfo.componentName,
+        component: tabInfo.component,
         closable: tabInfo.closable === false ? false : true,
         params: tabInfo.params,
       };
@@ -212,16 +213,21 @@ export default {
       }
     },
     componentProps(tab) {
-      if (tab.componentName) {
+      if (tab.component) {
         return {
-          is: tab.componentName,
+          is: tab.component,
           ...tab.params
         };
       }
 
       return {
-        is: 'webview',
+        target: '_blank',
+        rel: 'noopener',
+        is: 'iframe',
         src: tab.src,
+        height: "100%",
+        width: "100%",
+        style: "vertical-align:top",
         webpreferences: 'nodeIntegration=true, contextIsolation=false'
       }
     },
