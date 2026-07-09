@@ -1,0 +1,16 @@
+{
+    "name": "@ddm-center/create-plugin",
+    "version": "0.0.2",
+    "description": "Create a mixed renderer and main plugin project for Dubbo Desktop Manager.",
+    "bin": {
+        "create-plugin": "bin/create-plugin.js"
+    },
+    "files": [
+        "README.md",
+        "bin",
+        "templates"
+    ],
+    "engines": {
+        "node": ">=14"
+    }
+}

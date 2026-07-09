@@ -7,74 +7,91 @@
     "email": "992004863@qq.com",
     "url": "https://github.com/qiaolin-li/dubbo-desktop-manager"
   },
-  "version": "1.0.9",
+  "version": "2.0.0",
   "private": true,
+  "port": {
+    "dev": 34567,
+    "prod": 34568
+  },
   "scripts": {
-    "lint": "vue-cli-service lint",
-    "build": "vue-cli-service electron:build",
-    "debugStart": "vue-cli-service electron:serve --inspect=5858",
-    "start": "vue-cli-service electron:serve",
+    "lint": "eslint --ext .js,.vue src",
+    "format": "prettier --write \"src/**/*.{js,vue,json}\"",
+    "format:check": "prettier --check \"src/**/*.{js,vue,json}\"",
+    "build": "electron-vite build && electron-builder",
+    "debugStart": "(chcp 65001 || true) && electron-vite dev --inspect=5858",
+    "start": "(chcp 65001 || true) && electron-vite dev",
     "postinstall": "patch-package && electron-builder install-app-deps",
     "postuninstall": "electron-builder install-app-deps",
-    "release": "vue-cli-service electron:build  --publish always",
+    "publish:plugin-api": "npm publish ./packages/plugin-api --access public",
+    "publish:create-plugin": "npm publish ./packages/create-ddm-plugin --access public",
+    "publish:plugin-tools": "npm run publish:plugin-api && npm run publish:create-plugin",
+    "release": "electron-vite build && electron-builder --publish always",
     "patch": "npm version patch && git push origin master && git push origin --tags",
     "minor": "npm version minor && git push origin master && git push origin --tags",
     "major": "npm version major && git push origin master && git push origin --tags"
   },
-  "main": "background.js",
+  "main": "out/main/background.js",
   "dependencies": {
     "@electron/remote": "^2.0.1",
-    "@types/lowdb": "^1.0.11",
     "axios": "^0.26.0",
-    "clipboard": "^2.0.11",
-    "codemirror": "^5.64.0",
-    "core-js": "^3.6.5",
-    "custom-electron-titlebar": "file:./custom-electron-titlebar",
-    "electron": "^13.0.0",
-    "electron-devtools-installer": "^3.1.0",
-    "electron-find": "^1.0.7",
-    "element-ui": "^2.15.6",
-    "file": "^0.2.2",
     "fs-extra": "^10.1.0",
-    "js-yaml": "^4.1.0",
-    "json-bigint": "^1.0.0",
-    "jsonlint": "^1.6.3",
+    "log4js": "^6.9.1",
     "lowdb": "^1.0.0",
-    "moment": "^2.29.1",
-    "mousetrap": "^1.6.5",
     "nedb": "^1.8.0",
-    "node-zookeeper-client": "^1.1.1",
-    "os-locale": "^5.0.0",
-    "qs": "^6.11.0",
-    "sortablejs": "^1.15.0",
-    "system": "^2.0.1",
+    "vue-i18n": "6.0.0",
     "telnet-stream": "^1.0.5",
-    "urijs": "^1.19.7",
+    "os-locale": "^5.0.0",
+    "jq-wasm": "^1.1.0-jq-1.8.1",
+    "js-yaml": "^4.1.0",
+    "lodash-es": "^4.18.1",
+    "json-bigint": "^1.0.0",
+    "jsonc-parser": "^3.3.1",
+    "jsonpath-plus": "^10.4.0",
+    "jq-web": "^0.6.2"
+  },
+  
+  "devDependencies": {
+    "@babel/eslint-parser": "^7.28.0",
+    "@types/lowdb": "^1.0.11",
+    "@vitejs/plugin-vue2": "^2.3.4",
+    "@vue/composition-api": "^1.7.2",
+    "electron": "^25.9.8",
+    "electron-builder": "^23.0.6",
+    "electron-devtools-installer": "^3.1.0",
+    "electron-vite": "^5.0.0",
+    "eslint": "^7.32.0",
+    "eslint-config-prettier": "^8.10.2",
+    "eslint-plugin-vue": "^7.20.0",
+    "prettier": "^3.6.2",
+    "patch-package": "^6.4.7",
+    
+    "codemirror": "^5.64.0",
+    "element-ui": "2.15.14",
+    "markdown-it-replace-link": "^1.2.1",
+    "mavon-editor": "^2.10.4",
+    "moment": "^2.29.1",
+    "monaco-editor": "^0.52.2",
+    "mousetrap": "^1.6.5",
+    "npm": "8.19.4",
+    "pinia": "^2.3.1",
+    "sortablejs": "^1.15.0",
+    "vite": "^6",
+    "vite-plugin-monaco-editor": "^1.1.0",
     "vue": "^2.6.11",
     "vue-codemirror": "^4.0.6",
-    "vue-i18n": "6.0.0",
     "vue-infinite-scroll": "^2.0.2",
-    "winston": "^3.8.2",
-    "xlsx": "^0.18.5",
-    "xlsx-style": "^0.8.13",
+    "vue-template-compiler": "^2.6.11",
     "xterm": "^4.17.0",
     "xterm-addon-fit": "^0.5.0",
     "xterm-addon-search": "^0.8.2"
   },
-  "devDependencies": {
-    "@vue/cli-plugin-babel": "~4.5.0",
-    "@vue/cli-plugin-eslint": "~4.5.0",
-    "@vue/cli-service": "^3.9.0",
-    "babel-eslint": "^10.1.0",
-    "electron-builder": "^23.0.6",
-    "eslint": "^6.7.2",
-    "eslint-plugin-vue": "^6.2.2",
-    "patch-package": "^6.4.7",
-    "vue-cli-plugin-electron-builder": "~2.1.1",
-    "vue-template-compiler": "^2.6.11"
+  "initPlugins": {
+    "ddm-plugin-dubbo-support": "0.3.0"
   },
   "resolutions": {
-    "**/commander": "11.1.0"
+    "**/commander": "11.1.0",
+    "**/minimatch": "3.1.2",
+    "**/@achrinza/node-ipc": "9.2.9"
   },
   "eslintConfig": {
     "root": true,
@@ -83,10 +100,12 @@
     },
     "extends": [
       "plugin:vue/essential",
-      "eslint:recommended"
+      "eslint:recommended",
+      "prettier"
     ],
     "parserOptions": {
-      "parser": "babel-eslint"
+      "parser": "@babel/eslint-parser",
+      "requireConfigFile": false
     },
     "rules": {}
   },
@@ -96,8 +115,39 @@
     "not dead"
   ],
   "overrides": {
-    "vue-cli-plugin-electron-builder": {
-      "electron-builder": "^23.0.6"
-    }
+    "htmlparser2": "8.0.2"
+  },
+  "build": {
+    "productName": "Dubbo-Desktop-Manager",
+    "appId": "indi.qiaolin.dubbo.desktop.manager",
+    "copyright": "Copyright © 2021-2099 qiaolin",
+    "directories": {
+      "output": "dist_electron"
+    },
+    "files": [
+      "out/**/*",
+      {
+        "from": "public/plugins",
+        "to": "plugins"
+      },
+      "package.json"
+    ],
+    "afterPack": "./build/afterPack.js",
+    "win": {
+      "target": "nsis"
+    },
+    "nsis": {
+      "oneClick": false,
+      "perMachine": false,
+      "allowToChangeInstallationDirectory": true
+    },
+    "asar": true,
+    "extraResources": [
+      "./node_modules/npm"
+    ],
+    "asarUnpack": [
+      "./jar/**",
+      "./plugins/**"
+    ]
   }
 }

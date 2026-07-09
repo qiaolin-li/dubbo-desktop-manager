@@ -8,6 +8,10 @@
     "module": "commonjs",
     "paths": {
       "@/*": ["./src/*"],
+      "@ddm-center/plugin-api": ["./packages/plugin-api/index.d.ts"],
+      "@ddm-center/plugin-api/*": ["./packages/plugin-api/*"],
+      "appMain": ["./packages/plugin-api/appMain.d.ts"],
+      "appView": ["./packages/plugin-api/appView.d.ts"],
     }
   },
   "exclude": ["node_modules", "dist", "temp"],

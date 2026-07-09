@@ -1,14 +1,14 @@
-import Vue from 'vue'
-import VueI18n from 'vue-i18n'
-import {sync} from 'os-locale'
-import messages from '@/common/i18n/index.js'
-import appConfig from "@/main/common/config/appConfig.js";
+import Vue                      from 'vue'
+import VueI18n                  from 'vue-i18n'
+import {sync}                   from 'os-locale'
+import messages                 from '@/common/i18n/index.js'
+import appConfig                from "@/main/common/config/appConfig.js";
 
 Vue.use(VueI18n)
 
 let locale =  appConfig.getProperty("systemLocale");
 if(!locale && process.type != "renderer"){
-    let osLocale = locale = sync();
+    const osLocale = locale = sync();
     appConfig.setProperty("systemLocale", osLocale);
 }
 
