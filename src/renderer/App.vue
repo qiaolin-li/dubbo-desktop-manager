@@ -1,25 +1,43 @@
 <template>
-  <div id="app">
-    <mainPage />
-  </div>
+  <app-layout />
 </template>
 
 <script>
-import mainPage from '@/renderer/views/index.vue';
+import AppLayout from '@/renderer/layout/index.vue';
+
 export default {
   components: {
-    mainPage
-  },
+    AppLayout,
+  }
 };
 </script>
 <style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-
-  color: #2c3e50;
+html,
+body {
+  width: 100%;
   height: 100%;
+  margin: 0;
+  overflow: hidden;
+  background: var(--app-theme-bg);
+  color: var(--app-theme-text-primary);
+}
+
+#app {
+  font-family: var(--app-font-family);
+  -webkit-font-smoothing: subpixel-antialiased;
+  -moz-osx-font-smoothing: auto;
+  color: var(--app-theme-text-primary);
+  background: var(--app-theme-bg);
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.app-main {
+  flex: 1;
+  min-height: 0;
 }
 
 #nav {

@@ -1,8 +1,10 @@
-import lowdb from "lowdb"
-import FileSync from "lowdb/adapters/FileSync.js"
-import constant from "@/main/common/Constant.js";
+import lowdb                from "lowdb"
+import FileSync             from "lowdb/adapters/FileSync.js"
+import constant             from "@/main/common/Constant.js";
 
-
+/**
+ * 应用配置类，使用 lowdb 进行配置存储
+ */
 class AppConfig {
 
     /**

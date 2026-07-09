@@ -1,0 +1,6 @@
+node_modules
+dist
+dist_electron
+coverage
+public
+release

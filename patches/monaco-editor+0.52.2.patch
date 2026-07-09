@@ -1,0 +1,13 @@
+diff --git a/node_modules/monaco-editor/esm/vs/editor/editor.api.js b/node_modules/monaco-editor/esm/vs/editor/editor.api.js
+index 3c2c332..a497e2f 100644
+--- a/node_modules/monaco-editor/esm/vs/editor/editor.api.js
++++ b/node_modules/monaco-editor/esm/vs/editor/editor.api.js
+@@ -33,7 +33,7 @@ export const Token = api.Token;
+ export const editor = api.editor;
+ export const languages = api.languages;
+ const monacoEnvironment = globalThis.MonacoEnvironment;
+-if (monacoEnvironment?.globalAPI || (typeof define === 'function' && define.amd)) {
++if ((monacoEnvironment && monacoEnvironment.globalAPI) || (typeof define === 'function' && define.amd)) {
+     globalThis.monaco = api;
+ }
+ if (typeof globalThis.require !== 'undefined' && typeof globalThis.require.config === 'function') {

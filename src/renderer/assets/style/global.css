@@ -1,86 +1,321 @@
+html {
+    --app-font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+    --app-theme-bg: #f6f8fa;
+    --app-theme-surface: #ffffff;
+    --app-theme-surface-elevated: #f6f8fa;
+    --app-theme-sidebar-bg: #f6f8fa;
+    --app-theme-panel-muted: #f3f4f6;
+    --app-theme-border: #d0d7de;
+    --app-theme-border-strong: #afb8c1;
+    --app-theme-text-primary: #24292f;
+    --app-theme-text-secondary: #57606a;
+    --app-theme-text-tertiary: #6e7781;
+    --app-theme-hover-background: rgba(208, 215, 222, 0.32);
+    --app-theme-active-background: rgba(9, 105, 218, 0.12);
+    --app-theme-accent: #0969da;
+    --app-theme-accent-soft: rgba(9, 105, 218, 0.14);
+    --app-theme-control-bg: #ffffff;
+    --app-theme-control-bg-hover: #f6f8fa;
+    --app-theme-control-border: #d0d7de;
+    --app-theme-control-border-hover: #afb8c1;
+    --app-theme-control-focus: #0969da;
+    --app-theme-mask: rgba(27, 31, 36, 0.38);
+    --app-theme-tooltip-bg: #ffffff;
+    --app-theme-tooltip-border: #d0d7de;
+    --app-theme-tooltip-text: #24292f;
+    --app-theme-dialog-header-bg: #f6f8fa;
+    --app-theme-dialog-footer-border: #d0d7de;
+    --app-theme-shadow: 0 12px 28px rgba(31, 35, 40, 0.12);
+    --app-theme-button-bg: #f6f8fa;
+    --app-theme-button-text: #24292f;
+    --app-theme-button-border: #d0d7de;
+    --app-theme-button-hover-bg: #f3f4f6;
+    --app-theme-button-hover-text: #24292f;
+    --app-theme-button-hover-border: #afb8c1;
+    --app-theme-button-primary-bg: #1f883d;
+    --app-theme-button-primary-text: #ffffff;
+    --app-theme-button-primary-border: rgba(31, 35, 40, 0.15);
+    --app-theme-button-primary-hover-bg: #1a7f37;
+    --app-theme-button-primary-hover-border: rgba(31, 35, 40, 0.15);
+    --app-theme-titlebar-bg: #f6f8fa;
+    --app-theme-titlebar-tab-bg: #f6f8fa;
+    --app-theme-titlebar-tab-active-bg: #ffffff;
+    --app-theme-titlebar-tab-border: #d0d7de;
+    --app-theme-titlebar-tab-text: #57606a;
+    --app-theme-titlebar-tab-active-text: #24292f;
+    --app-theme-titlebar-tab-hover-bg: #ffffff;
+    --app-theme-titlebar-tab-accent: #fd8c73;
+    --app-theme-tabs-bg: #f6f8fa;
+    --app-theme-tabs-surface: #ffffff;
+    --app-theme-tabs-muted: #f3f4f6;
+    --app-theme-tabs-border: #d0d7de;
+    --app-theme-tabs-text: #57606a;
+    --app-theme-tabs-active-text: #24292f;
+    --app-theme-tabs-close-hover-bg: rgba(9, 105, 218, 0.12);
+    --app-theme-tabs-close-hover-text: #0969da;
+    --app-theme-statusbar-bg: #f6f8fa;
+    --app-theme-statusbar-border: #d0d7de;
+    --app-theme-statusbar-text: #57606a;
+    --app-theme-statusbar-hover-bg: rgba(208, 215, 222, 0.32);
+    --app-theme-statusbar-hover-text: #24292f;
+    --app-theme-statusbar-warning: #9a6700;
+    --app-theme-workbench-bg: #ffffff;
+    --app-theme-workbench-panel-bg: #f6f8fa;
+    --app-theme-success: #1f883d;
+    --app-theme-success-soft: rgba(31, 136, 61, 0.14);
+    --app-theme-danger: #cf222e;
+    --app-theme-danger-soft: rgba(207, 34, 46, 0.14);
+    --app-theme-service-badge: #1f883d;
+    --app-theme-service-badge-border: #1f883d;
+    --app-theme-scrollbar-track: rgba(27, 31, 36, 0.08);
+    --app-theme-scrollbar-thumb-hover: rgba(87, 96, 106, 0.35);
+    --app-theme-splitter: #d0d7de;
+    --app-theme-splitter-hover: #afb8c1;
+    --app-theme-splitter-text: #ffffff;
+    --app-theme-window-close-hover-bg: rgba(232, 17, 35, 0.9);
+    --app-theme-window-close-hover-text: #ffffff;
+    --app-theme-terminal-bg: #f6f8fa;
+    --app-theme-terminal-fg: #24292f;
+    --app-theme-terminal-cursor: #0969da;
+    --app-theme-terminal-selection: rgba(9, 105, 218, 0.18);
+    --app-theme-editor-error-marker: #b42318;
+}
+
+html.theme-dark {
+    --app-theme-bg: #202224;
+    --app-theme-surface: #2a2d30;
+    --app-theme-surface-elevated: #31353a;
+    --app-theme-sidebar-bg: #26292d;
+    --app-theme-panel-muted: #23262a;
+    --app-theme-border: #3c3c3c;
+    --app-theme-border-strong: #4d4d4d;
+    --app-theme-text-primary: #cccccc;
+    --app-theme-text-secondary: #b8b8b8;
+    --app-theme-text-tertiary: #9b9b9b;
+    --app-theme-hover-background: #32363b;
+    --app-theme-active-background: #3c4148;
+    --app-theme-accent: #3794ff;
+    --app-theme-accent-soft: rgba(55, 148, 255, 0.18);
+    --app-theme-control-bg: #3f4348;
+    --app-theme-control-bg-hover: #484d53;
+    --app-theme-control-border: #45494e;
+    --app-theme-control-border-hover: #5a5d61;
+    --app-theme-control-focus: #3794ff;
+    --app-theme-mask: rgba(0, 0, 0, 0.5);
+    --app-theme-tooltip-bg: #252526;
+    --app-theme-tooltip-border: #454545;
+    --app-theme-tooltip-text: #cccccc;
+    --app-theme-dialog-header-bg: #252526;
+    --app-theme-dialog-footer-border: #3c3c3c;
+    --app-theme-shadow: 0 18px 36px rgba(0, 0, 0, 0.45);
+    --app-theme-button-bg: #3c3c3c;
+    --app-theme-button-text: #cccccc;
+    --app-theme-button-border: #3c3c3c;
+    --app-theme-button-hover-bg: #45494e;
+    --app-theme-button-hover-text: #ffffff;
+    --app-theme-button-hover-border: #5a5d61;
+    --app-theme-button-primary-bg: #0e639c;
+    --app-theme-button-primary-text: #ffffff;
+    --app-theme-button-primary-border: #1177bb;
+    --app-theme-button-primary-hover-bg: #1177bb;
+    --app-theme-button-primary-hover-border: #1485d1;
+    --app-theme-titlebar-bg: #252526;
+    --app-theme-titlebar-tab-bg: #252526;
+    --app-theme-titlebar-tab-active-bg: #1e1e1e;
+    --app-theme-titlebar-tab-border: #3c3c3c;
+    --app-theme-titlebar-tab-text: #969696;
+    --app-theme-titlebar-tab-active-text: #ffffff;
+    --app-theme-titlebar-tab-hover-bg: #2d2d30;
+    --app-theme-titlebar-tab-accent: #3794ff;
+    --app-theme-tabs-bg: #24272b;
+    --app-theme-tabs-surface: #2a2d30;
+    --app-theme-tabs-muted: #2f3338;
+    --app-theme-tabs-border: #3c3c3c;
+    --app-theme-tabs-text: #b0b0b0;
+    --app-theme-tabs-active-text: #ffffff;
+    --app-theme-tabs-close-hover-bg: rgba(255, 255, 255, 0.08);
+    --app-theme-tabs-close-hover-text: #ffffff;
+    --app-theme-statusbar-bg: #007acc;
+    --app-theme-statusbar-border: rgba(0, 0, 0, 0.28);
+    --app-theme-statusbar-text: #ffffff;
+    --app-theme-statusbar-hover-bg: rgba(255, 255, 255, 0.12);
+    --app-theme-statusbar-hover-text: #ffffff;
+    --app-theme-statusbar-warning: #ffcc00;
+    --app-theme-workbench-bg: #202224;
+    --app-theme-workbench-panel-bg: #2a2d30;
+    --app-theme-success: #57ab5a;
+    --app-theme-success-soft: rgba(87, 171, 90, 0.14);
+    --app-theme-danger: #f85149;
+    --app-theme-danger-soft: rgba(248, 81, 73, 0.14);
+    --app-theme-service-badge: #57ab5a;
+    --app-theme-service-badge-border: #57ab5a;
+    --app-theme-scrollbar-track: rgba(255, 255, 255, 0.04);
+    --app-theme-scrollbar-thumb-hover: rgba(144, 147, 153, 0.5);
+    --app-theme-splitter: #3c3c3c;
+    --app-theme-splitter-hover: #5a5d61;
+    --app-theme-splitter-text: #ffffff;
+    --app-theme-window-close-hover-bg: rgba(232, 17, 35, 0.9);
+    --app-theme-window-close-hover-text: #ffffff;
+    --app-theme-terminal-bg: #1c2128;
+    --app-theme-terminal-fg: #adbac7;
+    --app-theme-terminal-cursor: #539bf5;
+    --app-theme-terminal-selection: rgba(83, 155, 245, 0.24);
+    --app-theme-editor-error-marker: #ff7b72;
+}
+
+body {
+    background: var(--app-theme-bg);
+    color: var(--app-theme-text-primary);
+    font-family: var(--app-font-family);
+}
+
+button,
+input,
+textarea,
+select,
+.el-button,
+.el-input__inner,
+.el-textarea__inner,
+.el-select,
+.el-dialog,
+.el-dropdown-menu,
+.el-tooltip__popper,
+.el-message,
+.el-notification,
+.el-form-item__label,
+.el-checkbox__label,
+.el-radio__label {
+    font-family: var(--app-font-family);
+}
+
  /* 美化滚动条 */
- ::-webkit-scrollbar {
-    width: 8px;
-    height: 8px;
- }
+::-webkit-scrollbar {
+    width: 4px;
+    height: 4px;
+}
 
- ::-webkit-scrollbar-track {
-     width: 6px;
-     background: rgba(#101F1C, 0.1);
-     -webkit-border-radius: 2em;
-     -moz-border-radius: 2em;
-     border-radius: 2em;
- }
+::-webkit-scrollbar-track {
+    width: 6px;
+    background: var(--app-theme-scrollbar-track);
+    -webkit-border-radius: 2em;
+    -moz-border-radius: 2em;
+    border-radius: 2em;
+}
 
- ::-webkit-scrollbar-thumb {
-     /* background-color: rgba(144,147,153,.5); */
-     background-color: transparent;
-     background-clip: padding-box;
-     min-height: 28px;
-     -webkit-border-radius: 2em;
-     -moz-border-radius: 2em;
-     border-radius: 2em;
-     transition: background-color .3s;
-     cursor: pointer;
- }
+::-webkit-scrollbar-corner {
+    background: var(--app-theme-scrollbar-track);
+}
 
- :hover::-webkit-scrollbar-thumb {
-     background-color: rgba(144, 147, 153, .5);
- }
+::-webkit-resizer {
+    background: var(--app-theme-scrollbar-track);
+}
 
- /* 
+::-webkit-scrollbar-thumb {
+    background-color: transparent;
+    background-clip: padding-box;
+    min-height: 28px;
+    -webkit-border-radius: 2em;
+    -moz-border-radius: 2em;
+    border-radius: 2em;
+    transition: background-color .3s;
+    cursor: pointer;
+}
+
+:hover::-webkit-scrollbar-thumb {
+    background-color: var(--app-theme-scrollbar-thumb-hover);
+}
+
+/* 
     element-ui dialog的内容内边距
 */
- .el-dialog .el-dialog__body {
-     padding-top: 0px;
-     padding-left: 10px;
-     padding-right: 10px;
-     padding-bottom: 10px;
- }
+.el-dialog {
+    box-shadow: var(--app-theme-shadow);
+    transition: all 0.3s ease-in-out;
+    margin: 0 auto 0px !important;
+    background: var(--app-theme-surface);
+    color: var(--app-theme-text-primary);
+}
 
- .element-hover:hover {
-     background: #d5ebe1;
- }
-
- .selectedBackground {
-     background: #d5ebe1;
-
- }
-
- .iconButton {
-     margin-right: 3px;
-     padding: 3px 3px;
- }
-
- .iconButton:hover {
-     background-color: #3fb24f;
-     border-radius: 50%;
- }
+.el-dialog .el-dialog__body {
+    padding: 0px !important;
+    background: var(--app-theme-surface);
+}
 
 
+.el-dialog__header {
+    padding: 2px 5px !important;
+    background-color: var(--app-theme-dialog-header-bg);
+    border-bottom: 1px solid var(--app-theme-border);
+}
 
- .notSelect {
-     /* 不让用户选中 */
-     -webkit-touch-callout: none;
-     /* iOS Safari */
-     -webkit-user-select: none;
-     /* Chrome/Safari/Opera */
-     -khtml-user-select: none;
-     /* Konqueror */
-     -moz-user-select: none;
-     /* Firefox */
-     -ms-user-select: none;
-     /* Internet Explorer/Edge */
-     user-select: none;
-     /* Non-prefixed version, currently
+.el-dialog__headerbtn {
+    top: 9px !important;
+    right: 9px !important;
+}
+
+.el-dialog__footer {
+    border-top: 1px solid var(--app-theme-dialog-footer-border) !important;
+    padding: 5px 5px !important;
+    background: var(--app-theme-surface);
+}
+
+.el-dialog__footer  .el-button {
+    padding: 6px 12px;
+}
+
+
+.element-hover:hover {
+    background: var(--app-theme-hover-background);
+}
+
+.selectedBackground {
+    background: var(--app-theme-active-background);
+}
+
+.iconButton {
+    /* margin-right: 3px; */
+    padding: 3px 3px;
+
+}
+
+.iconButton:hover {
+    background-color: var(--app-theme-hover-background);
+    color: var(--app-theme-text-primary);
+    border-radius: 50%;
+    transition: background-color .15s ease, color .15s ease;
+}
+
+.dragRegion {
+    -webkit-app-region: drag;
+}
+
+.noDragRegion {
+    -webkit-app-region: no-drag;
+}
+
+
+.notSelect {
+    /* 不让用户选中 */
+    -webkit-touch-callout: none;
+    /* iOS Safari */
+    -webkit-user-select: none;
+    /* Chrome/Safari/Opera */
+    -khtml-user-select: none;
+    /* Konqueror */
+    -moz-user-select: none;
+    /* Firefox */
+    -ms-user-select: none;
+    /* Internet Explorer/Edge */
+    user-select: none;
+    /* Non-prefixed version, currently
     not supported by any browser */
- }
+}
 
 
- .el-collapse-item__header {
+.el-collapse-item__header {
     height: 30px !important;
     line-height: 30px !important;
- }
+}
 
 .el-collapse-item__content {
     padding-bottom: 10px !important;
@@ -88,15 +323,645 @@
 
 
 .interfaceIcon::before {
-    content: "I";
+    content: "S";
     margin-right: 5px;
     /* font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif; */
     font-family: Georgia, serif;
-    background-color: rgb(136, 241, 124);
-    width: 17px;
-    height: 17px;
+    color: var(--app-theme-service-badge);
+    border: 1px solid var(--app-theme-service-badge-border);
+    width: 12px;
+    height: 12px;
     text-align: center;
-    font-size: 17px;
+    font-size: 12px;
     border-radius: 50%;
     display: inline-block;
+}
+
+
+.v-modal {
+    margin-top: 32px !important;
+    background: var(--app-theme-mask) !important;
+}
+
+
+
+.el-tooltip__popper.is-light {
+    background: var(--app-theme-tooltip-bg);
+    color: var(--app-theme-tooltip-text);
+    border: 1px solid var(--app-theme-tooltip-border) !important;
+    box-shadow: 0 4px 10px rgb(0 0 0 / 20%);
+    line-height: 1.5;
+}
+
+
+/* 针对 Light 主题的 Tooltip 小箭头边框颜色修改 */
+
+/* 1. 当 Tooltip 在上方时 (箭头朝下) */
+.el-tooltip__popper.is-light[x-placement^="top"] .popper__arrow {
+    border-top-color: var(--app-theme-tooltip-border) !important;
+}
+.el-tooltip__popper.is-light[x-placement^="top"] .popper__arrow::after {
+    border-top-color: var(--app-theme-tooltip-bg) !important; /* 内部填充色，通常保持白色 */
+}
+
+/* 2. 当 Tooltip 在下方时 (箭头朝上) */
+.el-tooltip__popper.is-light[x-placement^="bottom"] .popper__arrow {
+    border-bottom-color: var(--app-theme-tooltip-border) !important;
+}
+.el-tooltip__popper.is-light[x-placement^="bottom"] .popper__arrow::after {
+    border-bottom-color: var(--app-theme-tooltip-bg) !important;
+}
+
+/* 3. 当 Tooltip 在左侧时 (箭头朝右) */
+.el-tooltip__popper.is-light[x-placement^="left"] .popper__arrow {
+    border-left-color: var(--app-theme-tooltip-border) !important;
+}
+.el-tooltip__popper.is-light[x-placement^="left"] .popper__arrow::after {
+    border-left-color: var(--app-theme-tooltip-bg) !important;
+}
+
+/* 4. 当 Tooltip 在右侧时 (箭头朝左) */
+.el-tooltip__popper.is-light[x-placement^="right"] .popper__arrow {
+    border-right-color: var(--app-theme-tooltip-border) !important;
+}
+.el-tooltip__popper.is-light[x-placement^="right"] .popper__arrow::after {
+    border-right-color: var(--app-theme-tooltip-bg) !important;
+}
+
+
+
+.el-message {
+    margin-top: 20px !important;
+}
+
+.page-tabs-container,
+.page-tabs-view,
+.page-tab-boundary,
+.plugin-page,
+.plugin-page__content,
+.plugin-list-container,
+.plugin-view,
+.plugin-list,
+.plugin-details,
+.vue-splitter-container,
+.splitter-pane {
+    background: var(--app-theme-bg);
+    color: var(--app-theme-text-primary);
+}
+
+.plugin-page,
+.plugin-list-container,
+.plugin-view,
+.plugin-list,
+.plugin-details,
+.splitter-pane {
+    background: var(--app-theme-surface);
+}
+
+.el-loading-mask {
+    background-color: color-mix(in srgb, var(--app-theme-surface) 82%, transparent) !important;
+}
+
+.el-loading-spinner .path {
+    stroke: var(--app-theme-accent);
+}
+
+.el-loading-spinner .el-loading-text {
+    color: var(--app-theme-text-secondary);
+}
+
+.v-note-wrapper,
+.v-note-panel,
+.v-note-show,
+.v-show-content,
+.v-show-content-html,
+.CodeMirror,
+.CodeMirror-gutters {
+    background: var(--app-theme-surface) !important;
+    color: var(--app-theme-text-primary) !important;
+    border-color: var(--app-theme-border) !important;
+}
+
+
+
+.app-bottom-line::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 1px;
+    background: var(--app-theme-border);
+    z-index: 0;
+}
+
+html.theme-dark .app-sidebar,
+html.theme-dark .app-titlebar,
+html.theme-dark .app-statusbar,
+html.theme-dark .app-tabs,
+html.theme-dark .app-tabs-actions,
+html.theme-dark .app-workspace_main,
+html.theme-dark .app-workbench,
+html.theme-dark .settings-page,
+html.theme-dark .el-main,
+html.theme-dark .el-container,
+html.theme-dark .el-aside {
+    color: var(--app-theme-text-primary);
+}
+
+html.theme-dark .app-sidebar {
+    background-color: var(--app-theme-sidebar-bg);
+    box-shadow: inset -1px 0 0 var(--app-theme-border);
+}
+
+html.theme-dark .app-titlebar,
+html.theme-dark .app-tabs,
+html.theme-dark .app-statusbar {
+    background-color: var(--app-theme-surface);
+}
+
+html.theme-dark .app-statusbar {
+    box-shadow: none;
+}
+
+html.theme-dark .app-tabs-bottom-line::after {
+    background: var(--app-theme-border);
+}
+
+html.theme-dark .app-tabs-item {
+    color: var(--app-theme-text-secondary);
+    border-color: var(--app-theme-border);
+}
+
+html.theme-dark .app-tabs-item:hover,
+html.theme-dark .app-tabs-item.is-active,
+html.theme-dark .app-tabs-drag-proxy,
+html.theme-dark .titlebar-home-button:hover,
+html.theme-dark .titlebar-home-button.active {
+    background-color: var(--app-theme-surface-elevated);
+    color: var(--app-theme-text-primary);
+    border-color: var(--app-theme-border-strong);
+}
+
+html.theme-dark .app-tabs-item.is-active {
+    box-shadow: none;
+}
+
+html.theme-dark .app-tabs-actions {
+    background-color: var(--app-theme-panel-muted);
+    border-left-color: var(--app-theme-border);
+}
+
+html.theme-dark .app-tabs-close-button,
+html.theme-dark .app-tabs-action-button,
+html.theme-dark .titlebar-home-button,
+html.theme-dark .window-button,
+html.theme-dark .app-statusbar-status-text,
+html.theme-dark .app-tabs-overflow-icon,
+html.theme-dark .app-tabs-overflow-image {
+    color: var(--app-theme-text-secondary);
+}
+
+html.theme-dark .window-button:hover,
+html.theme-dark .app-tabs-close-button:hover,
+html.theme-dark .app-tabs-action-button:hover {
+    background-color: var(--app-theme-hover-background);
+}
+
+html.theme-dark .window-button-line,
+html.theme-dark .window-button-square,
+html.theme-dark .window-button-restore::before,
+html.theme-dark .window-button-restore::after,
+html.theme-dark .window-button-close-icon::before,
+html.theme-dark .window-button-close-icon::after {
+    background: currentColor;
+    border-color: currentColor;
+}
+
+html.theme-dark .titlebar-donate-popper,
+html.theme-dark .el-dialog,
+html.theme-dark .el-select-dropdown,
+html.theme-dark .el-popper[x-placement^="bottom"],
+html.theme-dark .el-popover,
+html.theme-dark .el-dropdown-menu,
+html.theme-dark .el-picker-panel {
+    background: var(--app-theme-surface-elevated);
+    color: var(--app-theme-text-primary);
+    border-color: var(--app-theme-border) !important;
+}
+
+html.theme-dark .el-dialog__body,
+html.theme-dark .el-dialog__footer {
+    background: var(--app-theme-surface) !important;
+    color: var(--app-theme-text-primary) !important;
+}
+
+html.theme-dark .el-dialog__header {
+    background: var(--app-theme-dialog-header-bg) !important;
+    border-color: var(--app-theme-border) !important;
+}
+
+html.theme-dark .v-modal {
+    background: var(--app-theme-mask) !important;
+}
+
+html.theme-dark .el-tooltip__popper.is-light,
+html.theme-dark .el-tooltip__popper.is-light[x-placement^="top"],
+html.theme-dark .el-tooltip__popper.is-light[x-placement^="bottom"],
+html.theme-dark .el-tooltip__popper.is-light[x-placement^="left"],
+html.theme-dark .el-tooltip__popper.is-light[x-placement^="right"] {
+    background: var(--app-theme-tooltip-bg) !important;
+    color: var(--app-theme-tooltip-text) !important;
+    border-color: var(--app-theme-tooltip-border) !important;
+}
+
+html.theme-dark .el-select-dropdown__item,
+html.theme-dark .el-dropdown-menu__item,
+html.theme-dark .el-popover,
+html.theme-dark .titlebar-donate-title,
+html.theme-dark .titlebar-donate-desc {
+    color: var(--app-theme-text-primary);
+}
+
+html.theme-dark .el-select-dropdown__item.hover,
+html.theme-dark .el-select-dropdown__item:hover,
+html.theme-dark .el-dropdown-menu__item:hover,
+html.theme-dark .el-dropdown-menu__item:focus {
+    background: var(--app-theme-hover-background);
+    color: var(--app-theme-text-primary);
+}
+
+html.theme-dark .el-input__inner,
+html.theme-dark .el-textarea__inner,
+html.theme-dark .el-input-group__append,
+html.theme-dark .el-input-group__prepend,
+html.theme-dark .el-select .el-input__inner,
+html.theme-dark .el-checkbox__inner {
+    background: var(--app-theme-control-bg);
+    color: var(--app-theme-text-primary);
+    border-color: var(--app-theme-control-border);
+}
+
+html.theme-dark .el-input__inner:hover,
+html.theme-dark .el-textarea__inner:hover,
+html.theme-dark .el-select .el-input__inner:hover {
+    border-color: var(--app-theme-control-border-hover);
+}
+
+html.theme-dark .el-input.is-active .el-input__inner,
+html.theme-dark .el-input__inner:focus,
+html.theme-dark .el-textarea__inner:focus {
+    border-color: var(--app-theme-control-focus) !important;
+}
+
+html.theme-dark .service-tree,
+html.theme-dark .service-tree__search,
+html.theme-dark .service-tree__panel,
+html.theme-dark .collect-panel,
+html.theme-dark .history-panel,
+html.theme-dark .history-panel__list,
+html.theme-dark .page-tabs-container,
+html.theme-dark .page-tabs-view,
+html.theme-dark .app-tree,
+html.theme-dark .service-tree__list,
+html.theme-dark .collect-tree,
+html.theme-dark .history-tree,
+html.theme-dark .el-tree {
+    background: var(--app-theme-surface) !important;
+    color: var(--app-theme-text-secondary);
+}
+
+html.theme-dark .service-tree .el-tree,
+html.theme-dark .collect-panel .el-tree,
+html.theme-dark .history-panel .el-tree,
+html.theme-dark .service-tree .el-tree-node,
+html.theme-dark .collect-panel .el-tree-node,
+html.theme-dark .history-panel .el-tree-node,
+html.theme-dark .service-tree .el-tree-node__children,
+html.theme-dark .collect-panel .el-tree-node__children,
+html.theme-dark .history-panel .el-tree-node__children {
+    background: transparent !important;
+}
+
+html.theme-dark .service-tree .el-tree-node__content,
+html.theme-dark .collect-panel .el-tree-node__content,
+html.theme-dark .history-panel .el-tree-node__content {
+    color: var(--app-theme-text-secondary) !important;
+    background: transparent !important;
+    border-radius: 4px;
+}
+
+html.theme-dark .service-tree .el-tree-node__content:hover,
+html.theme-dark .collect-panel .el-tree-node__content:hover,
+html.theme-dark .history-panel .el-tree-node__content:hover,
+html.theme-dark .service-tree .el-tree-node:focus > .el-tree-node__content,
+html.theme-dark .collect-panel .el-tree-node:focus > .el-tree-node__content,
+html.theme-dark .history-panel .el-tree-node:focus > .el-tree-node__content {
+    background: var(--app-theme-hover-background) !important;
+}
+
+html.theme-dark .service-tree .el-tree--highlight-current .el-tree-node.is-current > .el-tree-node__content,
+html.theme-dark .collect-panel .el-tree--highlight-current .el-tree-node.is-current > .el-tree-node__content,
+html.theme-dark .history-panel .el-tree--highlight-current .el-tree-node.is-current > .el-tree-node__content {
+    background: var(--app-theme-active-background) !important;
+    color: var(--app-theme-text-primary) !important;
+}
+
+html.theme-dark .el-form-item__label,
+html.theme-dark .el-checkbox__label,
+html.theme-dark .el-radio__label,
+html.theme-dark .el-input__icon,
+html.theme-dark .el-select-dropdown__empty,
+html.theme-dark .el-empty__description,
+html.theme-dark .el-dialog__title,
+html.theme-dark .el-tabs__item {
+    color: var(--app-theme-text-secondary);
+}
+
+html.theme-dark .el-tabs__active-bar {
+    background-color: var(--app-theme-accent);
+}
+
+html.theme-dark .el-tabs__item.is-active,
+html.theme-dark .el-tabs__item:hover {
+    color: var(--app-theme-text-primary);
+}
+
+html.theme-dark .el-tabs__nav-wrap::after,
+html.theme-dark .el-tabs__header {
+    border-color: var(--app-theme-border);
+}
+
+html.theme-dark .tab-panel,
+html.theme-dark .tab-panel-header,
+html.theme-dark .tab-panel-content {
+    background-color: var(--app-theme-surface) !important;
+    color: var(--app-theme-text-primary) !important;
+}
+
+html.theme-dark .tab-panel-header-link {
+    color: var(--app-theme-text-secondary) !important;
+}
+
+html.theme-dark .tab-panel-header-link:hover,
+html.theme-dark .tab-panel-toolbar,
+html.theme-dark .tab-panel-toolbar > div {
+    color: var(--app-theme-text-primary) !important;
+}
+
+html.theme-dark .page-tabs-view > *,
+html.theme-dark .page-tabs-view .el-container,
+html.theme-dark .page-tabs-view .el-main,
+html.theme-dark .page-tabs-view .el-header,
+html.theme-dark .page-tabs-view .el-aside,
+html.theme-dark .page-tabs-view .el-tabs__content {
+    background: var(--app-theme-bg);
+    color: var(--app-theme-text-primary);
+}
+
+html.theme-dark .el-table,
+html.theme-dark .el-table__expanded-cell,
+html.theme-dark .el-table th.el-table__cell,
+html.theme-dark .el-table tr,
+html.theme-dark .el-table td.el-table__cell,
+html.theme-dark .el-table__body,
+html.theme-dark .el-table__header,
+html.theme-dark .el-table__body-wrapper,
+html.theme-dark .el-table__header-wrapper {
+    background: var(--app-theme-surface-elevated) !important;
+    color: var(--app-theme-text-primary) !important;
+    border-color: var(--app-theme-border) !important;
+}
+
+html.theme-dark .el-table--border,
+html.theme-dark .el-table--group,
+html.theme-dark .el-table::before,
+html.theme-dark .el-table__fixed::before,
+html.theme-dark .el-table__fixed-right::before,
+html.theme-dark .el-table--border::after,
+html.theme-dark .el-table--group::after,
+html.theme-dark .el-table td.el-table__cell,
+html.theme-dark .el-table th.el-table__cell.is-leaf {
+    border-color: var(--app-theme-border) !important;
+    background-color: var(--app-theme-border) !important;
+}
+
+html.theme-dark .el-table tbody tr:hover > td,
+html.theme-dark .el-table__body tr.hover-row > td,
+html.theme-dark .el-table__body tr.current-row > td {
+    background: var(--app-theme-hover-background) !important;
+}
+
+html.theme-dark .el-table th.el-table__cell {
+    background: var(--app-theme-tabs-muted) !important;
+    color: var(--app-theme-text-secondary) !important;
+}
+
+html.theme-dark .el-table td.el-table__cell,
+html.theme-dark .el-table tr {
+    background: var(--app-theme-surface) !important;
+}
+
+html.theme-dark .el-descriptions,
+html.theme-dark .el-descriptions__body,
+html.theme-dark .el-descriptions__table,
+html.theme-dark .el-descriptions-item__cell,
+html.theme-dark .el-descriptions-item__label,
+html.theme-dark .el-descriptions-item__content {
+    background: var(--app-theme-surface) !important;
+    color: var(--app-theme-text-primary) !important;
+    border-color: var(--app-theme-border) !important;
+}
+
+html.theme-dark .el-descriptions-item__label {
+    color: var(--app-theme-text-secondary) !important;
+    background: var(--app-theme-tabs-muted) !important;
+}
+
+html.theme-dark .el-descriptions-item__content {
+    background: var(--app-theme-surface) !important;
+}
+
+html.theme-dark .v-note-wrapper,
+html.theme-dark .v-note-panel,
+html.theme-dark .v-note-show,
+html.theme-dark .v-show-content,
+html.theme-dark .v-show-content-html,
+html.theme-dark .CodeMirror,
+html.theme-dark .CodeMirror-gutters {
+    background: var(--app-theme-workbench-bg) !important;
+    color: var(--app-theme-text-primary) !important;
+    border-color: var(--app-theme-border) !important;
+}
+
+html.theme-dark .CodeMirror-cursor {
+    border-left-color: var(--app-theme-accent) !important;
+}
+
+html.theme-dark .CodeMirror-gutters {
+    background: var(--app-theme-workbench-panel-bg) !important;
+}
+
+html.theme-dark .CodeMirror-linenumber {
+    color: var(--app-theme-text-tertiary) !important;
+}
+
+html.theme-dark .CodeMirror-activeline-background,
+html.theme-dark .CodeMirror-activeline .CodeMirror-line,
+html.theme-dark .CodeMirror-activeline .CodeMirror-gutter-elt {
+    background: rgba(255, 255, 255, 0.04) !important;
+}
+
+.CodeMirror-scrollbar-filler,
+.CodeMirror-gutter-filler {
+    background: transparent !important;
+}
+
+.CodeMirror-simplescroll-horizontal,
+.CodeMirror-simplescroll-vertical,
+.CodeMirror-overlayscroll-horizontal,
+.CodeMirror-overlayscroll-vertical {
+    background: transparent !important;
+}
+
+.CodeMirror-simplescroll-horizontal,
+.CodeMirror-overlayscroll-horizontal {
+    height: 6px !important;
+}
+
+.CodeMirror-simplescroll-vertical,
+.CodeMirror-overlayscroll-vertical {
+    width: 6px !important;
+}
+
+.CodeMirror-simplescroll-horizontal div,
+.CodeMirror-simplescroll-vertical div,
+.CodeMirror-overlayscroll-horizontal div,
+.CodeMirror-overlayscroll-vertical div {
+    background: rgba(127, 127, 127, 0.28) !important;
+    border: none !important;
+    border-radius: 999px !important;
+}
+
+.CodeMirror-simplescroll-horizontal div:hover,
+.CodeMirror-simplescroll-vertical div:hover,
+.CodeMirror-overlayscroll-horizontal div:hover,
+.CodeMirror-overlayscroll-vertical div:hover {
+    background: var(--app-theme-scrollbar-thumb-hover) !important;
+}
+
+html.theme-dark .v-show-content pre,
+html.theme-dark .v-show-content code,
+html.theme-dark .v-show-content pre code {
+    background: var(--app-theme-surface-elevated) !important;
+    color: var(--app-theme-text-primary) !important;
+}
+
+html.theme-dark .v-show-content a {
+    color: var(--app-theme-accent) !important;
+}
+
+html.theme-dark .invoke-dubbo-dialog,
+html.theme-dark .invoke-dubbo-dialog-interface-info,
+html.theme-dark .invoke-dubbo-dialog-content {
+    background: var(--app-theme-bg) !important;
+    color: var(--app-theme-text-primary) !important;
+}
+
+html.theme-dark .invoke-page-breadcrumb {
+    color: var(--app-theme-text-secondary) !important;
+}
+
+html.theme-dark .invoke-page-breadcrumb-app,
+html.theme-dark .invoke-page-breadcrumb-separator {
+    color: var(--app-theme-text-tertiary) !important;
+}
+
+html.theme-dark .invoke-page-breadcrumb-service {
+    color: var(--app-theme-text-primary) !important;
+}
+
+html.theme-dark .invoke-request-composer {
+    background: var(--app-theme-control-bg) !important;
+    border-color: var(--app-theme-control-border) !important;
+}
+
+html.theme-dark .invoke-request-divider {
+    background: var(--app-theme-border) !important;
+}
+
+html.theme-dark .invoke-request-composer .el-input__inner {
+    color: var(--app-theme-text-primary) !important;
+}
+
+html.theme-dark .invoke-request-composer .el-input__suffix,
+html.theme-dark .invoke-request-composer .el-select__caret {
+    color: var(--app-theme-text-tertiary) !important;
+}
+
+html.theme-dark .el-button--default {
+    background: var(--app-theme-button-bg);
+    border-color: var(--app-theme-button-border);
+    color: var(--app-theme-button-text);
+}
+
+html.theme-dark .el-button--default:hover,
+html.theme-dark .el-button--default:focus {
+    background: var(--app-theme-button-hover-bg);
+    border-color: var(--app-theme-button-hover-border);
+    color: var(--app-theme-button-hover-text);
+}
+
+html.theme-dark .el-button--primary {
+    background: var(--app-theme-button-primary-bg);
+    border-color: var(--app-theme-button-primary-border);
+    color: var(--app-theme-button-primary-text);
+}
+
+html.theme-dark .el-button--primary:hover,
+html.theme-dark .el-button--primary:focus {
+    background: var(--app-theme-button-primary-hover-bg);
+    border-color: var(--app-theme-button-primary-hover-border);
+    color: var(--app-theme-button-primary-text);
+}
+
+html.theme-dark .el-button.is-plain {
+    background: rgba(56, 139, 253, 0.1);
+    border-color: rgba(56, 139, 253, 0.4);
+    color: #58a6ff;
+}
+
+html.theme-dark .el-button.is-plain:hover,
+html.theme-dark .el-button.is-plain:focus {
+    background: rgba(56, 139, 253, 0.18);
+    border-color: #58a6ff;
+    color: #ffffff;
+}
+
+html.theme-dark .el-input-group__append .el-button,
+html.theme-dark .el-input-group__prepend .el-button {
+    background: transparent;
+    border-color: transparent;
+    color: var(--app-theme-button-text);
+}
+
+html.theme-dark .el-input-group__append .el-button:hover,
+html.theme-dark .el-input-group__append .el-button:focus,
+html.theme-dark .el-input-group__prepend .el-button:hover,
+html.theme-dark .el-input-group__prepend .el-button:focus {
+    background: var(--app-theme-button-hover-bg);
+    color: var(--app-theme-button-hover-text);
+}
+
+html.theme-dark .el-message {
+    background: var(--app-theme-surface-elevated);
+    border-color: var(--app-theme-border);
+}
+
+html.theme-dark .el-message-box,
+html.theme-dark .el-notification,
+html.theme-dark .el-card {
+    background: var(--app-theme-surface);
+    color: var(--app-theme-text-primary);
+    border-color: var(--app-theme-border);
 }

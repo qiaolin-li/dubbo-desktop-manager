@@ -1,20 +1,8 @@
-import connectRepository from "./connectRepository"
-import invokeHistoryRepository from './invokeHistoryRepository'
-import interfaceCollectRepository from './interfaceCollectRepository'
+import dataSourceRepository from "./DataSourceRepository";
 
-export default [
-    {
-        name: "connectRepository",
-        target: connectRepository,
-    },
-
-    {
-        name: "invokeHistoryRecord",
-        target: invokeHistoryRepository
-    },
-
-    {
-        name: "interfaceCollectRepository",
-        target: interfaceCollectRepository
-    }
-]
+/**
+ * @param {import('@/main/AppCore').default} app 主进程核心对象
+ */
+export default (app) => {
+	app.exportService("dataSourceRepository", dataSourceRepository);
+};

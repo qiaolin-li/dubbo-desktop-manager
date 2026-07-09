@@ -1,12 +1,12 @@
 
-.dragRegion {
-    -webkit-app-region: drag;
+.app-titlebar {
+    margin-top: 0px !important;
 }
 
-.noDragRegion {
-    -webkit-app-region: no-drag;
+.titlebar-home-button {
+    margin-left: 66px !important;
 }
 
-.menu-aside {
-    padding-top: 20px;
+.titlebar-link-list {
+	margin-right: 10px !important;
 }

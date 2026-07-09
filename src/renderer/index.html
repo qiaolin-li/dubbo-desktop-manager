@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="">
+
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <link rel="icon" href="/favicon.ico">
+  <title>Dubbo-Desktop-Manager</title>
+  <script>
+    (function () {
+      var root = document.documentElement;
+      var themeModeList = ["system", "light", "dark"];
+      var lightAppearance = "light";
+      var darkAppearance = "dark";
+      var macUIFontFamily = "'PingFang SC', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif";
+      var windowsUIFontFamily = "'Segoe UI', 'Microsoft YaHei', sans-serif";
+      var platform = window.constant && window.constant.platform;
+
+      function normalizeThemeMode(themeMode) {
+        return themeModeList.indexOf(themeMode) > -1 ? themeMode : "system";
+      }
+
+      function getSystemTheme() {
+        return typeof window.matchMedia === "function" && window.matchMedia("(prefers-color-scheme: dark)").matches ? darkAppearance : lightAppearance;
+      }
+
+      function getUIFontFamily(fontFamily) {
+        return typeof fontFamily === "string" && fontFamily.trim() ? fontFamily.trim() : (platform === "win32" ? windowsUIFontFamily : macUIFontFamily);
+      }
+
+      var themeMode = normalizeThemeMode(appRuntime.getThemeMode());
+      var appearance = themeMode === lightAppearance || themeMode === darkAppearance ? themeMode : getSystemTheme();
+      var currentThemeId = appearance === darkAppearance ? appRuntime.getPreferredDarkThemeId() || "dark-vscode" : appRuntime.getPreferredLightThemeId() || "light-default";
+      var iconThemeId = appRuntime.getIconThemeId() || "default";
+      var uiFontFamily = getUIFontFamily(appRuntime.getUIFontFamily());
+      var isDarkTheme = appearance === darkAppearance;
+      var themeBg = isDarkTheme ? "#202224" : "#f6f8fa";
+      var themeText = isDarkTheme ? "#cccccc" : "#24292f";
+      var style = document.createElement("style");
+
+      root.setAttribute("data-theme", appearance);
+      root.setAttribute("data-theme-mode", themeMode);
+      root.setAttribute("data-theme-id", currentThemeId);
+      root.setAttribute("data-icon-theme-id", iconThemeId);
+      root.style.setProperty("--app-font-family", uiFontFamily);
+      root.style.setProperty("--app-theme-bg", themeBg);
+      root.style.setProperty("--app-theme-text-primary", themeText);
+      root.style.colorScheme = isDarkTheme ? "dark" : "light";
+      root.classList.toggle("theme-dark", isDarkTheme);
+      root.classList.toggle("theme-light", !isDarkTheme);
+      style.textContent = "html, body, #app { min-height: 100%; background: " + themeBg + "; color: " + themeText + "; }";
+      document.head.appendChild(style);
+    })();
+  </script>
+  <link rel="stylesheet" href="/reset.css">
+</head>
+
+<body>
+  <div id="app"></div>
+  <script type="module" src="./main.js"></script>
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function () {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?a2fc543fc8046d0b815bda45fc10453c";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+</body>
+
+</html>

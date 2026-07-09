@@ -8,13 +8,18 @@
   export default {
     name: 'Pane',
     props: {
-      className: String
+      split: {
+        type: String,
+        required: true
+      },
+      className: {
+        type: String,
+        default: ''
+      }
     },
-    data() {
-      const classes = [this.$parent.split, this.className]
-      return {
-        classes: classes.join(' '),
-        percent: 50
+    computed: {
+      classes() {
+        return [this.split, this.className].filter(Boolean).join(' ')
       }
     }
   }

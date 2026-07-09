@@ -1,0 +1,23 @@
+diff --git a/node_modules/htmlparser2/lib/esm/index.js b/node_modules/htmlparser2/lib/esm/index.js
+index 949c914..e85a70f 100644
+--- a/node_modules/htmlparser2/lib/esm/index.js
++++ b/node_modules/htmlparser2/lib/esm/index.js
+@@ -45,7 +45,8 @@ export { default as Tokenizer, } from "./Tokenizer.js";
+  * All of the following exports exist for backwards-compatibility.
+  * They should probably be removed eventually.
+  */
+-export * as ElementType from "domelementtype";
++import * as ElementType from "domelementtype";
++export {ElementType};
+ import { getFeed } from "domutils";
+ export { getFeed } from "domutils";
+ const parseFeedDefaultOptions = { xmlMode: true };
+@@ -58,5 +59,6 @@ const parseFeedDefaultOptions = { xmlMode: true };
+ export function parseFeed(feed, options = parseFeedDefaultOptions) {
+     return getFeed(parseDOM(feed, options));
+ }
+-export * as DomUtils from "domutils";
++import * as DomUtils from "domutils";
++export {DomUtils}
+ //# sourceMappingURL=index.js.map
+\ No newline at end of file

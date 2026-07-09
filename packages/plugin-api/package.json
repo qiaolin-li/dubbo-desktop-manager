@@ -1,0 +1,19 @@
+{
+    "name": "@ddm-center/plugin-api",
+    "version": "0.0.2",
+    "description": "Type declarations for Dubbo Desktop Manager plugin development.",
+    "types": "index.d.ts",
+    "files": [
+        "README.md",
+        "index.d.ts",
+        "main.d.ts",
+        "renderer.d.ts",
+        "appMain.d.ts",
+        "appView.d.ts",
+        "vue-shim.d.ts"
+    ],
+    "peerDependencies": {
+        "axios": "*",
+        "vue": "^2.6.0"
+    }
+}
