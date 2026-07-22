@@ -20,7 +20,7 @@ jobs:
         include:
           - name: Windows x64
             os: windows-latest
-            args: --win nsis --x64
+            args: --win nsis portable --x64
             artifact: windows-x64
           - name: macOS Intel
             os: macos-15-intel
@@ -32,7 +32,7 @@ jobs:
             artifact: macos-arm64
           - name: Linux x64
             os: ubuntu-latest
-            args: --linux AppImage deb --x64
+            args: --linux AppImage deb rpm --x64
             artifact: linux-x64
 
     steps:
@@ -43,6 +43,10 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 22
+
+      - name: Install RPM tools
+        if: matrix.name == 'Linux x64'
+        run: sudo apt-get update && sudo apt-get install --no-install-recommends -y rpm
 
       - name: Install dependencies
         run: yarn install --no-lockfile --network-timeout 600000
