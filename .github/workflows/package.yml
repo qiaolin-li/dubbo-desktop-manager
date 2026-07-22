@@ -43,10 +43,9 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 22
-          cache: yarn
 
       - name: Install dependencies
-        run: yarn install --frozen-lockfile --network-timeout 600000
+        run: yarn install --no-lockfile --network-timeout 600000
 
       - name: Build source
         run: yarn electron-vite build
