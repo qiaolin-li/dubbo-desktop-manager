@@ -154,3 +154,11 @@ await npmUtils.execCommand('install', ['ddm-plugin-dubbo-support@1.0.0', '--logl
 ```js
 await npmUtils.execCommand('uninstall', ['ddm-plugin-dubbo-support', '--loglevel', 'info'], pluginDirectory)
 ```
+
+
+
+真实代码参见：
+[PluginInstaller.js](https://github.com/qiaolin-li/dubbo-desktop-manager/blob/master/src/main/plugin/PluginInstaller.js)
+
+[NpmUtils.js](https://github.com/qiaolin-li/dubbo-desktop-manager/blob/master/src/main/common/utils/NpmUtils.js)
+
